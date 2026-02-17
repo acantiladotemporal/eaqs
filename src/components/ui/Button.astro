@@ -1,0 +1,72 @@
+---
+interface Props {
+  href?: string;
+  id?: string;
+  type?: 'button' | 'submit' | 'reset';
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  block?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
+  class?: string;
+  ariaLabel?: string;
+  target?: string;
+  rel?: string;
+}
+
+const {
+  href,
+  id,
+  type = 'button',
+  variant = 'primary',
+  size = 'md',
+  block = false,
+  loading = false,
+  disabled = false,
+  class: className = '',
+  ariaLabel,
+  target,
+  rel,
+} = Astro.props;
+
+const isDisabled = disabled || loading;
+const computedRel = rel ?? (target === '_blank' ? 'noopener noreferrer' : undefined);
+
+const classes = [
+  'btn',
+  `btn-${variant}`,
+  `btn-${size}`,
+  block ? 'btn-block' : '',
+  loading ? 'opacity-80' : '',
+  className,
+].join(' ').trim();
+---
+
+{
+  href ? (
+    <a
+      href={isDisabled ? undefined : href}
+      id={id}
+      class={classes}
+      aria-label={ariaLabel}
+      aria-disabled={isDisabled ? 'true' : undefined}
+      aria-busy={loading ? 'true' : undefined}
+      tabindex={isDisabled ? '-1' : undefined}
+      target={target}
+      rel={computedRel}
+    >
+      <slot />
+    </a>
+  ) : (
+    <button
+      id={id}
+      type={type}
+      class={classes}
+      disabled={isDisabled}
+      aria-label={ariaLabel}
+      aria-busy={loading ? 'true' : undefined}
+    >
+      <slot />
+    </button>
+  )
+}

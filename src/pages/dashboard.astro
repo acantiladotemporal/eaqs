@@ -1,0 +1,165 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+
+const modulos = [
+  {
+    id: '1',
+    numero: '01',
+    titulo: 'Bases de la Neuroeducacion',
+    descripcion: 'Fundamentos neurosonoros para ordenar atencion y seguridad en aula.',
+  },
+  {
+    id: '2',
+    numero: '02',
+    titulo: 'Ritmo y Psicomotricidad',
+    descripcion: 'Pulso y movimiento para mejorar coordinacion, foco y regulacion.',
+  },
+  {
+    id: '3',
+    numero: '03',
+    titulo: 'Voz y Lenguaje Musical',
+    descripcion: 'Herramientas vocales para comunicacion, escucha y expresion.',
+  },
+  {
+    id: '4',
+    numero: '04',
+    titulo: 'Emocion y Memoria',
+    descripcion: 'Diseno de experiencias musicales con anclaje afectivo duradero.',
+  },
+  {
+    id: '5',
+    numero: '05',
+    titulo: 'Diseno de Sesiones',
+    descripcion: 'Secuencias aplicables en clase con objetivos claros y evaluables.',
+  },
+  {
+    id: '6',
+    numero: '06',
+    titulo: 'Integracion y Transferencia',
+    descripcion: 'Cierre metodologico para sostener la practica en el tiempo.',
+  },
+];
+---
+
+<Layout title="Dashboard | El Arbol Que Suena" description="Portal del alumnado para acceder a modulos, examen y comunidad docente.">
+  <Header mode="learning" />
+
+  <main class="bg-white pt-28 md:pt-32 pb-16 md:pb-20">
+    <section class="section-shell bg-white">
+      <div class="content-shell space-y-9 md:space-y-10">
+        <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8" data-reveal>
+          <div class="max-w-3xl space-y-4">
+            <p class="editorial-kicker">Portal del alumnado</p>
+            <h1 class="headline-luxe section-title md:!text-[4.1rem] leading-[0.94]">
+              Hola,
+              <span id="welcome-name-target" class="name-swap not-italic">Docente</span>.
+            </h1>
+            <p id="dashboard-feedback" class="text-sm text-ink/62 min-h-6" aria-live="polite">
+              Verificando sesion...
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <a href="/foro" class="btn btn-md btn-secondary">Comunidad</a>
+            <a href="/examen-1" class="btn btn-md btn-secondary">Examen 1</a>
+          </div>
+        </header>
+
+        <section id="dashboard-gate" class="ui-panel p-5 md:p-7 hidden" data-reveal style="--reveal-delay:100ms">
+          <div class="text-center max-w-2xl mx-auto space-y-5">
+            <p class="editorial-kicker">Acceso al aula</p>
+            <h2 class="headline-luxe text-3xl md:text-4xl">Tu sesion aun no esta lista.</h2>
+            <p class="lead-copy">
+              Puedes refrescar esta pantalla o iniciar sesion de nuevo sin salir del flujo.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3">
+              <a href="/login?next=/dashboard" class="btn btn-md btn-primary">Iniciar sesion</a>
+              <button type="button" id="dashboard-retry" class="btn btn-md btn-secondary">Reintentar</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="ui-panel p-5 md:p-7" data-reveal style="--reveal-delay:120ms">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 mb-5">
+            <p class="font-sans text-[10px] uppercase tracking-[0.28em] text-moss font-bold">Ruta de aprendizaje</p>
+            <a href="/programa-completo.pdf" class="program-pdf-link" download>Descargar programa en PDF</a>
+          </div>
+
+          <div class="module-list">
+            {modulos.map((modulo, index) => (
+              <article class="module-row" data-reveal style={`--reveal-delay:${index * 65}ms`}>
+                <span class="module-index">{modulo.numero}</span>
+                <div>
+                  <a href={`/modulos/${modulo.id}`} class="inline-block">
+                    <h2>{modulo.titulo}</h2>
+                  </a>
+                </div>
+                <p>{modulo.descripcion}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    import { getPreferredName, resolveSessionUser } from '../lib/auth-client';
+
+    async function initDashboard() {
+      const feedback = document.getElementById('dashboard-feedback');
+      const nameTarget = document.getElementById('welcome-name-target');
+      const gate = document.getElementById('dashboard-gate');
+      const retryButton = document.getElementById('dashboard-retry');
+
+      const updateWithUser = (user) => {
+        const firstName = getPreferredName(user);
+        if (nameTarget) {
+          nameTarget.textContent = firstName;
+          nameTarget.classList.remove('is-ready');
+          void nameTarget.offsetWidth;
+          nameTarget.classList.add('is-ready');
+        }
+        if (gate) gate.classList.add('hidden');
+        if (feedback) {
+          feedback.textContent = 'Sesion activa detectada. Tu aula esta lista.';
+          feedback.className = 'text-sm text-ink/62 min-h-6';
+        }
+      };
+
+      const signedAt = Number(window.sessionStorage.getItem('eaqs-auth-just-signed') || 0);
+      const signedRecently = signedAt > 0 && Date.now() - signedAt < 30000;
+
+      const user = await resolveSessionUser(signedRecently ? 6200 : 2600);
+      if (user) {
+        window.sessionStorage.removeItem('eaqs-auth-just-signed');
+        updateWithUser(user);
+      } else {
+        if (gate) gate.classList.remove('hidden');
+        if (feedback) {
+          feedback.textContent = 'No pudimos recuperar la sesion en este momento.';
+          feedback.className = 'text-sm text-red-700 min-h-6';
+        }
+      }
+
+      if (retryButton instanceof HTMLButtonElement) {
+        retryButton.addEventListener('click', async () => {
+          retryButton.disabled = true;
+          retryButton.textContent = 'Reintentando...';
+          const retriedUser = await resolveSessionUser(4200);
+          if (retriedUser) {
+            updateWithUser(retriedUser);
+          } else if (feedback) {
+            feedback.textContent = 'Sigue sin haber sesion activa. Inicia sesion para continuar.';
+            feedback.className = 'text-sm text-red-700 min-h-6';
+          }
+          retryButton.disabled = false;
+          retryButton.textContent = 'Reintentar';
+        });
+      }
+    }
+
+    initDashboard();
+  </script>
+</Layout>

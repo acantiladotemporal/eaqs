@@ -1,0 +1,119 @@
+---
+interface Props {
+  mode?: 'default' | 'learning';
+}
+
+const { mode = 'default' } = Astro.props;
+const isLearning = mode === 'learning';
+---
+
+<header data-site-header class={`site-header ${isLearning ? 'site-header-learning' : ''}`}>
+  <span data-scroll-progress class="site-header-progress" aria-hidden="true"></span>
+
+  <nav class="content-shell header-shell" aria-label="Principal">
+    <a href="/" class="group inline-flex items-center gap-3 header-brand" aria-label="Inicio El Arbol Que Suena">
+      <img
+        src="/images/elarbolquesuena-escuela-neuroeducacion-musical.png"
+        alt=""
+        class="brand-mark-image"
+        loading="eager"
+        decoding="async"
+      />
+      <span class="inline-flex flex-col min-w-0">
+        <span class="font-display whitespace-nowrap header-brand-title leading-none text-note tracking-tight">El Arbol Que Suena.</span>
+        <span class="h-px w-0 group-hover:w-full bg-ochre transition-all duration-500"></span>
+      </span>
+    </a>
+
+    {
+      isLearning ? (
+        <div class="header-center-nav hidden lg:flex font-sans text-[10px] uppercase tracking-[0.2em]">
+          <a href="/dashboard" class="nav-link header-nav-link">Ruta</a>
+          <a href="/foro" class="nav-link header-nav-link">Comunidad</a>
+        </div>
+      ) : (
+        <div class="header-center-nav hidden xl:flex font-sans text-[9.5px] uppercase tracking-[0.18em]">
+          <a href="/#curso" class="nav-link header-nav-link">La formacion</a>
+          <a href="/#newsletter" class="nav-link header-nav-link">Newsletter</a>
+          <a href="/#quienes" class="nav-link header-nav-link">Escuela</a>
+          <a href="/#precio" class="nav-link header-nav-link">Inscripciones</a>
+          <a href="/contacto" class="nav-link header-nav-link">Contacto</a>
+        </div>
+      )
+    }
+
+    <div class="header-actions">
+      <details class="lg:hidden relative">
+        <summary class="menu-summary btn btn-secondary btn-sm !px-5">Menu</summary>
+        {
+          isLearning ? (
+            <div class="mobile-nav">
+              <a href="/dashboard">Ruta</a>
+              <a href="/foro">Comunidad</a>
+              <a href="/examen-1">Examen</a>
+            </div>
+          ) : (
+            <div class="mobile-nav">
+              <a href="/#curso">La formacion</a>
+              <a href="/#newsletter">Newsletter</a>
+              <a href="/#quienes">Escuela</a>
+              <a href="/#precio">Inscripciones</a>
+              <a href="/contacto">Contacto</a>
+            </div>
+          )
+        }
+      </details>
+
+      {
+        isLearning ? (
+          <>
+            <span class="hidden xl:inline-flex items-center rounded-full border border-clay px-4 py-2 text-[11px] uppercase tracking-[0.16em] text-ink/80">
+              <span class="mr-2 text-ink/45">Aula de</span>
+              <span data-user-name class="name-swap">Docente</span>
+            </span>
+            <button type="button" data-header-logout class="btn btn-sm btn-header-access">Salir</button>
+          </>
+        ) : (
+          <>
+            <a href="/login" class="hidden md:inline-flex btn btn-sm btn-header-access">Acceso</a>
+            <a href="/registro?source=header_reserva" class="btn btn-sm btn-header-reserve">Reservar plaza</a>
+          </>
+        )
+      }
+    </div>
+  </nav>
+</header>
+
+<script>
+  import { getPreferredName, resolveSessionUser } from '../lib/auth-client';
+  import { supabase } from '../lib/supabase';
+
+  async function bindLearningHeader() {
+    const nameTargets = document.querySelectorAll('[data-user-name]');
+    const logoutButton = document.querySelector('[data-header-logout]');
+
+    if (!nameTargets.length && !logoutButton) return;
+
+    const user = await resolveSessionUser();
+
+    if (user && nameTargets.length) {
+      const firstName = getPreferredName(user);
+
+      nameTargets.forEach((target) => {
+        target.textContent = firstName;
+        target.classList.remove('is-ready');
+        void target.offsetWidth;
+        target.classList.add('is-ready');
+      });
+    }
+
+    if (logoutButton instanceof HTMLButtonElement) {
+      logoutButton.addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = '/login';
+      });
+    }
+  }
+
+  bindLearningHeader();
+</script>

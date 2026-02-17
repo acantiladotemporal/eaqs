@@ -1,0 +1,14 @@
+---
+import Button from './ui/Button.astro';
+---
+
+<Button id="checkout-button" size="lg" variant="primary" class="shadow-soft">
+  Ver programa y reservar plaza
+</Button>
+
+<script>
+  const checkoutButton = document.getElementById('checkout-button');
+  checkoutButton?.addEventListener('click', () => {
+    window.location.href = '/curso-neuroeducacion-musical-docentes-0-9';
+  });
+</script>

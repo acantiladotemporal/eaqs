@@ -1,0 +1,70 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Button from '../components/ui/Button.astro';
+
+const checkoutUrl = import.meta.env.PUBLIC_CHECKOUT_URL ?? '';
+const hasExternalCheckout = checkoutUrl.trim().length > 0;
+const paymentHref = hasExternalCheckout ? checkoutUrl : '/gracias?payment=ok';
+---
+
+<Layout
+  title="Pago | El Arbol Que Suena"
+  description="Confirma tu plaza en la primera edicion del curso y activa tu acceso al aula."
+>
+  <Header />
+
+  <main class="bg-white pt-40 pb-20">
+    <section class="section-shell section-tone-ivory">
+      <div class="content-shell grid lg:grid-cols-12 gap-10 md:gap-12 items-start">
+        <aside class="lg:col-span-5 space-y-6" data-reveal>
+          <p class="editorial-kicker">Paso 2 de 3</p>
+          <h1 class="headline-luxe section-title">
+            Confirmar pago
+            <span class="ink-underline-subtle">y activar tu plaza</span>.
+          </h1>
+          <p class="lead-copy">
+            Estas a un paso de entrar al aula. Al completar el pago tendras acceso al dashboard y al modulo inicial.
+          </p>
+
+          <div class="ui-panel p-6 md:p-7 space-y-4">
+            <p class="font-sans text-[10px] uppercase tracking-[0.25em] text-moss font-bold">Resumen</p>
+            <div class="flex items-end justify-between border-b border-clay/60 pb-4">
+              <p class="text-sm text-ink/72">Curso Neuroeducacion Musical 0-9</p>
+              <p class="font-display text-4xl italic text-note">390 EUR</p>
+            </div>
+            <p class="text-xs text-ink/60 uppercase tracking-[0.18em]">Oferta lanzamiento . luego 490 EUR</p>
+            <p class="text-sm text-ink/72">Plazas limitadas: maximo 20 docentes por edicion.</p>
+          </div>
+        </aside>
+
+        <section class="lg:col-span-7 ui-panel p-7 md:p-10" data-reveal style="--reveal-delay:120ms">
+          <div class="max-w-xl mx-auto space-y-8">
+            <div>
+              <p class="editorial-kicker mb-3">Pago seguro</p>
+              <h2 class="headline-luxe text-4xl md:text-5xl">Finalizar compra</h2>
+            </div>
+
+            <p class="lead-copy">
+              {hasExternalCheckout
+                ? 'Seras redirigido a la pasarela de pago segura para confirmar tu compra.'
+                : 'No hay pasarela configurada en este entorno. Puedes continuar en modo demo para revisar el flujo completo.'}
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+              <Button href={paymentHref} size="lg" variant="primary" class="cta-breathe">Pagar y confirmar plaza</Button>
+              <Button href="/registro" size="lg" variant="secondary">Volver al registro</Button>
+            </div>
+
+            <p class="text-xs text-ink/60">
+              Tras el pago, pasa a iniciar sesion para entrar al dashboard y comenzar el curso.
+            </p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

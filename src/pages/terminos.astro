@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Terminos | El Arbol Que Suena" canonical="https://eaqs.vercel.app/terminos">
+  <Header />
+  <main class="bg-white text-ink pt-40 pb-20 px-6">
+    <article class="max-w-3xl mx-auto space-y-10 font-sans">
+      <header>
+        <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold mb-4 block">Terminos</span>
+        <h1 class="font-display text-6xl italic tracking-tighter">Condiciones de uso</h1>
+      </header>
+      <section class="space-y-5 text-ink/75 leading-relaxed">
+        <p>
+          El acceso y uso de esta plataforma implica la aceptacion de las condiciones de servicio vigentes para alumnado, docentes y
+          personas visitantes.
+        </p>
+        <p>
+          Esta pagina funciona como acceso rapido. El detalle completo esta disponible en
+          <a href="/condiciones" class="underline"> condiciones de servicio</a>.
+        </p>
+      </section>
+    </article>
+  </main>
+  <Footer />
+</Layout>

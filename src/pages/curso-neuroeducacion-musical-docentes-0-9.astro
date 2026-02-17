@@ -1,0 +1,124 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Button from '../components/ui/Button.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+---
+
+<Layout
+  title="Curso Neuroeducacion Musical para Docentes 0-9 | El Arbol Que Suena"
+  description="Primera edicion del curso internacional de neuroeducacion musical para docentes de 0 a 9 anos. Reserva tu plaza y accede al recorrido completo."
+>
+  <Header />
+
+  <main class="bg-white text-ink pt-40 md:pt-48 overflow-hidden">
+    <section class="relative px-6 md:px-12 pb-18 md:pb-24">
+      <div class="absolute top-2 right-0 w-[34rem] h-[34rem] bg-sage/18 blur-[120px] rounded-full"></div>
+
+      <div class="max-w-[1800px] mx-auto grid lg:grid-cols-12 gap-12 items-start relative">
+        <div class="lg:col-span-8 space-y-8">
+          <p class="badge bg-bark/15 text-bark">Convocatoria inaugural 2026</p>
+          <h1 class="font-display text-6xl md:text-8xl italic leading-[0.9] max-w-5xl">
+            Curso internacional de neuroeducacion musical
+            <br />
+            para docentes de 0 a 9 anos.
+          </h1>
+          <p class="text-xl md:text-2xl text-ink/75 leading-relaxed italic max-w-3xl">
+            Formacion avanzada para acompanar desarrollo cognitivo, motor, emocional y vincular, con foco especial en etapa 0 a 6 anos.
+          </p>
+          <div class="flex flex-wrap gap-4 pt-2">
+            <Button href="/registro?source=curso_0_9_hero" size="lg" variant="primary">Reservar mi plaza</Button>
+            <Button href="#temario" size="lg" variant="secondary">Ver temario</Button>
+          </div>
+        </div>
+
+        <aside class="lg:col-span-4 bg-note text-bone p-8 md:p-9 rounded-sm shadow-soft">
+          <h2 class="font-display text-3xl italic mb-5">Datos clave</h2>
+          <ul class="space-y-4 text-sm text-bone/80">
+            <li class="flex justify-between gap-4 border-b border-bone/20 pb-3"><span>Modalidad</span><strong class="text-bone">Online guiada</strong></li>
+            <li class="flex justify-between gap-4 border-b border-bone/20 pb-3"><span>Nivel</span><strong class="text-bone">Docentes 0-9</strong></li>
+            <li class="flex justify-between gap-4 border-b border-bone/20 pb-3"><span>Foco principal</span><strong class="text-bone">Primera infancia</strong></li>
+            <li class="flex justify-between gap-4 border-b border-bone/20 pb-3"><span>Comunidad</span><strong class="text-bone">Foro privado</strong></li>
+            <li class="flex justify-between gap-4"><span>Certificacion</span><strong class="text-bone">Incluida</strong></li>
+          </ul>
+          <div class="mt-8">
+            <Button href="/registro?source=curso_0_9_box" size="md" variant="primary">Acceder a plazas</Button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="temario" class="bg-white border-y border-clay/50 px-6 md:px-12 py-20 md:py-24">
+      <div class="max-w-[1800px] mx-auto">
+        <div class="max-w-3xl mb-12">
+          <p class="font-sans text-[10px] uppercase tracking-[0.3em] text-olive font-bold mb-3">Temario esencial</p>
+          <h2 class="font-display text-5xl italic mb-4">Estructura del recorrido</h2>
+          <p class="text-ink/80 leading-relaxed">Cada modulo conecta neurociencia, practica didactica y criterios de evaluacion aplicables en contexto real.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+          <article class="ui-panel p-8 border-t-2 border-t-olive">
+            <p class="font-sans text-[10px] uppercase tracking-[0.3em] text-olive font-bold mb-4">Modulo 1</p>
+            <h3 class="font-display text-3xl italic mb-4">Bases neurosonoras</h3>
+            <p class="text-sm text-ink/80 leading-relaxed">Plasticidad cerebral, ventanas de oportunidad y uso del ritmo para favorecer atencion y seguridad.</p>
+          </article>
+
+          <article class="ui-panel p-8 border-t-2 border-t-sage">
+            <p class="font-sans text-[10px] uppercase tracking-[0.3em] text-olive font-bold mb-4">Modulo 2</p>
+            <h3 class="font-display text-3xl italic mb-4">Lenguaje y voz</h3>
+            <p class="text-sm text-ink/80 leading-relaxed">Estrategias vocales para reforzar escucha activa, expresion y comunicacion en edades tempranas.</p>
+          </article>
+
+          <article class="ui-panel p-8 border-t-2 border-t-bark">
+            <p class="font-sans text-[10px] uppercase tracking-[0.3em] text-bark font-bold mb-4">Modulo 3</p>
+            <h3 class="font-display text-3xl italic mb-4">Regulacion emocional</h3>
+            <p class="text-sm text-ink/80 leading-relaxed">Diseno de secuencias para transiciones, calma, cohesion grupal y vinculo docente-alumnado.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="px-6 md:px-12 py-20 md:py-24">
+      <div class="max-w-[1800px] mx-auto grid lg:grid-cols-12 gap-10 items-start">
+        <div class="lg:col-span-7 space-y-7">
+          <h2 class="font-display text-5xl md:text-6xl italic leading-[0.95]">Para quien esta creado</h2>
+          <ul class="space-y-4 text-ink/80 leading-relaxed">
+            <li class="flex gap-3"><span class="mt-2 w-2 h-2 rounded-full bg-olive"></span>Docentes de infantil y primeros cursos de primaria.</li>
+            <li class="flex gap-3"><span class="mt-2 w-2 h-2 rounded-full bg-olive"></span>Especialistas en musica, audicion y lenguaje o psicomotricidad.</li>
+            <li class="flex gap-3"><span class="mt-2 w-2 h-2 rounded-full bg-olive"></span>Profesionales que quieren integrar ciencia y sensibilidad en aula.</li>
+          </ul>
+          <div class="pt-2">
+            <Button href="/registro?source=curso_0_9_body" size="lg" variant="primary">Quiero reservar plaza</Button>
+          </div>
+        </div>
+
+        <aside class="lg:col-span-5 ui-panel p-8 md:p-10">
+          <h3 class="font-display text-3xl italic mb-4">Proceso de acceso</h3>
+          <ol class="space-y-4 text-sm text-ink/80 leading-relaxed list-decimal pl-4">
+            <li>Completa el registro y confirma tu correo.</li>
+            <li>Recibe la guia de inicio y calendario.</li>
+            <li>Accede a materiales, comunidad y evaluacion final.</li>
+          </ol>
+          <p class="mt-6 text-sm text-ink/70">Si prefieres validar primero el enfoque, empieza en la newsletter y recibe la secuencia de bienvenida.</p>
+          <div class="mt-7">
+            <Button href="/#newsletter" size="md" variant="secondary">Ir a la newsletter</Button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="bg-note text-bone px-6 md:px-12 py-20 md:py-24">
+      <div class="max-w-4xl mx-auto">
+        <NewsletterForm
+          source="curso_newsletter"
+          title="Prefieres empezar por contenido semanal?"
+          description="Te enviaremos una secuencia de bienvenida con claves de neuroeducacion musical y te avisaremos antes de cerrar plazas."
+          ctaLabel="Recibir la secuencia"
+        />
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

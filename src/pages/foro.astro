@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import ForoComunidad from '../components/ForoComunidad.vue';
+---
+
+<Layout title="Comunidad | El Arbol Que Suena" description="Foro de intercambio entre docentes del programa.">
+  <Header mode="learning" />
+  <main class="bg-white min-h-screen pt-40 pb-20 px-6">
+    <div class="max-w-[1800px] mx-auto">
+      <header class="mb-10">
+        <p class="font-sans text-[10px] uppercase tracking-[0.3em] text-moss font-bold mb-3">Comunidad</p>
+        <h1 class="font-display text-5xl md:text-7xl italic">Archivo vivo de aula</h1>
+      </header>
+      <ForoComunidad client:load />
+    </div>
+  </main>
+</Layout>

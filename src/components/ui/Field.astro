@@ -1,0 +1,68 @@
+---
+interface Props {
+  id: string;
+  name?: string;
+  label: string;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+  autocomplete?: string;
+  value?: string;
+  textarea?: boolean;
+  rows?: number;
+  hint?: string;
+  error?: string;
+}
+
+const {
+  id,
+  name,
+  label,
+  type = 'text',
+  placeholder = '',
+  required = false,
+  autocomplete,
+  value = '',
+  textarea = false,
+  rows = 5,
+  hint,
+  error,
+} = Astro.props;
+
+const describedBy = [hint ? `${id}-hint` : null, error ? `${id}-error` : null]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<div class="group">
+  <label for={id} class="field-label">{label}</label>
+  {
+    textarea ? (
+      <textarea
+        id={id}
+        name={name ?? id}
+        class="textarea-base"
+        rows={rows}
+        placeholder={placeholder}
+        required={required}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={describedBy || undefined}
+      >{value}</textarea>
+    ) : (
+      <input
+        id={id}
+        name={name ?? id}
+        class="input-base"
+        type={type}
+        placeholder={placeholder}
+        required={required}
+        autocomplete={autocomplete}
+        value={value}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={describedBy || undefined}
+      />
+    )
+  }
+  {hint && <p id={`${id}-hint`} class="field-help">{hint}</p>}
+  {error && <p id={`${id}-error`} class="field-error">{error}</p>}
+</div>

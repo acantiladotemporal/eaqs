@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Button from '../components/ui/Button.astro';
+import Field from '../components/ui/Field.astro';
+---
+
+<Layout
+  title="Contacto | El Arbol Que Suena"
+  description="Escribenos para resolver dudas sobre la formacion, colaboraciones institucionales o prensa."
+>
+  <Header />
+  <main class="bg-white text-ink pt-40 pb-20">
+    <div class="max-w-[1800px] mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-24">
+      <section>
+        <h1 class="font-display text-7xl md:text-9xl italic tracking-tighter leading-none mb-10">Hablemos.</h1>
+        <p class="font-sans text-xl text-ink/60 leading-relaxed max-w-md italic">
+          Estamos disponibles para resolver dudas sobre el programa, acuerdos con centros y entrevistas.
+        </p>
+        <div class="mt-20 space-y-8">
+          <div>
+            <p class="font-sans text-[10px] uppercase tracking-widest text-moss font-bold mb-2">Email</p>
+            <p class="font-display text-3xl italic">hola@elarbolquesuena.com</p>
+          </div>
+          <div>
+            <p class="font-sans text-[10px] uppercase tracking-widest text-moss font-bold mb-2">Ubicacion</p>
+            <p class="font-display text-3xl italic">Madrid, Espana</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="ui-panel p-10 md:p-16">
+        <form id="contact-form" class="space-y-8" novalidate>
+          <Field id="contact-name" label="Nombre" placeholder="Tu nombre y apellidos" required />
+          <Field id="contact-email" type="email" label="Email" placeholder="tu@email.com" required />
+          <Field
+            id="contact-message"
+            label="Mensaje"
+            textarea
+            rows={6}
+            placeholder="Cuentanos brevemente que necesitas."
+            required
+          />
+          <p id="contact-feedback" class="text-sm text-ink/60 min-h-6" aria-live="polite"></p>
+          <Button type="submit" variant="primary" size="lg" block>Enviar mensaje</Button>
+        </form>
+      </section>
+    </div>
+  </main>
+  <Footer />
+
+  <script>
+    const form = document.getElementById('contact-form');
+    const feedback = document.getElementById('contact-feedback');
+    const nameInput = document.getElementById('contact-name');
+    const emailInput = document.getElementById('contact-email');
+    const messageInput = document.getElementById('contact-message');
+
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const name = (nameInput instanceof HTMLInputElement ? nameInput.value : '').trim();
+      const email = (emailInput instanceof HTMLInputElement ? emailInput.value : '').trim();
+      const message = (messageInput instanceof HTMLTextAreaElement ? messageInput.value : '').trim();
+
+      if (!name || !email || !message) {
+        if (feedback) {
+          feedback.textContent = 'Completa todos los campos antes de enviar.';
+          feedback.className = 'text-sm text-red-700 min-h-6';
+        }
+        return;
+      }
+
+      const subject = encodeURIComponent(`Consulta web EAQS - ${name}`);
+      const body = encodeURIComponent(`${message}\n\nContacto: ${name}\nEmail: ${email}`);
+      window.location.href = `mailto:hola@elarbolquesuena.com?subject=${subject}&body=${body}`;
+    });
+  </script>
+</Layout>

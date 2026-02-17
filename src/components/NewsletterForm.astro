@@ -1,0 +1,120 @@
+---
+interface Props {
+  source?: string;
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
+  variant?: 'default' | 'inline';
+  class?: string;
+}
+
+const {
+  source = 'home',
+  title = 'Newsletter semanal',
+  description = 'Una dosis breve de musica, infancia y aprendizaje para inspirar tu semana.',
+  ctaLabel = 'Quiero suscribirme',
+  variant = 'default',
+  class: className = '',
+} = Astro.props;
+
+const formId = `newsletter-form-${source}`;
+const emailId = `newsletter-email-${source}`;
+const buttonId = `newsletter-button-${source}`;
+const feedbackId = `newsletter-feedback-${source}`;
+---
+
+<section class={`${variant === 'inline' ? 'space-y-4' : 'space-y-6'} ${className}`}>
+  {
+    variant === 'default' && (
+      <>
+        <p class="badge">Newsletter semanal</p>
+        <h3 class="headline-luxe text-4xl md:text-5xl">{title}</h3>
+        <p class="lead-copy max-w-2xl">{description}</p>
+      </>
+    )
+  }
+
+  <form id={formId} class={variant === 'inline' ? 'space-y-3' : 'space-y-4'} novalidate>
+    <label for={emailId} class={variant === 'inline' ? 'sr-only' : 'field-label'}>Tu correo profesional</label>
+    <div class={`flex flex-col sm:flex-row gap-3 ${variant === 'inline' ? 'items-center' : ''}`}>
+      <input
+        id={emailId}
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        placeholder="docente@centroeducativo.com"
+        class={`input-base sm:flex-1 ${variant === 'inline' ? 'newsletter-inline-input' : ''}`}
+      />
+      <button
+        id={buttonId}
+        type="submit"
+        class={`btn ${variant === 'inline' ? 'btn-primary newsletter-inline-button' : 'btn-accent px-8 py-4 md:px-10 md:py-4'} sm:shrink-0`}
+      >
+        {ctaLabel}
+      </button>
+    </div>
+    <input type="hidden" name="source" value={source} />
+    <p class="text-xs text-ink/60">
+      {variant === 'inline' ? 'Sin spam. Solo valor semanal para tu aula.' : 'Un correo semanal. Sin ruido.'}
+    </p>
+    <p id={feedbackId} class="text-sm min-h-6 text-ink/60" aria-live="polite"></p>
+  </form>
+</section>
+
+<script define:vars={{ formId, emailId, feedbackId, buttonId, source, ctaLabel }}>
+  import { supabase } from '../lib/supabase';
+
+  const form = document.getElementById(formId);
+  const emailInput = document.getElementById(emailId);
+  const feedback = document.getElementById(feedbackId);
+  const button = document.getElementById(buttonId);
+
+  const setFeedback = (message, isError = false) => {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.className = `text-sm min-h-6 ${isError ? 'text-red-700' : 'text-ink/60'}`;
+  };
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const email = emailInput instanceof HTMLInputElement ? emailInput.value.trim().toLowerCase() : '';
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!isValidEmail) {
+      setFeedback('Introduce un correo valido para suscribirte.', true);
+      return;
+    }
+
+    if (button instanceof HTMLButtonElement) {
+      button.disabled = true;
+      button.textContent = 'Enviando...';
+      button.setAttribute('aria-busy', 'true');
+    }
+    setFeedback('');
+
+    try {
+      const { error } = await supabase.from('newsletter_subscribers').insert([
+        {
+          email,
+          source,
+        },
+      ]);
+
+      if (error && error.code !== '23505') throw error;
+
+      setFeedback('Ya estas dentro. Te leemos la proxima semana.');
+      if (form instanceof HTMLFormElement) form.reset();
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      setFeedback('No se pudo registrar automaticamente. Escribenos a hola@elarbolquesuena.com.', true);
+    } finally {
+      if (button instanceof HTMLButtonElement) {
+        button.disabled = false;
+        button.textContent = ctaLabel;
+        button.setAttribute('aria-busy', 'false');
+      }
+    }
+  });
+</script>

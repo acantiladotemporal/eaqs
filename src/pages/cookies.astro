@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Politica de cookies | El Arbol Que Suena">
+  <Header />
+  <main class="bg-white text-ink pt-40 pb-20 px-6">
+    <article class="max-w-3xl mx-auto space-y-10 font-sans">
+      <header>
+        <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold mb-4 block">Transparencia</span>
+        <h1 class="font-display text-6xl italic tracking-tighter">Cookies</h1>
+      </header>
+
+      <section class="space-y-5 text-ink/75 leading-relaxed">
+        <p>
+          Esta web utiliza cookies tecnicas necesarias para el funcionamiento de la sesion y para mejorar la experiencia de navegacion.
+        </p>
+        <p>
+          Las cookies no esenciales (analitica o marketing) se activaran solo con consentimiento explicito y revocable por parte de la
+          persona usuaria.
+        </p>
+      </section>
+
+      <section class="space-y-5 text-ink/75 leading-relaxed">
+        <h2 class="font-display text-3xl italic text-ink">Gestion de preferencias</h2>
+        <p>
+          Puedes configurar o retirar el consentimiento de cookies en cualquier momento desde la herramienta de gestion de preferencias
+          disponible en el sitio.
+        </p>
+      </section>
+    </article>
+  </main>
+  <Footer />
+</Layout>

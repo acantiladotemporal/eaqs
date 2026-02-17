@@ -1,0 +1,235 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Button from '../components/ui/Button.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+
+const moduleRows = [
+  {
+    id: '01',
+    title: 'Arquitectura Cerebral',
+    description: 'Como procesa el cerebro infantil el sonido, el ritmo y la repeticion.',
+  },
+  {
+    id: '02',
+    title: 'Sincronia Ritmica',
+    description: 'Pulso, coordinacion y movimiento para activar atencion real en clase.',
+  },
+  {
+    id: '03',
+    title: 'Neurofonia',
+    description: 'Voz, lenguaje y musicalidad para enriquecer expresion y comunicacion.',
+  },
+  {
+    id: '04',
+    title: 'Sistema Limbico',
+    description: 'Emocion, memoria y seguridad afectiva como base del aprendizaje.',
+  },
+  {
+    id: '05',
+    title: 'Laboratorio de Aula',
+    description: 'Secuencias concretas para aplicar con grupos de 0 a 6 y 0 a 9.',
+  },
+  {
+    id: '06',
+    title: 'Integracion Final',
+    description: 'Cierre metodologico, evaluacion y certificacion de la Escuela.',
+  },
+];
+
+const formationFeatures = [
+  '6 modulos con aplicacion directa en aula',
+  'Acceso permanente a clases y materiales',
+  'Certificacion oficial de la Escuela',
+  'Comunidad docente internacional',
+  'Mentoria en directo con Azahara',
+];
+
+const faqs = [
+  {
+    question: 'Necesito ser docente de musica para aprovechar el curso?',
+    answer: 'No. Esta formacion esta pensada para docentes y profesionales que trabajan con infancia de 0 a 9 anos.',
+  },
+  {
+    question: 'Cuanto tiempo necesito cada semana?',
+    answer: 'Entre 2 y 4 horas semanales entre clase, observacion y aplicacion en aula.',
+  },
+  {
+    question: 'Es teorico o practico?',
+    answer: 'Es practico: cada modulo termina con propuestas listas para implementar.',
+  },
+  {
+    question: 'Y si aun no quiero inscribirme?',
+    answer: 'Puedes entrar gratis en la newsletter semanal y avanzar a tu ritmo.',
+  },
+];
+---
+
+<Layout
+  title="Curso de Neuroeducacion Musical | El Arbol Que Suena"
+  description="Escuela internacional de neuroeducacion musical. Primera edicion para docentes de 0 a 9 anos con foco en primera infancia."
+>
+  <Header />
+
+  <main class="rhythm-layer sales-home overflow-hidden">
+    <section class="section-shell pt-44 md:pt-56">
+      <div class="content-shell max-w-5xl text-center">
+        <p class="editorial-kicker mb-8" data-reveal>Escuela internacional de neuroeducacion musical</p>
+        <h1 class="headline-luxe headline-rhythm hero-title sales-hero-title mb-7" data-reveal style="--reveal-delay:90ms">
+          Sincroniza tu tempo interno con el de tus alumnos
+        </h1>
+        <p class="lead-copy max-w-3xl mx-auto mb-8" data-reveal style="--reveal-delay:150ms">
+          Vuelve a disfrutar ensenando: clases con mas calma, mas atencion y mas alegria en ninos y ninas de 0 a 6 anos.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4" data-reveal style="--reveal-delay:220ms">
+          <Button href="/registro?source=home_hero" size="lg" variant="primary" class="cta-breathe">Quiero transformar mi aula</Button>
+          <a href="/#curso" class="btn btn-secondary btn-lg">Ver programa completo</a>
+        </div>
+
+        <p class="sales-note mt-8" data-reveal style="--reveal-delay:280ms">
+          Proxima edicion: <span class="ink-underline-subtle">plazas limitadas a 20 docentes</span>. Prioridad para 0 a 6 anos.
+        </p>
+      </div>
+    </section>
+
+    <section id="newsletter" class="section-shell section-tone-ivory">
+      <div class="content-shell">
+        <div class="newsletter-band newsletter-band-stacked space-y-7" data-reveal>
+          <div class="space-y-4 max-w-none">
+            <p class="editorial-kicker mb-3">Newsletter semanal</p>
+            <h2 class="headline-luxe headline-rhythm-soft text-4xl md:text-5xl mb-3">
+              Correos con metodo,
+              <span class="ink-underline">sin ruido.</span>
+            </h2>
+            <p class="lead-copy">
+              Si aun no te apuntas al curso, deja tu email y recibe una idea accionable cada semana.
+            </p>
+          </div>
+          <div>
+            <NewsletterForm source="home_newsletter" variant="inline" ctaLabel="Apuntarme" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="curso" class="section-shell">
+      <div class="content-shell">
+        <div class="max-w-3xl mb-14 md:mb-16" data-reveal>
+          <p class="editorial-kicker mb-4">La formacion</p>
+          <h2 class="headline-luxe section-title mb-5">
+            Lo que deseas para tu aula
+            <span class="ink-underline-subtle">si se puede entrenar</span>.
+          </h2>
+          <p class="lead-copy">
+            No es solo teoria. Es una metodologia para ordenar la clase desde el ritmo, el vinculo y la atencion.
+            Menos caos, mas presencia y aprendizaje que si se sostiene en el tiempo.
+          </p>
+        </div>
+
+        <div class="module-list">
+          {moduleRows.map((row, index) => (
+            <article class="module-row" data-reveal style={`--reveal-delay:${index * 70}ms`}>
+              <span class="module-index">{row.id}</span>
+              <h3>{row.title}</h3>
+              <p>{row.description}</p>
+            </article>
+          ))}
+        </div>
+
+        <div class="pt-9 md:pt-11 text-center" data-reveal style="--reveal-delay:460ms">
+          <a href="/programa-completo.pdf" class="program-pdf-link" download>
+            Descargar programa completo en PDF
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="quienes" class="section-shell section-tone-ivory">
+      <div class="content-shell">
+        <div class="grid lg:grid-cols-12 gap-10 md:gap-12 items-start">
+          <div class="lg:col-span-7 space-y-5" data-reveal>
+            <p class="editorial-kicker">Quienes somos</p>
+            <h2 class="headline-luxe section-title">
+              Una escuela para docentes que quieren
+              <span class="ink-underline">impacto real</span> y sensibilidad.
+            </h2>
+            <p class="lead-copy">
+              Unimos neuroeducacion, musica y pedagogia aplicada para ayudarte a sostener clases mas profundas, disfrutables y efectivas.
+            </p>
+          </div>
+
+          <div class="lg:col-span-5 who-list" data-reveal style="--reveal-delay:120ms">
+            <p>Metodo claro para 0-6 y adaptable a 0-9.</p>
+            <p>Aplicacion inmediata en contexto real.</p>
+            <p>Formacion premium con acompanamiento humano.</p>
+            <div class="pt-3">
+              <Button href="/azahara-mateos" size="md" variant="secondary">Conocer a la directora</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="precio" class="section-shell">
+      <div class="content-shell max-w-4xl">
+        <div class="price-shell" data-reveal>
+          <div class="text-center mb-10">
+            <p class="editorial-kicker mb-4">Inversion en tu futuro docente</p>
+            <h2 class="headline-luxe headline-rhythm-soft section-title mb-5">La formacion.</h2>
+            <p class="font-display text-6xl md:text-7xl text-note mb-2">390 EUR</p>
+            <p class="text-[11px] uppercase tracking-[0.2em] text-ink/54">Oferta lanzamiento . luego 490 EUR</p>
+          </div>
+
+          <div class="max-w-2xl mx-auto">
+            {formationFeatures.map((feature, index) => (
+              <div class={`formation-item ${index === formationFeatures.length - 1 ? '!border-b-0' : ''}`}>
+                <span class="text-base md:text-[18px] text-ink/78">{feature}</span>
+                <span class="check-soft text-xl text-moss">&#10003;</span>
+              </div>
+            ))}
+          </div>
+
+          <div class="text-center pt-10">
+            <Button href="/registro?source=home_precio" size="lg" variant="primary" class="cta-breathe">Reservar mi plaza - 390 EUR</Button>
+            <p class="mt-5 text-sm text-ink/54 italic">
+              Garantia de 14 dias. Maximo 20 plazas por curso. Si no encaja contigo, devolvemos la inversion.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section-shell section-tone-ivory">
+      <div class="content-shell max-w-4xl">
+        <div class="price-shell" data-reveal>
+          <div class="text-center mb-8">
+            <p class="editorial-kicker mb-3">Preguntas frecuentes</p>
+            <h2 class="headline-luxe section-title">FAQ</h2>
+          </div>
+
+          <div>
+            {faqs.map((faq, index) => (
+              <details class="faq-item" open={index === 0} data-reveal style={`--reveal-delay:${index * 70}ms`}>
+                <summary>{faq.question}</summary>
+                <p class="mt-3 text-ink/78 leading-relaxed text-base md:text-lg">{faq.answer}</p>
+              </details>
+            ))}
+          </div>
+
+          <div class="text-center pt-10">
+            <p class="lead-copy max-w-3xl mx-auto mb-7">
+              Tu aula puede sonar distinta desde este mes. Reserva tu plaza y entra en la primera edicion de la Escuela.
+            </p>
+            <Button href="/registro?source=home_faq_cta" size="lg" variant="primary" class="cta-breathe">Reservar plaza</Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+

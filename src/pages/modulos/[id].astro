@@ -1,0 +1,112 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+
+export async function getStaticPaths() {
+  return [
+    { params: { id: '1' } },
+    { params: { id: '2' } },
+    { params: { id: '3' } },
+    { params: { id: '4' } },
+    { params: { id: '5' } },
+    { params: { id: '6' } },
+  ];
+}
+
+const { id } = Astro.params;
+
+const modulosData = {
+  '1': {
+    title: 'Bases de la Neuroeducacion',
+    numero: '01',
+    content:
+      'La neuroeducacion musical integra desarrollo cerebral, ritmo y vinculacion afectiva para construir aprendizaje estable.',
+  },
+  '2': {
+    title: 'Ritmo y Psicomotricidad',
+    numero: '02',
+    content:
+      'El ritmo organiza movimiento, atencion y lenguaje. Entrena sincronizacion y anticipacion en edades tempranas.',
+  },
+  '3': {
+    title: 'Voz y Lenguaje Musical',
+    numero: '03',
+    content:
+      'La voz cantada fortalece discriminacion auditiva, prosodia y seguridad expresiva en primera infancia.',
+  },
+  '4': {
+    title: 'Emocion y Memoria',
+    numero: '04',
+    content:
+      'La experiencia sonora significativa mejora codificacion emocional y consolidacion de memoria.',
+  },
+  '5': {
+    title: 'Diseno de Sesiones',
+    numero: '05',
+    content:
+      'Aprende a planificar secuencias musicales con objetivos observables y evaluacion realista en aula.',
+  },
+  '6': {
+    title: 'Integracion y Transferencia',
+    numero: '06',
+    content:
+      'Cierra el proceso conectando neurociencia, didactica y aplicacion sostenida para distintos perfiles de alumnado.',
+  },
+};
+
+const modulo = modulosData[id] || modulosData['1'];
+---
+
+<Layout title={`Modulo ${modulo.numero} | El Arbol Que Suena`}>
+  <Header mode="learning" />
+
+  <main class="bg-white min-h-screen pt-40 pb-20">
+    <article class="max-w-4xl mx-auto px-6 font-sans">
+      <header class="mb-16">
+        <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold mb-4 block">
+          Modulo {modulo.numero}
+        </span>
+        <h1 class="font-display text-6xl md:text-8xl italic tracking-tighter leading-none mb-10 text-ink">{modulo.title}</h1>
+        <div class="h-px w-full bg-clay/30"></div>
+      </header>
+
+      <section class="space-y-8 text-ink/80 leading-relaxed">
+        <p class="text-2xl font-display italic text-ink border-l-4 border-moss pl-6 py-1">{modulo.content}</p>
+
+        <p class="text-lg">
+          Este modulo combina fundamentos cientificos y actividades listas para aplicar en contextos reales de aula, con foco en
+          edades de 0 a 6 anos.
+        </p>
+
+        <div class="ui-panel p-10 my-12">
+          <h2 class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-moss mb-4">Recurso de apoyo</h2>
+          <p class="font-display text-2xl italic text-ink">Guia de observacion docente (disponible dentro del aula virtual)</p>
+        </div>
+      </section>
+
+      <footer class="mt-20 pt-12 border-t border-clay/30 flex flex-col md:flex-row justify-between items-center gap-10">
+        <div>
+          <p class="font-sans text-[10px] uppercase tracking-widest text-ink/45 font-bold mb-2">Siguiente paso</p>
+          <p class="font-display text-3xl italic">Valida lo aprendido en el examen.</p>
+        </div>
+        <a href="/examen-1" class="btn btn-lg btn-primary">
+          Realizar examen modulo {modulo.numero}
+        </a>
+      </footer>
+    </article>
+  </main>
+
+  <script>
+    import { resolveSessionUser } from '../../lib/auth-client';
+
+    async function ensureSession() {
+      const user = await resolveSessionUser();
+
+      if (user) return;
+      const next = encodeURIComponent(window.location.pathname);
+      window.location.href = `/login?next=${next}`;
+    }
+
+    ensureSession();
+  </script>
+</Layout>

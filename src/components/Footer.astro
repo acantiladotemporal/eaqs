@@ -1,0 +1,87 @@
+---
+import NewsletterForm from './NewsletterForm.astro';
+
+interface Props {
+  mode?: 'default' | 'learning';
+}
+
+const { mode = 'default' } = Astro.props;
+const isLearning = mode === 'learning';
+const currentYear = new Date().getFullYear();
+---
+
+<footer class={`pt-20 md:pt-24 pb-10 md:pb-12 ${isLearning ? 'site-footer-learning' : 'site-footer'}`}>
+  {
+    isLearning ? (
+      <div class="content-shell px-5 sm:px-6 md:px-10">
+        <nav class="flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-sm md:text-[15px]" aria-label="Footer aprendizaje">
+          <a href="/dashboard" class="learning-link">Dashboard</a>
+          <a href="/foro" class="learning-link">Comunidad</a>
+          <a href="/examen-1" class="learning-link">Examen</a>
+          <a href="/contacto" class="learning-link">Soporte</a>
+          <a href="/privacidad" class="learning-link">Privacidad</a>
+        </nav>
+        <div class="pt-6 mt-6 border-t border-clay/60 text-[11px] text-ink/58 text-center">
+          <p>(c) <span data-current-year>{currentYear}</span> El Arbol Que Suena. Espacio de aprendizaje.</p>
+        </div>
+      </div>
+    ) : (
+      <div class="content-shell px-5 sm:px-6 md:px-10 space-y-12">
+        <header class="text-center space-y-3" data-reveal>
+          <img
+            src="/images/elarbolquesuena-escuela-neuroeducacion-musical.png"
+            alt="Logo El Arbol Que Suena"
+            class="footer-brand-logo mx-auto"
+            loading="lazy"
+            decoding="async"
+          />
+          <p class="headline-luxe text-3xl sm:text-4xl md:text-5xl !text-[#f6efe3]">
+            El Arbol Que Suena.
+          </p>
+          <p class="text-sm md:text-base text-[#f1e6d4] max-w-3xl mx-auto">
+            Escuela internacional de neuroeducacion musical
+          </p>
+        </header>
+
+        <section class="footer-newsletter space-y-7" data-reveal>
+          <div class="space-y-4 max-w-none">
+            <p class="editorial-kicker !text-[#f8de7e]">Newsletter semanal</p>
+            <h2 class="headline-luxe text-4xl md:text-5xl max-w-none">Cuando estes listo, aqui estaremos.</h2>
+            <p class="lead-copy">
+              Si aun no es tu momento para entrar al curso, al menos no te vayas sin una idea util cada semana para tu aula.
+            </p>
+          </div>
+
+          <div>
+            <NewsletterForm source="footer" variant="inline" ctaLabel="Apuntarme" />
+          </div>
+        </section>
+
+        <nav class="flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-sm md:text-[15px]" aria-label="Footer">
+          <a href="/#curso" class="footer-link">La formacion</a>
+          <a href="/#precio" class="footer-link">Inscripciones</a>
+          <a href="/#newsletter" class="footer-link">Newsletter</a>
+          <a href="/contacto" class="footer-link">Contacto</a>
+          <a href="/privacidad" class="footer-link">Privacidad</a>
+          <a href="/cookies" class="footer-link">Cookies</a>
+          <a href="/aviso-legal" class="footer-link">Aviso legal</a>
+          <a href="/terminos" class="footer-link">Terminos</a>
+        </nav>
+
+        <div class="pt-6 border-t border-[#f4dea7]/24 text-[12px] footer-bottom-note text-center">
+          <p>(c) <span data-current-year>{currentYear}</span> El Arbol Que Suena. Escuela Internacional de Neuroeducacion Musical.</p>
+        </div>
+      </div>
+    )
+  }
+</footer>
+
+<script is:inline>
+  (() => {
+    const year = String(new Date().getFullYear());
+    const nodes = document.querySelectorAll('[data-current-year]');
+    nodes.forEach((node) => {
+      node.textContent = year;
+    });
+  })();
+</script>

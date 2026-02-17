@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Condiciones de servicio | El Arbol Que Suena">
+  <Header />
+  <main class="bg-white text-ink pt-40 pb-20 px-6">
+    <article class="max-w-3xl mx-auto space-y-10 font-sans">
+      <header>
+        <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold mb-4 block">Condiciones</span>
+        <h1 class="font-display text-6xl italic tracking-tighter">Servicio y formacion</h1>
+      </header>
+
+      <section class="space-y-5 text-ink/75 leading-relaxed">
+        <p>
+          La matricula da acceso al contenido formativo indicado en la convocatoria vigente, asi como al entorno de comunidad y recursos
+          asociados incluidos en el plan contratado.
+        </p>
+        <p>
+          El acceso a la plataforma es personal e intransferible. No se permite compartir credenciales ni redistribuir contenidos.
+        </p>
+      </section>
+
+      <section class="space-y-5 text-ink/75 leading-relaxed">
+        <h2 class="font-display text-3xl italic text-ink">Pagos, cancelaciones y soporte</h2>
+        <p>
+          Los pagos se gestionan mediante pasarela segura. Las condiciones de cancelacion y devolucion se aplican segun lo publicado en
+          la pagina de inscripcion.
+        </p>
+        <p>
+          Para incidencias tecnicas o administrativas, contacta con hola@elarbolquesuena.com y responderemos en el menor plazo posible.
+        </p>
+      </section>
+    </article>
+  </main>
+  <Footer />
+</Layout>

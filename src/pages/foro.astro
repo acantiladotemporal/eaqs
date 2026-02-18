@@ -6,13 +6,15 @@ import ForoComunidad from '../components/ForoComunidad.vue';
 
 <Layout title="Comunidad | El Arbol Que Suena" description="Foro de intercambio entre docentes del programa.">
   <Header mode="learning" />
-  <main class="bg-white min-h-screen pt-40 pb-20 px-6">
-    <div class="max-w-[1800px] mx-auto">
+  <main class="bg-white min-h-screen pt-24 md:pt-28 pb-16 md:pb-20">
+    <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
+    <div class="content-shell max-w-5xl">
       <header class="mb-10">
         <p class="font-sans text-[10px] uppercase tracking-[0.3em] text-moss font-bold mb-3">Comunidad</p>
         <h1 class="font-display text-5xl md:text-7xl italic">Archivo vivo de aula</h1>
       </header>
       <ForoComunidad client:load />
     </div>
+    </section>
   </main>
 </Layout>

@@ -86,7 +86,8 @@ const isLearning = mode === 'learning';
 </header>
 
 <script>
-  import { getPreferredName, resolveSessionUser } from '../lib/auth-client';
+  import { AUTH_PREVIEW_MODE } from '../lib/auth-config';
+  import { animateNameSwap, getPreferredName, resolveSessionUser } from '../lib/auth-client';
   import { supabase } from '../lib/supabase';
 
   async function bindLearningHeader() {
@@ -100,13 +101,7 @@ const isLearning = mode === 'learning';
 
     if (user && nameTargets.length) {
       const firstName = getPreferredName(user);
-
-      nameTargets.forEach((target) => {
-        target.textContent = firstName;
-        target.classList.remove('is-ready');
-        void target.offsetWidth;
-        target.classList.add('is-ready');
-      });
+      nameTargets.forEach((target) => animateNameSwap(target, firstName));
     }
 
     if (!user && loginLink instanceof HTMLAnchorElement) {
@@ -117,7 +112,15 @@ const isLearning = mode === 'learning';
       logoutButton.classList.add('hidden');
     }
 
-    if (logoutButton instanceof HTMLButtonElement) {
+    if (AUTH_PREVIEW_MODE && loginLink instanceof HTMLAnchorElement) {
+      loginLink.classList.add('hidden');
+    }
+
+    if (AUTH_PREVIEW_MODE && logoutButton instanceof HTMLButtonElement) {
+      logoutButton.classList.add('hidden');
+    }
+
+    if (!AUTH_PREVIEW_MODE && logoutButton instanceof HTMLButtonElement) {
       logoutButton.addEventListener('click', async () => {
         await supabase.auth.signOut();
         window.location.href = '/login';

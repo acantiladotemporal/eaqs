@@ -51,8 +51,8 @@ const modulos = [
 <Layout title="Dashboard | El Arbol Que Suena" description="Portal del alumnado para acceder a modulos, examen y comunidad docente.">
   <Header mode="learning" />
 
-  <main class="bg-white pt-32 md:pt-36 pb-20">
-    <section class="section-shell">
+  <main class="bg-white pt-24 md:pt-28 pb-16 md:pb-20">
+    <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
       <div class="content-shell space-y-8 md:space-y-9">
         <header class="max-w-3xl space-y-4" data-reveal>
           <p class="editorial-kicker">Portal del alumnado</p>
@@ -65,7 +65,7 @@ const modulos = [
         </header>
 
         <section id="dashboard-loading" class="ui-panel p-6 md:p-7" data-reveal style="--reveal-delay:80ms">
-          <p class="font-sans text-sm text-ink/68">Validando acceso con Supabase...</p>
+          <p class="font-sans text-sm text-ink/68">Validando acceso al aula...</p>
         </section>
 
         <section id="dashboard-gate" class="ui-panel p-6 md:p-8 hidden" data-reveal style="--reveal-delay:100ms">
@@ -115,8 +115,8 @@ const modulos = [
   </main>
 
   <script>
-    import { buildLoginRedirect, getPreferredName, resolveSessionUser } from '../lib/auth-client';
-    import { isSupabaseConfigured } from '../lib/supabase';
+    import { animateNameSwap, buildLoginRedirect, getPreferredName, resolveSessionUser } from '../lib/auth-client';
+    import { supabase } from '../lib/supabase';
 
     async function initDashboard() {
       const feedback = document.getElementById('dashboard-feedback');
@@ -130,6 +130,11 @@ const modulos = [
         loginLink.href = buildLoginRedirect('/dashboard');
       }
 
+      const applyUser = (user) => {
+        const firstName = getPreferredName(user);
+        animateNameSwap(nameTarget, firstName);
+      };
+
       const showGate = (message) => {
         if (loading) loading.classList.add('hidden');
         if (content) content.classList.add('hidden');
@@ -140,11 +145,6 @@ const modulos = [
         }
       };
 
-      if (!isSupabaseConfigured) {
-        showGate('Supabase no esta configurada en este entorno.');
-        return;
-      }
-
       const user = await resolveSessionUser(7000);
 
       if (!user) {
@@ -152,13 +152,7 @@ const modulos = [
         return;
       }
 
-      const firstName = getPreferredName(user);
-      if (nameTarget) {
-        nameTarget.textContent = firstName;
-        nameTarget.classList.remove('is-ready');
-        void nameTarget.offsetWidth;
-        nameTarget.classList.add('is-ready');
-      }
+      applyUser(user);
 
       if (loading) loading.classList.add('hidden');
       if (gate) gate.classList.add('hidden');
@@ -167,6 +161,21 @@ const modulos = [
         feedback.textContent = 'Sesion activa. Tu aula ya esta lista.';
         feedback.className = 'text-sm text-ink/62 min-h-6';
       }
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+        if (!nextSession?.user) return;
+        applyUser(nextSession.user);
+      });
+
+      window.addEventListener(
+        'beforeunload',
+        () => {
+          subscription.unsubscribe();
+        },
+        { once: true }
+      );
     }
 
     initDashboard();

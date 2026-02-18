@@ -1,47 +1,20 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Button from '../components/ui/Button.astro';
-
-const checkoutUrl = import.meta.env.PUBLIC_CHECKOUT_URL?.trim() ?? '';
-const hasExternalCheckout = checkoutUrl.length > 0;
 ---
 
-<Layout
-  title="Pago seguro | El Arbol Que Suena"
-  description="Formulario de pago seguro en Stripe para confirmar tu plaza."
->
+<Layout title="Redirigiendo | El Arbol Que Suena" description="Redireccion a la pagina de reserva.">
   <main class="bg-white min-h-screen flex items-center justify-center px-6 py-20">
-    <section class="ui-panel w-full max-w-xl p-8 md:p-10 text-center space-y-6" data-reveal>
-      <p class="editorial-kicker">Pago seguro</p>
-      <h1 class="headline-luxe text-4xl md:text-5xl">Formulario Stripe</h1>
-
-      {
-        hasExternalCheckout ? (
-          <>
-            <p class="lead-copy">Abriendo formulario de pago seguro...</p>
-            <Button href={checkoutUrl} size="lg" variant="primary" class="cta-breathe" block>Continuar en Stripe</Button>
-            <p class="text-xs text-ink/55">Si no redirige automaticamente, usa el boton.</p>
-          </>
-        ) : (
-          <>
-            <p class="text-sm text-red-700">Falta configurar `PUBLIC_CHECKOUT_URL` para activar Stripe.</p>
-            <Button href="/registro" size="lg" variant="secondary" block>Volver al carrito</Button>
-          </>
-        )
-      }
+    <section class="ui-panel w-full max-w-xl p-8 md:p-10 text-center space-y-5" data-reveal>
+      <p class="editorial-kicker">Unificacion del flujo</p>
+      <h1 class="headline-luxe text-4xl md:text-5xl">Redirigiendo a reserva</h1>
+      <p class="lead-copy">Todo el proceso de compra ahora se realiza en un solo paso.</p>
+      <a href="/registro" class="btn btn-lg btn-primary w-full">Ir a reservar plaza</a>
     </section>
   </main>
 
-  {
-    hasExternalCheckout && (
-      <script define:vars={{ checkoutUrl }}>
-        const safeUrl = typeof checkoutUrl === 'string' ? checkoutUrl.trim() : '';
-        if (safeUrl) {
-          window.setTimeout(() => {
-            window.location.replace(safeUrl);
-          }, 120);
-        }
-      </script>
-    )
-  }
+  <script>
+    window.setTimeout(() => {
+      window.location.replace('/registro');
+    }, 120);
+  </script>
 </Layout>

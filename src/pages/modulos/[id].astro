@@ -60,8 +60,9 @@ const modulo = modulosData[id] || modulosData['1'];
 <Layout title={`Modulo ${modulo.numero} | El Arbol Que Suena`}>
   <Header mode="learning" />
 
-  <main class="bg-white min-h-screen pt-40 pb-20">
-    <article class="max-w-4xl mx-auto px-6 font-sans">
+  <main class="bg-white min-h-screen pt-24 md:pt-28 pb-16 md:pb-20">
+    <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
+    <article class="content-shell max-w-4xl font-sans">
       <header class="mb-16">
         <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold mb-4 block">
           Modulo {modulo.numero}
@@ -94,6 +95,7 @@ const modulo = modulosData[id] || modulosData['1'];
         </a>
       </footer>
     </article>
+    </section>
   </main>
 
   <script>

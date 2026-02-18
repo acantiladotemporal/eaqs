@@ -5,8 +5,9 @@ import Header from '../components/Header.astro';
 
 <Layout title="Examen modulo 1 | El Arbol Que Suena">
   <Header mode="learning" />
-  <main class="bg-white min-h-screen pt-40 pb-20 px-6">
-    <section class="max-w-4xl mx-auto py-12">
+  <main class="bg-white min-h-screen pt-24 md:pt-28 pb-16 md:pb-20">
+    <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
+    <section class="content-shell max-w-4xl py-4 md:py-6">
       <div id="exam-intro" class="text-center space-y-12">
         <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold">
           Validacion de conocimientos
@@ -36,9 +37,11 @@ import Header from '../components/Header.astro';
         <div id="exam-result-actions" class="pt-6"></div>
       </div>
     </section>
+    </section>
   </main>
 
   <script>
+    import { AUTH_PREVIEW_MODE } from '../lib/auth-config';
     import { buildLoginRedirect, resolveSessionUser } from '../lib/auth-client';
     import { supabase } from '../lib/supabase';
 
@@ -120,6 +123,12 @@ import Header from '../components/Header.astro';
 
     async function saveProgressIfPassed() {
       if (!savingEl) return;
+
+      if (AUTH_PREVIEW_MODE) {
+        savingEl.textContent = 'Modo vista previa: progreso simulado correctamente.';
+        return;
+      }
+
       savingEl.textContent = 'Guardando progreso...';
 
       try {

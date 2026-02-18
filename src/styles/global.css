@@ -309,6 +309,13 @@
     will-change: transform, opacity, filter;
   }
 
+  .name-swap.is-swapping {
+    opacity: 0.2;
+    transform: translate3d(0, -6px, 0) scale(0.99);
+    filter: blur(4px);
+    transition: opacity 180ms ease, transform 180ms ease, filter 180ms ease;
+  }
+
   .name-swap.is-ready {
     animation: name-swap-reveal 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }

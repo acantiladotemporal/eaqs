@@ -2,54 +2,111 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import Button from '../components/ui/Button.astro';
 ---
 
 <Layout
-  title="Reserva | El Arbol Que Suena"
-  description="Resumen de compra del curso de neuroeducacion musical antes de pasar al pago seguro."
+  title="Reservar plaza | El Arbol Que Suena"
+  description="Informacion del curso y formulario de pago en un solo paso para reservar plaza."
 >
   <Header />
 
   <main class="bg-white pt-24 md:pt-28 pb-16 md:pb-20">
     <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
-      <div class="content-shell max-w-3xl space-y-10 md:space-y-12">
-        <header class="text-center max-w-2xl mx-auto space-y-5" data-reveal>
-          <p class="editorial-kicker">Paso 1 de 2</p>
-          <h1 class="headline-luxe section-title">Tu carrito de la formacion.</h1>
+      <div class="content-shell max-w-5xl space-y-10 md:space-y-12">
+        <header class="text-center max-w-3xl mx-auto space-y-5" data-reveal>
+          <p class="editorial-kicker">Reserva en un solo paso</p>
+          <h1 class="headline-luxe section-title">Tu plaza, tu pago, tu acceso privado.</h1>
           <p class="lead-copy">
-            Revisa todo lo que incluye esta edicion y pasa al pago seguro con Stripe para confirmar tu plaza.
+            Aqui tienes toda la informacion de la formacion y el formulario de pago tipo Stripe integrado en la misma pantalla.
           </p>
         </header>
 
-        <section class="ui-panel p-7 md:p-10 max-w-2xl mx-auto space-y-7" data-reveal style="--reveal-delay:120ms">
-          <div class="space-y-2">
-            <p class="editorial-kicker">Curso seleccionado</p>
-            <h2 class="font-display text-4xl md:text-5xl text-note leading-[1.02]">
-              Neuroeducacion musical para docentes de 0 a 9 anos.
-            </h2>
-            <p class="text-sm text-ink/62">Foco principal: primera infancia (0 a 6 anos).</p>
-          </div>
+        <section class="ui-panel p-7 md:p-10" data-reveal style="--reveal-delay:120ms">
+          <div class="grid lg:grid-cols-12 gap-8 md:gap-10">
+            <aside class="lg:col-span-5 space-y-6">
+              <div class="space-y-2">
+                <p class="editorial-kicker">Lo que compras hoy</p>
+                <h2 class="font-display text-4xl md:text-5xl text-note leading-[1.02]">
+                  Curso de Neuroeducacion Musical para docentes de 0 a 9 anos.
+                </h2>
+                <p class="text-sm text-ink/62">Foco principal: primera infancia (0 a 6 anos).</p>
+              </div>
 
-          <div class="space-y-3 text-sm text-ink/78">
-            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Primera edicion 2026 . formato online.</p>
-            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>6 modulos de especializacion + certificacion de la escuela.</p>
-            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Plazas limitadas: maximo 20 docentes por convocatoria.</p>
-            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Acceso privado activado tras confirmacion de pago.</p>
-          </div>
+              <div class="space-y-3 text-sm text-ink/78">
+                <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Primera edicion 2026 . formato online.</p>
+                <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>6 modulos de especializacion + certificacion oficial.</p>
+                <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Acceso privado a dashboard, foro y evaluaciones.</p>
+                <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Plazas limitadas: maximo 20 docentes por convocatoria.</p>
+              </div>
 
-          <div class="border-t border-clay/60 pt-6 space-y-2">
-            <div class="flex items-end justify-between gap-4">
-              <p class="text-sm text-ink/72">Precio hoy</p>
-              <p class="font-display text-5xl italic text-note">390 EUR</p>
-            </div>
-            <p class="text-xs uppercase tracking-[0.18em] text-ink/58">Oferta de lanzamiento . luego 490 EUR</p>
-          </div>
+              <div class="border-t border-clay/60 pt-6 space-y-2">
+                <div class="flex items-end justify-between gap-4">
+                  <p class="text-sm text-ink/72">Precio hoy</p>
+                  <p class="font-display text-5xl italic text-note">390 EUR</p>
+                </div>
+                <p class="text-xs uppercase tracking-[0.18em] text-ink/58">Oferta de lanzamiento . luego 490 EUR</p>
+              </div>
+            </aside>
 
-          <div class="pt-2">
-            <Button href="/pago?source=carrito_registro" size="lg" variant="primary" class="cta-breathe" block>
-              Ir al pago seguro
-            </Button>
+            <section class="lg:col-span-7 space-y-5">
+              <div class="space-y-2">
+                <p class="editorial-kicker">Pago seguro</p>
+                <h3 class="font-display text-3xl md:text-4xl text-note">Formulario tipo Stripe</h3>
+              </div>
+
+              <form id="checkout-demo-form" class="space-y-4" novalidate>
+                <label class="block">
+                  <span class="field-label">Correo electronico</span>
+                  <input class="input-base" type="email" placeholder="tu@email.com" required />
+                </label>
+
+                <label class="block">
+                  <span class="field-label">Nombre del titular</span>
+                  <input class="input-base" type="text" placeholder="Nombre Apellido" required />
+                </label>
+
+                <label class="block">
+                  <span class="field-label">Numero de tarjeta</span>
+                  <input class="input-base" type="text" placeholder="4242 4242 4242 4242" inputmode="numeric" required />
+                </label>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <label class="block">
+                    <span class="field-label">Caducidad</span>
+                    <input class="input-base" type="text" placeholder="MM / AA" required />
+                  </label>
+                  <label class="block">
+                    <span class="field-label">CVC</span>
+                    <input class="input-base" type="text" placeholder="123" inputmode="numeric" required />
+                  </label>
+                </div>
+
+                <label class="block">
+                  <span class="field-label">Pais o region</span>
+                  <select class="input-base" required>
+                    <option>Espana</option>
+                    <option>Mexico</option>
+                    <option>Colombia</option>
+                    <option>Argentina</option>
+                    <option>Chile</option>
+                    <option>Otro</option>
+                  </select>
+                </label>
+
+                <label class="flex items-start gap-3 pt-2 text-sm text-ink/70">
+                  <input type="checkbox" class="mt-1" required />
+                  <span>Acepto terminos, politica de privacidad y condiciones de compra.</span>
+                </label>
+
+                <p id="checkout-demo-feedback" class="text-sm text-ink/60 min-h-6" aria-live="polite"></p>
+
+                <button type="submit" class="btn btn-lg btn-primary cta-breathe w-full">Reservar plaza . 390 EUR</button>
+              </form>
+
+              <p class="text-xs text-ink/55">
+                Demo visual del formulario. En la version final aqui se conectara Stripe Checkout/Elements.
+              </p>
+            </section>
           </div>
         </section>
       </div>
@@ -57,4 +114,16 @@ import Button from '../components/ui/Button.astro';
   </main>
 
   <Footer />
+
+  <script>
+    const form = document.getElementById('checkout-demo-form');
+    const feedback = document.getElementById('checkout-demo-feedback');
+
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!feedback) return;
+      feedback.textContent = 'Vista previa de pago: el cobro real con Stripe aun no esta activo en este formulario.';
+      feedback.className = 'text-sm text-ink/70 min-h-6';
+    });
+  </script>
 </Layout>

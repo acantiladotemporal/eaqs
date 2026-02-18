@@ -1,71 +1,47 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
 import Button from '../components/ui/Button.astro';
 
-const checkoutUrl = import.meta.env.PUBLIC_CHECKOUT_URL ?? '';
-const hasExternalCheckout = checkoutUrl.trim().length > 0;
-const paymentHref = hasExternalCheckout ? checkoutUrl : '/gracias?payment=ok';
+const checkoutUrl = import.meta.env.PUBLIC_CHECKOUT_URL?.trim() ?? '';
+const hasExternalCheckout = checkoutUrl.length > 0;
 ---
 
 <Layout
   title="Pago seguro | El Arbol Que Suena"
-  description="Confirma tu plaza mediante Stripe y activa tu acceso privado al aula."
+  description="Formulario de pago seguro en Stripe para confirmar tu plaza."
 >
-  <Header />
+  <main class="bg-white min-h-screen flex items-center justify-center px-6 py-20">
+    <section class="ui-panel w-full max-w-xl p-8 md:p-10 text-center space-y-6" data-reveal>
+      <p class="editorial-kicker">Pago seguro</p>
+      <h1 class="headline-luxe text-4xl md:text-5xl">Formulario Stripe</h1>
 
-  <main class="bg-white pt-24 md:pt-28 pb-16 md:pb-20">
-    <section class="section-shell section-tone-ivory">
-      <div class="content-shell grid lg:grid-cols-12 gap-10 md:gap-12 items-start">
-        <aside class="lg:col-span-5 space-y-6" data-reveal>
-          <p class="editorial-kicker">Paso 2 de 2</p>
-          <h1 class="headline-luxe section-title">
-            Finaliza tu pago
-            <span class="ink-underline-subtle">con Stripe</span>.
-          </h1>
-          <p class="lead-copy">
-            Tras confirmar el pago recibirás email de compra y email de acceso al perfil privado del alumno.
-          </p>
-
-          <div class="ui-panel p-6 md:p-7 space-y-4">
-            <p class="font-sans text-[10px] uppercase tracking-[0.25em] text-moss font-bold">Resumen</p>
-            <div class="flex items-end justify-between border-b border-clay/60 pb-4">
-              <p class="text-sm text-ink/72">Curso Neuroeducacion Musical 0-9</p>
-              <p class="font-display text-4xl italic text-note">390 EUR</p>
-            </div>
-            <p class="text-xs text-ink/60 uppercase tracking-[0.18em]">Oferta lanzamiento . luego 490 EUR</p>
-            <p class="text-sm text-ink/72">Incluye 6 modulos + certificacion.</p>
-            <p class="text-sm text-ink/72">Plazas limitadas: maximo 20 docentes por edicion.</p>
-          </div>
-        </aside>
-
-        <section class="lg:col-span-7 ui-panel p-7 md:p-10" data-reveal style="--reveal-delay:120ms">
-          <div class="max-w-xl mx-auto space-y-8">
-            <div>
-              <p class="editorial-kicker mb-3">Pago seguro</p>
-              <h2 class="headline-luxe text-4xl md:text-5xl">Completar compra</h2>
-            </div>
-
-            <p class="lead-copy">
-              {hasExternalCheckout
-                ? 'Seras redirigido a Stripe para finalizar el pago con tarjeta de forma segura.'
-                : 'No hay URL de checkout configurada. Define PUBLIC_CHECKOUT_URL para activar Stripe en esta pagina.'}
-            </p>
-
-            <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
-              <Button href={paymentHref} size="lg" variant="primary" class="cta-breathe">Pagar 390 EUR en Stripe</Button>
-              <Button href="/registro" size="lg" variant="secondary">Volver al carrito</Button>
-            </div>
-
-            <p class="text-xs text-ink/60">
-              Tras la compra, recibirás por email la confirmacion y el acceso a tu perfil privado con modulos aun sin activar.
-            </p>
-          </div>
-        </section>
-      </div>
+      {
+        hasExternalCheckout ? (
+          <>
+            <p class="lead-copy">Abriendo formulario de pago seguro...</p>
+            <Button href={checkoutUrl} size="lg" variant="primary" class="cta-breathe" block>Continuar en Stripe</Button>
+            <p class="text-xs text-ink/55">Si no redirige automaticamente, usa el boton.</p>
+          </>
+        ) : (
+          <>
+            <p class="text-sm text-red-700">Falta configurar `PUBLIC_CHECKOUT_URL` para activar Stripe.</p>
+            <Button href="/registro" size="lg" variant="secondary" block>Volver al carrito</Button>
+          </>
+        )
+      }
     </section>
   </main>
 
-  <Footer />
+  {
+    hasExternalCheckout && (
+      <script define:vars={{ checkoutUrl }}>
+        const safeUrl = typeof checkoutUrl === 'string' ? checkoutUrl.trim() : '';
+        if (safeUrl) {
+          window.setTimeout(() => {
+            window.location.replace(safeUrl);
+          }, 120);
+        }
+      </script>
+    )
+  }
 </Layout>

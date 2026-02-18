@@ -16,9 +16,7 @@ import Button from '../components/ui/Button.astro';
       <div class="content-shell max-w-3xl space-y-10 md:space-y-12">
         <header class="text-center max-w-2xl mx-auto space-y-5" data-reveal>
           <p class="editorial-kicker">Paso 1 de 2</p>
-          <h1 class="headline-luxe section-title">
-            Tu carrito de la formacion.
-          </h1>
+          <h1 class="headline-luxe section-title">Tu carrito de la formacion.</h1>
           <p class="lead-copy">
             Revisa todo lo que incluye esta edicion y pasa al pago seguro con Stripe para confirmar tu plaza.
           </p>
@@ -34,7 +32,7 @@ import Button from '../components/ui/Button.astro';
           </div>
 
           <div class="space-y-3 text-sm text-ink/78">
-            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Primera edicion 2026 · formato online.</p>
+            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Primera edicion 2026 . formato online.</p>
             <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>6 modulos de especializacion + certificacion de la escuela.</p>
             <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Plazas limitadas: maximo 20 docentes por convocatoria.</p>
             <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Acceso privado activado tras confirmacion de pago.</p>
@@ -45,12 +43,13 @@ import Button from '../components/ui/Button.astro';
               <p class="text-sm text-ink/72">Precio hoy</p>
               <p class="font-display text-5xl italic text-note">390 EUR</p>
             </div>
-            <p class="text-xs uppercase tracking-[0.18em] text-ink/58">Oferta de lanzamiento · luego 490 EUR</p>
+            <p class="text-xs uppercase tracking-[0.18em] text-ink/58">Oferta de lanzamiento . luego 490 EUR</p>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-3 sm:items-center pt-2">
-            <Button href="/pago?source=carrito_registro" size="lg" variant="primary" class="cta-breathe">Ir al pago seguro</Button>
-            <Button href="/#precio" size="lg" variant="secondary">Volver a la informacion</Button>
+          <div class="pt-2">
+            <Button href="/pago?source=carrito_registro" size="lg" variant="primary" class="cta-breathe" block>
+              Ir al pago seguro
+            </Button>
           </div>
         </section>
       </div>

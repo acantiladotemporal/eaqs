@@ -45,118 +45,117 @@ const modulos = [
 <Layout title="Dashboard | El Arbol Que Suena" description="Portal del alumnado para acceder a modulos, examen y comunidad docente.">
   <Header mode="learning" />
 
-  <main class="bg-white pt-28 md:pt-32 pb-16 md:pb-20">
-    <section class="section-shell bg-white">
-      <div class="content-shell space-y-9 md:space-y-10">
-        <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8" data-reveal>
-          <div class="max-w-3xl space-y-4">
-            <p class="editorial-kicker">Portal del alumnado</p>
-            <h1 class="headline-luxe section-title md:!text-[4.1rem] leading-[0.94]">
-              Hola,
-              <span id="welcome-name-target" class="name-swap not-italic">Docente</span>.
-            </h1>
-            <p id="dashboard-feedback" class="text-sm text-ink/62 min-h-6" aria-live="polite">
-              Verificando sesion...
-            </p>
-          </div>
-
-          <div class="flex items-center gap-3">
-            <a href="/foro" class="btn btn-md btn-secondary">Comunidad</a>
-            <a href="/examen-1" class="btn btn-md btn-secondary">Examen 1</a>
-          </div>
+  <main class="bg-white pt-32 md:pt-36 pb-20">
+    <section class="section-shell">
+      <div class="content-shell space-y-8 md:space-y-9">
+        <header class="max-w-3xl space-y-4" data-reveal>
+          <p class="editorial-kicker">Portal del alumnado</p>
+          <h1 class="headline-luxe section-title md:!text-[3.45rem] leading-[0.95]">
+            Hola, <span id="welcome-name-target" class="name-swap not-italic">Docente</span>.
+          </h1>
+          <p id="dashboard-feedback" class="text-sm text-ink/62 min-h-6" aria-live="polite">
+            Preparando tu aula...
+          </p>
         </header>
 
-        <section id="dashboard-gate" class="ui-panel p-5 md:p-7 hidden" data-reveal style="--reveal-delay:100ms">
-          <div class="text-center max-w-2xl mx-auto space-y-5">
-            <p class="editorial-kicker">Acceso al aula</p>
-            <h2 class="headline-luxe text-3xl md:text-4xl">Tu sesion aun no esta lista.</h2>
-            <p class="lead-copy">
-              Puedes refrescar esta pantalla o iniciar sesion de nuevo sin salir del flujo.
-            </p>
-            <div class="flex flex-wrap justify-center gap-3">
-              <a href="/login?next=/dashboard" class="btn btn-md btn-primary">Iniciar sesion</a>
-              <button type="button" id="dashboard-retry" class="btn btn-md btn-secondary">Reintentar</button>
+        <section id="dashboard-loading" class="ui-panel p-6 md:p-7" data-reveal style="--reveal-delay:80ms">
+          <p class="font-sans text-sm text-ink/68">Validando acceso con Supabase...</p>
+        </section>
+
+        <section id="dashboard-gate" class="ui-panel p-6 md:p-8 hidden" data-reveal style="--reveal-delay:100ms">
+          <div class="max-w-2xl space-y-4">
+            <p class="editorial-kicker">Acceso requerido</p>
+            <h2 class="headline-luxe text-3xl md:text-4xl">Tu sesion no esta activa.</h2>
+            <p class="lead-copy">Inicia sesion para recuperar tu progreso y entrar a todos los modulos.</p>
+            <div class="flex flex-wrap gap-3 pt-2">
+              <a id="dashboard-login-link" href="/login?next=/dashboard" class="btn btn-md btn-primary">Iniciar sesion</a>
+              <a href="/registro" class="btn btn-md btn-secondary">Crear cuenta</a>
             </div>
           </div>
         </section>
 
-        <section class="ui-panel p-5 md:p-7" data-reveal style="--reveal-delay:120ms">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 mb-5">
-            <p class="font-sans text-[10px] uppercase tracking-[0.28em] text-moss font-bold">Ruta de aprendizaje</p>
-            <a href="/programa-completo.pdf" class="program-pdf-link" download>Descargar programa en PDF</a>
-          </div>
+        <section id="dashboard-content" class="space-y-8 md:space-y-9 hidden">
+          <section class="ui-panel p-5 md:p-7" data-reveal style="--reveal-delay:120ms">
+            <div class="flex flex-wrap items-center gap-3">
+              <a href="/foro" class="btn btn-md btn-secondary">Comunidad</a>
+              <a href="/examen-1" class="btn btn-md btn-secondary">Examen 1</a>
+              <a href="/programa-completo.pdf" class="program-pdf-link" download>Descargar programa en PDF</a>
+            </div>
+          </section>
 
-          <div class="module-list">
-            {modulos.map((modulo, index) => (
-              <article class="module-row" data-reveal style={`--reveal-delay:${index * 65}ms`}>
-                <span class="module-index">{modulo.numero}</span>
-                <div>
-                  <a href={`/modulos/${modulo.id}`} class="inline-block">
-                    <h2>{modulo.titulo}</h2>
-                  </a>
-                </div>
-                <p>{modulo.descripcion}</p>
-              </article>
-            ))}
-          </div>
+          <section class="ui-panel p-5 md:p-7" data-reveal style="--reveal-delay:140ms">
+            <p class="font-sans text-[10px] uppercase tracking-[0.28em] text-moss font-bold mb-5">Ruta de aprendizaje</p>
+            <div class="module-list">
+              {modulos.map((modulo, index) => (
+                <article class="module-row" data-reveal style={`--reveal-delay:${index * 65}ms`}>
+                  <span class="module-index">{modulo.numero}</span>
+                  <div>
+                    <a href={`/modulos/${modulo.id}`} class="inline-block">
+                      <h2>{modulo.titulo}</h2>
+                    </a>
+                  </div>
+                  <p>{modulo.descripcion}</p>
+                </article>
+              ))}
+            </div>
+          </section>
         </section>
       </div>
     </section>
   </main>
 
   <script>
-    import { getPreferredName, resolveSessionUser } from '../lib/auth-client';
+    import { buildLoginRedirect, getPreferredName, resolveSessionUser } from '../lib/auth-client';
+    import { isSupabaseConfigured } from '../lib/supabase';
 
     async function initDashboard() {
       const feedback = document.getElementById('dashboard-feedback');
       const nameTarget = document.getElementById('welcome-name-target');
+      const loading = document.getElementById('dashboard-loading');
       const gate = document.getElementById('dashboard-gate');
-      const retryButton = document.getElementById('dashboard-retry');
+      const content = document.getElementById('dashboard-content');
+      const loginLink = document.getElementById('dashboard-login-link');
 
-      const updateWithUser = (user) => {
-        const firstName = getPreferredName(user);
-        if (nameTarget) {
-          nameTarget.textContent = firstName;
-          nameTarget.classList.remove('is-ready');
-          void nameTarget.offsetWidth;
-          nameTarget.classList.add('is-ready');
-        }
-        if (gate) gate.classList.add('hidden');
+      if (loginLink instanceof HTMLAnchorElement) {
+        loginLink.href = buildLoginRedirect('/dashboard');
+      }
+
+      const showGate = (message) => {
+        if (loading) loading.classList.add('hidden');
+        if (content) content.classList.add('hidden');
+        if (gate) gate.classList.remove('hidden');
         if (feedback) {
-          feedback.textContent = 'Sesion activa detectada. Tu aula esta lista.';
-          feedback.className = 'text-sm text-ink/62 min-h-6';
+          feedback.textContent = message;
+          feedback.className = 'text-sm text-red-700 min-h-6';
         }
       };
 
-      const signedAt = Number(window.sessionStorage.getItem('eaqs-auth-just-signed') || 0);
-      const signedRecently = signedAt > 0 && Date.now() - signedAt < 30000;
-
-      const user = await resolveSessionUser(signedRecently ? 6200 : 2600);
-      if (user) {
-        window.sessionStorage.removeItem('eaqs-auth-just-signed');
-        updateWithUser(user);
-      } else {
-        if (gate) gate.classList.remove('hidden');
-        if (feedback) {
-          feedback.textContent = 'No pudimos recuperar la sesion en este momento.';
-          feedback.className = 'text-sm text-red-700 min-h-6';
-        }
+      if (!isSupabaseConfigured) {
+        showGate('Supabase no esta configurada en este entorno.');
+        return;
       }
 
-      if (retryButton instanceof HTMLButtonElement) {
-        retryButton.addEventListener('click', async () => {
-          retryButton.disabled = true;
-          retryButton.textContent = 'Reintentando...';
-          const retriedUser = await resolveSessionUser(4200);
-          if (retriedUser) {
-            updateWithUser(retriedUser);
-          } else if (feedback) {
-            feedback.textContent = 'Sigue sin haber sesion activa. Inicia sesion para continuar.';
-            feedback.className = 'text-sm text-red-700 min-h-6';
-          }
-          retryButton.disabled = false;
-          retryButton.textContent = 'Reintentar';
-        });
+      const user = await resolveSessionUser(7000);
+
+      if (!user) {
+        showGate('No detectamos una sesion activa.');
+        return;
+      }
+
+      const firstName = getPreferredName(user);
+      if (nameTarget) {
+        nameTarget.textContent = firstName;
+        nameTarget.classList.remove('is-ready');
+        void nameTarget.offsetWidth;
+        nameTarget.classList.add('is-ready');
+      }
+
+      if (loading) loading.classList.add('hidden');
+      if (gate) gate.classList.add('hidden');
+      if (content) content.classList.remove('hidden');
+      if (feedback) {
+        feedback.textContent = 'Sesion activa. Tu aula ya esta lista.';
+        feedback.className = 'text-sm text-ink/62 min-h-6';
       }
     }
 

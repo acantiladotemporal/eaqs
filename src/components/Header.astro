@@ -71,6 +71,7 @@ const isLearning = mode === 'learning';
               <span class="mr-2 text-ink/45">Aula de</span>
               <span data-user-name class="name-swap">Docente</span>
             </span>
+            <a href="/login" data-header-login class="btn btn-sm btn-header-access hidden">Acceso</a>
             <button type="button" data-header-logout class="btn btn-sm btn-header-access">Salir</button>
           </>
         ) : (
@@ -91,10 +92,11 @@ const isLearning = mode === 'learning';
   async function bindLearningHeader() {
     const nameTargets = document.querySelectorAll('[data-user-name]');
     const logoutButton = document.querySelector('[data-header-logout]');
+    const loginLink = document.querySelector('[data-header-login]');
 
-    if (!nameTargets.length && !logoutButton) return;
+    if (!nameTargets.length && !logoutButton && !loginLink) return;
 
-    const user = await resolveSessionUser();
+    const user = await resolveSessionUser(4500);
 
     if (user && nameTargets.length) {
       const firstName = getPreferredName(user);
@@ -105,6 +107,14 @@ const isLearning = mode === 'learning';
         void target.offsetWidth;
         target.classList.add('is-ready');
       });
+    }
+
+    if (!user && loginLink instanceof HTMLAnchorElement) {
+      loginLink.classList.remove('hidden');
+    }
+
+    if (!user && logoutButton instanceof HTMLButtonElement) {
+      logoutButton.classList.add('hidden');
     }
 
     if (logoutButton instanceof HTMLButtonElement) {

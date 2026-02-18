@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { resolveSessionUser } from '../lib/auth-client';
+import { buildLoginRedirect, resolveSessionUser } from '../lib/auth-client';
 import { supabase } from '../lib/supabase';
 
 const posts = ref([]);
@@ -46,7 +46,7 @@ async function enviarPost() {
 
   if (!user.value) {
     setFeedback('Necesitas iniciar sesion para publicar.', true);
-    window.location.href = '/login?next=/foro';
+    window.location.href = buildLoginRedirect('/foro');
     return;
   }
 
@@ -78,9 +78,9 @@ async function enviarPost() {
 }
 
 onMounted(async () => {
-  user.value = await resolveSessionUser();
+  user.value = await resolveSessionUser(7000);
   if (!user.value) {
-    window.location.href = '/login?next=/foro';
+    window.location.href = buildLoginRedirect('/foro');
     return;
   }
   await cargarPosts();

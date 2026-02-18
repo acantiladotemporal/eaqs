@@ -1,51 +1,59 @@
 import type { User } from '@supabase/supabase-js';
-import { supabase } from './supabase';
+import { isSupabaseConfigured, supabase } from './supabase';
 
-export async function resolveSessionUser(timeoutMs = 1200): Promise<User | null> {
-  const startedAt = Date.now();
-  const pollEveryMs = 220;
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    globalThis.setTimeout(resolve, ms);
+  });
+}
 
-  const readSessionUser = async (): Promise<User | null> => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    return session?.user ?? null;
-  };
+async function readSessionUser(): Promise<User | null> {
+  try {
+    const [{ data: userData }, { data: sessionData }] = await Promise.all([
+      supabase.auth.getUser(),
+      supabase.auth.getSession(),
+    ]);
+    return userData.user ?? sessionData.session?.user ?? null;
+  } catch (_error) {
+    return null;
+  }
+}
+
+export async function resolveSessionUser(timeoutMs = 6500): Promise<User | null> {
+  if (typeof window === 'undefined') return null;
+  if (!isSupabaseConfigured) return null;
 
   const directUser = await readSessionUser();
-  if (directUser) return directUser;
+  if (directUser) {
+    return directUser;
+  }
 
-  return new Promise((resolve) => {
-    let settled = false;
-    let pollTimer: number | null = null;
-    let unsubscribe = () => {};
+  const pollEveryMs = 280;
+  const deadline = Date.now() + timeoutMs;
 
-    const finish = (user: User | null) => {
-      if (settled) return;
-      settled = true;
-      unsubscribe();
-      if (pollTimer !== null) window.clearInterval(pollTimer);
-      resolve(user);
-    };
+  while (Date.now() < deadline) {
+    await wait(pollEveryMs);
+    const nextUser = await readSessionUser();
+    if (nextUser) {
+      return nextUser;
+    }
+  }
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      if (nextSession?.user) finish(nextSession.user);
-    });
-    unsubscribe = () => subscription.unsubscribe();
+  return null;
+}
 
-    pollTimer = window.setInterval(async () => {
-      const elapsed = Date.now() - startedAt;
-      if (elapsed >= timeoutMs) {
-        finish(null);
-        return;
-      }
+export function getSafeNextPath(nextPath: string | null | undefined, fallback = '/dashboard'): string {
+  if (!nextPath) return fallback;
 
-      const user = await readSessionUser();
-      if (user) finish(user);
-    }, pollEveryMs);
-  });
+  const trimmed = nextPath.trim();
+  if (!trimmed.startsWith('/') || trimmed.startsWith('//')) return fallback;
+
+  return trimmed;
+}
+
+export function buildLoginRedirect(nextPath = '/dashboard'): string {
+  const safePath = getSafeNextPath(nextPath);
+  return `/login?next=${encodeURIComponent(safePath)}`;
 }
 
 export function getPreferredName(user: User | null, fallback = 'Docente'): string {

@@ -39,7 +39,7 @@ import Header from '../components/Header.astro';
   </main>
 
   <script>
-    import { resolveSessionUser } from '../lib/auth-client';
+    import { buildLoginRedirect, resolveSessionUser } from '../lib/auth-client';
     import { supabase } from '../lib/supabase';
 
     const preguntas = [
@@ -76,10 +76,10 @@ import Header from '../components/Header.astro';
     let puntos = 0;
 
     async function ensureSession() {
-      const user = await resolveSessionUser();
+      const user = await resolveSessionUser(7000);
 
       if (user) return;
-      window.location.href = '/login?next=/examen-1';
+      window.location.replace(buildLoginRedirect('/examen-1'));
     }
 
     function show(el) {
@@ -128,7 +128,7 @@ import Header from '../components/Header.astro';
         } = await supabase.auth.getUser();
 
         if (!user) {
-          savingEl.textContent = 'Sin sesion activa. Puedes seguir en modo vista previa.';
+          savingEl.textContent = 'Sin sesion activa. Inicia sesion de nuevo y repite el guardado.';
           return;
         }
 

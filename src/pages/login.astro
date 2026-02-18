@@ -4,60 +4,49 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Button from '../components/ui/Button.astro';
 import Field from '../components/ui/Field.astro';
+import { isSupabaseConfigured } from '../lib/supabase';
 ---
 
 <Layout title="Acceso | El Arbol Que Suena" description="Inicia sesion para entrar al aula y continuar tu recorrido formativo.">
   <Header />
 
-  <main class="bg-white pt-40 pb-20">
+  <main class="bg-white pt-36 md:pt-40 pb-20">
     <section class="section-shell">
-      <div class="content-shell grid lg:grid-cols-12 gap-10 md:gap-12 items-start">
-        <aside class="lg:col-span-5 space-y-6" data-reveal>
+      <div class="content-shell max-w-3xl space-y-10 md:space-y-12">
+        <header class="text-center max-w-2xl mx-auto space-y-5" data-reveal>
           <p class="editorial-kicker">Acceso al aula</p>
-          <h1 class="headline-luxe section-title">
-            Bienvenida de nuevo
-            <span class="ink-underline-subtle">a tu formacion</span>.
-          </h1>
+          <h1 class="headline-luxe section-title">Inicia sesion y vuelve a tu recorrido.</h1>
           <p class="lead-copy">
-            Inicia sesion para acceder a tus modulos, comunidad y evaluacion. Tu progreso queda guardado en tu cuenta.
+            Todo tu avance queda guardado en tu cuenta: modulos, examen y comunidad docente.
           </p>
+          {
+            !isSupabaseConfigured && (
+              <p class="text-sm text-red-700">
+                Falta configurar Supabase en este entorno (PUBLIC_SUPABASE_URL y PUBLIC_SUPABASE_ANON_KEY).
+              </p>
+            )
+          }
+        </header>
 
-          <div class="ui-panel p-6 md:p-7 space-y-4">
-            <p class="font-sans text-[10px] uppercase tracking-[0.25em] text-moss font-bold">Recorrido</p>
-            <ul class="space-y-3 text-sm text-ink/78">
-              <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Entra al dashboard y avanza modulo a modulo.</li>
-              <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Participa en comunidad docente y comparte recursos.</li>
-              <li class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Valida aprendizajes en el examen del modulo 1.</li>
-            </ul>
-          </div>
-        </aside>
+        <section class="ui-panel p-7 md:p-10 max-w-2xl mx-auto" data-reveal style="--reveal-delay:120ms">
+          <form id="login-form" class="space-y-6" novalidate>
+            <Field id="email" type="email" label="Correo electronico" placeholder="tu@email.com" autocomplete="email" required />
+            <Field
+              id="password"
+              type="password"
+              label="Contrasena"
+              placeholder="Tu contrasena"
+              autocomplete="current-password"
+              required
+            />
+            <p id="login-feedback" class="text-sm text-ink/60 min-h-6" aria-live="polite"></p>
+            <Button id="btn-login" type="submit" variant="primary" size="lg" block>Entrar al aula</Button>
+          </form>
 
-        <section class="lg:col-span-7 ui-panel p-7 md:p-10" data-reveal style="--reveal-delay:120ms">
-          <div class="max-w-xl mx-auto space-y-8">
-            <div>
-              <p class="editorial-kicker mb-3">Credenciales</p>
-              <h2 class="headline-luxe text-4xl md:text-5xl">Iniciar sesion</h2>
-            </div>
-
-            <form id="login-form" class="space-y-6" novalidate>
-              <Field id="email" type="email" label="Correo electronico" placeholder="tu@email.com" autocomplete="email" required />
-              <Field
-                id="password"
-                type="password"
-                label="Contrasena"
-                placeholder="Tu contrasena"
-                autocomplete="current-password"
-                required
-              />
-              <p id="login-feedback" class="text-sm text-ink/60 min-h-6" aria-live="polite"></p>
-              <Button id="btn-login" type="submit" variant="primary" size="lg" block>Entrar al aula</Button>
-            </form>
-
-            <p class="text-center font-sans text-xs text-ink/55">
-              Aun no tienes cuenta?
-              <a href="/registro" class="text-ink underline decoration-1 underline-offset-4 hover:text-moss">Reservar plaza</a>
-            </p>
-          </div>
+          <p class="text-center font-sans text-xs text-ink/55 mt-6">
+            Aun no tienes cuenta?
+            <a href="/registro" class="text-ink underline decoration-1 underline-offset-4 hover:text-moss">Reservar plaza</a>
+          </p>
         </section>
       </div>
     </section>
@@ -66,15 +55,27 @@ import Field from '../components/ui/Field.astro';
   <Footer />
 
   <script>
-    import { resolveSessionUser } from '../lib/auth-client';
-    import { supabase } from '../lib/supabase';
+    import { getSafeNextPath, resolveSessionUser } from '../lib/auth-client';
+    import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
     const form = document.getElementById('login-form');
     const feedback = document.getElementById('login-feedback');
     const button = document.getElementById('btn-login');
 
+    function setFeedback(message, isError = false) {
+      if (!feedback) return;
+      feedback.textContent = message;
+      feedback.className = isError ? 'text-sm text-red-700 min-h-6' : 'text-sm text-ink/60 min-h-6';
+    }
+
     form?.addEventListener('submit', async (event) => {
       event.preventDefault();
+
+      if (!isSupabaseConfigured) {
+        setFeedback('Supabase no esta configurada en este entorno.', true);
+        return;
+      }
+
       const emailInput = document.getElementById('email');
       const passwordInput = document.getElementById('password');
 
@@ -82,10 +83,7 @@ import Field from '../components/ui/Field.astro';
       const password = passwordInput instanceof HTMLInputElement ? passwordInput.value : '';
 
       if (!email || !password) {
-        if (feedback) {
-          feedback.textContent = 'Completa email y contrasena.';
-          feedback.className = 'text-sm text-red-700 min-h-6';
-        }
+        setFeedback('Completa email y contrasena.', true);
         return;
       }
 
@@ -94,46 +92,39 @@ import Field from '../components/ui/Field.astro';
         button.textContent = 'Accediendo...';
       }
 
-      if (feedback) feedback.textContent = '';
+      setFeedback('');
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        if (feedback) {
-          feedback.textContent = error.message;
-          feedback.className = 'text-sm text-red-700 min-h-6';
+      try {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          setFeedback(error.message, true);
+          if (button instanceof HTMLButtonElement) {
+            button.disabled = false;
+            button.textContent = 'Entrar al aula';
+          }
+          return;
         }
+
+        const user = await resolveSessionUser(7000);
+        if (!user) {
+          setFeedback('No se pudo recuperar la sesion. Intenta de nuevo.', true);
+          if (button instanceof HTMLButtonElement) {
+            button.disabled = false;
+            button.textContent = 'Entrar al aula';
+          }
+          return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const safeNext = getSafeNextPath(params.get('next'), '/dashboard');
+        window.location.assign(safeNext);
+      } catch (_error) {
+        setFeedback('Error de conexion. Revisa tu red e intentalo otra vez.', true);
         if (button instanceof HTMLButtonElement) {
           button.disabled = false;
           button.textContent = 'Entrar al aula';
         }
-        return;
       }
-
-      const accessToken = data?.session?.access_token;
-      const refreshToken = data?.session?.refresh_token;
-      if (accessToken && refreshToken) {
-        await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
-      }
-
-      window.sessionStorage.setItem('eaqs-auth-just-signed', String(Date.now()));
-
-      const user = await resolveSessionUser(5200);
-      if (!user) {
-        if (feedback) {
-          feedback.textContent = 'No se pudo validar la sesion. Intenta entrar de nuevo.';
-          feedback.className = 'text-sm text-red-700 min-h-6';
-        }
-        if (button instanceof HTMLButtonElement) {
-          button.disabled = false;
-          button.textContent = 'Entrar al aula';
-        }
-        return;
-      }
-
-      const params = new URLSearchParams(window.location.search);
-      const next = params.get('next');
-      const safeNext = next && next.startsWith('/') ? next : '/dashboard';
-      window.location.href = safeNext;
     });
   </script>
 </Layout>

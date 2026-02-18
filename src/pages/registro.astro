@@ -4,7 +4,6 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Button from '../components/ui/Button.astro';
 import Field from '../components/ui/Field.astro';
-import { isSupabaseConfigured } from '../lib/supabase';
 ---
 
 <Layout
@@ -13,8 +12,8 @@ import { isSupabaseConfigured } from '../lib/supabase';
 >
   <Header />
 
-  <main class="bg-white pt-36 md:pt-40 pb-20">
-    <section class="section-shell">
+  <main class="bg-white pt-24 md:pt-28 pb-16 md:pb-20">
+    <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
       <div class="content-shell max-w-3xl space-y-10 md:space-y-12">
         <header class="text-center max-w-2xl mx-auto space-y-5" data-reveal>
           <p class="editorial-kicker">Reserva de plaza</p>
@@ -27,13 +26,6 @@ import { isSupabaseConfigured } from '../lib/supabase';
           <p class="font-sans text-xs uppercase tracking-[0.2em] text-ink/55">
             Oferta de lanzamiento: 390 EUR . luego 490 EUR
           </p>
-          {
-            !isSupabaseConfigured && (
-              <p class="text-sm text-red-700">
-                Falta configurar Supabase en este entorno (PUBLIC_SUPABASE_URL y PUBLIC_SUPABASE_ANON_KEY).
-              </p>
-            )
-          }
         </header>
 
         <section class="ui-panel p-7 md:p-10 max-w-2xl mx-auto" data-reveal style="--reveal-delay:120ms">

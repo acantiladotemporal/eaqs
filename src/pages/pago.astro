@@ -10,22 +10,22 @@ const paymentHref = hasExternalCheckout ? checkoutUrl : '/gracias?payment=ok';
 ---
 
 <Layout
-  title="Pago | El Arbol Que Suena"
-  description="Confirma tu plaza en la primera edicion del curso y activa tu acceso al aula."
+  title="Pago seguro | El Arbol Que Suena"
+  description="Confirma tu plaza mediante Stripe y activa tu acceso privado al aula."
 >
   <Header />
 
-  <main class="bg-white pt-40 pb-20">
+  <main class="bg-white pt-24 md:pt-28 pb-16 md:pb-20">
     <section class="section-shell section-tone-ivory">
       <div class="content-shell grid lg:grid-cols-12 gap-10 md:gap-12 items-start">
         <aside class="lg:col-span-5 space-y-6" data-reveal>
-          <p class="editorial-kicker">Paso 2 de 3</p>
+          <p class="editorial-kicker">Paso 2 de 2</p>
           <h1 class="headline-luxe section-title">
-            Confirmar pago
-            <span class="ink-underline-subtle">y activar tu plaza</span>.
+            Finaliza tu pago
+            <span class="ink-underline-subtle">con Stripe</span>.
           </h1>
           <p class="lead-copy">
-            Estas a un paso de entrar al aula. Al completar el pago tendras acceso al dashboard y al modulo inicial.
+            Tras confirmar el pago recibirás email de compra y email de acceso al perfil privado del alumno.
           </p>
 
           <div class="ui-panel p-6 md:p-7 space-y-4">
@@ -35,6 +35,7 @@ const paymentHref = hasExternalCheckout ? checkoutUrl : '/gracias?payment=ok';
               <p class="font-display text-4xl italic text-note">390 EUR</p>
             </div>
             <p class="text-xs text-ink/60 uppercase tracking-[0.18em]">Oferta lanzamiento . luego 490 EUR</p>
+            <p class="text-sm text-ink/72">Incluye 6 modulos + certificacion.</p>
             <p class="text-sm text-ink/72">Plazas limitadas: maximo 20 docentes por edicion.</p>
           </div>
         </aside>
@@ -43,22 +44,22 @@ const paymentHref = hasExternalCheckout ? checkoutUrl : '/gracias?payment=ok';
           <div class="max-w-xl mx-auto space-y-8">
             <div>
               <p class="editorial-kicker mb-3">Pago seguro</p>
-              <h2 class="headline-luxe text-4xl md:text-5xl">Finalizar compra</h2>
+              <h2 class="headline-luxe text-4xl md:text-5xl">Completar compra</h2>
             </div>
 
             <p class="lead-copy">
               {hasExternalCheckout
-                ? 'Seras redirigido a la pasarela de pago segura para confirmar tu compra.'
-                : 'No hay pasarela configurada en este entorno. Puedes continuar en modo demo para revisar el flujo completo.'}
+                ? 'Seras redirigido a Stripe para finalizar el pago con tarjeta de forma segura.'
+                : 'No hay URL de checkout configurada. Define PUBLIC_CHECKOUT_URL para activar Stripe en esta pagina.'}
             </p>
 
             <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
-              <Button href={paymentHref} size="lg" variant="primary" class="cta-breathe">Pagar y confirmar plaza</Button>
-              <Button href="/registro" size="lg" variant="secondary">Volver al registro</Button>
+              <Button href={paymentHref} size="lg" variant="primary" class="cta-breathe">Pagar 390 EUR en Stripe</Button>
+              <Button href="/registro" size="lg" variant="secondary">Volver al carrito</Button>
             </div>
 
             <p class="text-xs text-ink/60">
-              Tras el pago, pasa a iniciar sesion para entrar al dashboard y comenzar el curso.
+              Tras la compra, recibirás por email la confirmacion y el acceso a tu perfil privado con modulos aun sin activar.
             </p>
           </div>
         </section>

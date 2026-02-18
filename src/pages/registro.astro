@@ -3,12 +3,11 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Button from '../components/ui/Button.astro';
-import Field from '../components/ui/Field.astro';
 ---
 
 <Layout
-  title="Registro | El Arbol Que Suena"
-  description="Crea tu cuenta y continua al pago para reservar tu plaza en el curso de neuroeducacion musical."
+  title="Reserva | El Arbol Que Suena"
+  description="Resumen de compra del curso de neuroeducacion musical antes de pasar al pago seguro."
 >
   <Header />
 
@@ -16,117 +15,47 @@ import Field from '../components/ui/Field.astro';
     <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
       <div class="content-shell max-w-3xl space-y-10 md:space-y-12">
         <header class="text-center max-w-2xl mx-auto space-y-5" data-reveal>
-          <p class="editorial-kicker">Reserva de plaza</p>
+          <p class="editorial-kicker">Paso 1 de 2</p>
           <h1 class="headline-luxe section-title">
-            Crea tu cuenta y continua al pago.
+            Tu carrito de la formacion.
           </h1>
           <p class="lead-copy">
-            Primer paso para entrar al aula. Plazas limitadas: maximo 20 docentes por convocatoria.
-          </p>
-          <p class="font-sans text-xs uppercase tracking-[0.2em] text-ink/55">
-            Oferta de lanzamiento: 390 EUR . luego 490 EUR
+            Revisa todo lo que incluye esta edicion y pasa al pago seguro con Stripe para confirmar tu plaza.
           </p>
         </header>
 
-        <section class="ui-panel p-7 md:p-10 max-w-2xl mx-auto" data-reveal style="--reveal-delay:120ms">
-          <form id="register-form" class="space-y-6" novalidate>
-            <Field id="name" label="Nombre completo" placeholder="Nombre Apellido" autocomplete="name" required />
-            <Field id="email" type="email" label="Correo electronico" placeholder="tu@email.com" autocomplete="email" required />
-            <Field
-              id="password"
-              type="password"
-              label="Contrasena"
-              placeholder="Minimo 6 caracteres"
-              autocomplete="new-password"
-              hint="Usa una contrasena segura para proteger tu cuenta."
-              required
-            />
+        <section class="ui-panel p-7 md:p-10 max-w-2xl mx-auto space-y-7" data-reveal style="--reveal-delay:120ms">
+          <div class="space-y-2">
+            <p class="editorial-kicker">Curso seleccionado</p>
+            <h2 class="font-display text-4xl md:text-5xl text-note leading-[1.02]">
+              Neuroeducacion musical para docentes de 0 a 9 anos.
+            </h2>
+            <p class="text-sm text-ink/62">Foco principal: primera infancia (0 a 6 anos).</p>
+          </div>
 
-            <p id="register-feedback" class="text-sm text-ink/60 min-h-6" aria-live="polite"></p>
-            <Button id="btn-register" type="submit" variant="primary" size="lg" block>Crear cuenta y continuar al pago</Button>
-          </form>
+          <div class="space-y-3 text-sm text-ink/78">
+            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Primera edicion 2026 · formato online.</p>
+            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>6 modulos de especializacion + certificacion de la escuela.</p>
+            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Plazas limitadas: maximo 20 docentes por convocatoria.</p>
+            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Acceso privado activado tras confirmacion de pago.</p>
+          </div>
 
-          <p class="text-center font-sans text-xs text-ink/55 mt-6">
-            Ya tienes cuenta?
-            <a href="/login" class="text-ink underline decoration-1 underline-offset-4 hover:text-moss">Iniciar sesion</a>
-          </p>
+          <div class="border-t border-clay/60 pt-6 space-y-2">
+            <div class="flex items-end justify-between gap-4">
+              <p class="text-sm text-ink/72">Precio hoy</p>
+              <p class="font-display text-5xl italic text-note">390 EUR</p>
+            </div>
+            <p class="text-xs uppercase tracking-[0.18em] text-ink/58">Oferta de lanzamiento · luego 490 EUR</p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 sm:items-center pt-2">
+            <Button href="/pago?source=carrito_registro" size="lg" variant="primary" class="cta-breathe">Ir al pago seguro</Button>
+            <Button href="/#precio" size="lg" variant="secondary">Volver a la informacion</Button>
+          </div>
         </section>
       </div>
     </section>
   </main>
 
   <Footer />
-
-  <script>
-    import { isSupabaseConfigured, supabase } from '../lib/supabase';
-
-    const form = document.getElementById('register-form');
-    const feedback = document.getElementById('register-feedback');
-    const button = document.getElementById('btn-register');
-
-    function setFeedback(message, isError = false) {
-      if (!feedback) return;
-      feedback.textContent = message;
-      feedback.className = isError ? 'text-sm text-red-700 min-h-6' : 'text-sm text-ink/60 min-h-6';
-    }
-
-    form?.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      if (!isSupabaseConfigured) {
-        setFeedback('Supabase no esta configurada en este entorno.', true);
-        return;
-      }
-
-      const emailInput = document.getElementById('email');
-      const passwordInput = document.getElementById('password');
-      const nameInput = document.getElementById('name');
-
-      const email = (emailInput instanceof HTMLInputElement ? emailInput.value : '').trim();
-      const password = passwordInput instanceof HTMLInputElement ? passwordInput.value : '';
-      const name = (nameInput instanceof HTMLInputElement ? nameInput.value : '').trim();
-
-      if (!email || !password || !name) {
-        setFeedback('Completa nombre, email y contrasena.', true);
-        return;
-      }
-
-      if (password.length < 6) {
-        setFeedback('La contrasena debe tener al menos 6 caracteres.', true);
-        return;
-      }
-
-      if (button instanceof HTMLButtonElement) {
-        button.disabled = true;
-        button.textContent = 'Creando cuenta...';
-      }
-
-      setFeedback('');
-
-      try {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { full_name: name } },
-        });
-
-        if (error) {
-          setFeedback(error.message, true);
-          if (button instanceof HTMLButtonElement) {
-            button.disabled = false;
-            button.textContent = 'Crear cuenta y continuar al pago';
-          }
-          return;
-        }
-
-        window.location.assign('/pago?source=registro');
-      } catch (_error) {
-        setFeedback('Error de conexion. Revisa tu red e intentalo otra vez.', true);
-        if (button instanceof HTMLButtonElement) {
-          button.disabled = false;
-          button.textContent = 'Crear cuenta y continuar al pago';
-        }
-      }
-    });
-  </script>
 </Layout>

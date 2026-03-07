@@ -1,0 +1,258 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import { COURSE_MODULES, getModuleById } from '../../lib/course-data';
+
+const { id = '1' } = Astro.params;
+const moduleData = getModuleById(id) || COURSE_MODULES[0];
+const moduleNumber = Number(moduleData.id);
+const nextModule = COURSE_MODULES.find((module) => Number(module.id) === moduleNumber + 1) || null;
+---
+
+<Layout title={`Quiz modulo ${moduleData.numero} | El Arbol Que Suena`}>
+  <Header mode="learning" />
+
+  <main class="bg-white min-h-screen pt-20 md:pt-24 pb-16 md:pb-20">
+    <section class="section-shell pt-6 md:pt-8 pb-14 md:pb-16">
+      <section class="content-shell max-w-4xl py-4 md:py-6">
+        <div id="exam-intro" class="text-center space-y-8">
+          <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold">
+            Quiz de consolidacion
+          </span>
+          <h1 class="font-display text-6xl md:text-8xl italic tracking-tight leading-none text-ink">
+            Modulo {moduleData.numero}.
+          </h1>
+          <p class="font-sans text-ink/62 max-w-lg mx-auto text-lg leading-relaxed">
+            {moduleData.title}. Completa este quiz para consolidar el bloque.
+          </p>
+          <button id="exam-start" class="btn btn-lg btn-primary">Comenzar quiz</button>
+        </div>
+
+        <div id="exam-quiz" class="space-y-10 hidden">
+          <header class="flex justify-between items-end border-b border-clay/30 pb-6 gap-8">
+            <h2 id="exam-question" class="font-display text-4xl md:text-5xl italic text-ink max-w-xl leading-tight"></h2>
+            <div class="text-right">
+              <span class="font-sans text-[10px] font-bold text-moss tracking-widest uppercase">Pregunta</span>
+              <p id="exam-counter" class="font-display text-3xl italic"></p>
+            </div>
+          </header>
+          <div id="exam-options" class="grid gap-4"></div>
+        </div>
+
+        <div id="exam-result" class="text-center space-y-8 hidden">
+          <h2 id="exam-result-title" class="font-display text-7xl md:text-8xl italic tracking-tight leading-none"></h2>
+          <p id="exam-result-score" class="font-sans text-ink/62 text-xl"></p>
+          <p id="exam-saving" class="text-sm text-ink/55 min-h-6" aria-live="polite"></p>
+          <div id="exam-result-actions" class="pt-4 flex flex-wrap justify-center gap-3"></div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script define:vars={{ moduleId: moduleData.id, moduleTitle: moduleData.title, nextModuleId: nextModule?.id || '' }}>
+    import { buildLoginRedirect, resolveSessionUser } from '../../lib/auth-client';
+    import { supabase } from '../../lib/supabase';
+
+    function buildQuestions(title) {
+      return [
+        {
+          titulo: `Cual es el objetivo principal del bloque ${title}?`,
+          opciones: [
+            'Acumular teoria sin aplicacion',
+            'Aplicar neuroeducacion musical en decisiones de aula',
+            'Sustituir toda la planificacion didactica',
+          ],
+          correcta: 1,
+        },
+        {
+          titulo: 'Que accion representa mejor el enfoque de esta cohorte?',
+          opciones: [
+            'Abrir modulos sin practica',
+            'Practicar, observar y ajustar de forma semanal',
+            'Esperar al examen final para aplicar',
+          ],
+          correcta: 1,
+        },
+        {
+          titulo: 'El quiz del modulo sirve para...',
+          opciones: [
+            'Marcar progreso y consolidar aprendizaje',
+            'Sustituir la practica docente',
+            'Bloquear el acceso por castigo',
+          ],
+          correcta: 0,
+        },
+      ];
+    }
+
+    const preguntas = buildQuestions(moduleTitle);
+    const introEl = document.getElementById('exam-intro');
+    const quizEl = document.getElementById('exam-quiz');
+    const resultEl = document.getElementById('exam-result');
+    const startBtn = document.getElementById('exam-start');
+    const questionEl = document.getElementById('exam-question');
+    const counterEl = document.getElementById('exam-counter');
+    const optionsEl = document.getElementById('exam-options');
+    const resultTitleEl = document.getElementById('exam-result-title');
+    const resultScoreEl = document.getElementById('exam-result-score');
+    const resultActionsEl = document.getElementById('exam-result-actions');
+    const savingEl = document.getElementById('exam-saving');
+
+    let preguntaActual = 0;
+    let puntos = 0;
+
+    async function ensureSession() {
+      const user = await resolveSessionUser(8500);
+
+      if (user) return user;
+      window.location.replace(buildLoginRedirect(`/examen/${moduleId}`));
+      return null;
+    }
+
+    function show(el) {
+      el?.classList.remove('hidden');
+    }
+
+    function hide(el) {
+      el?.classList.add('hidden');
+    }
+
+    function renderQuestion() {
+      const pregunta = preguntas[preguntaActual];
+      if (!pregunta || !questionEl || !counterEl || !optionsEl) return;
+
+      questionEl.textContent = pregunta.titulo;
+      counterEl.textContent = `${preguntaActual + 1}/${preguntas.length}`;
+      optionsEl.innerHTML = '';
+
+      pregunta.opciones.forEach((opcion, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className =
+          'group flex justify-between items-center p-6 border border-clay/40 rounded-2xl hover:bg-ink hover:text-bone transition-all duration-500 text-left';
+
+        const optionText = document.createElement('span');
+        optionText.className = 'font-sans text-xs uppercase tracking-[0.18em] font-medium';
+        optionText.textContent = opcion;
+
+        const optionArrow = document.createElement('span');
+        optionArrow.className = 'text-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+        optionArrow.textContent = '\u2192';
+
+        button.append(optionText, optionArrow);
+        button.addEventListener('click', () => answerQuestion(index));
+        optionsEl.appendChild(button);
+      });
+    }
+
+    async function saveProgressIfPassed() {
+      if (!savingEl) return;
+      savingEl.textContent = 'Guardando progreso...';
+
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) {
+          savingEl.textContent = 'Sin sesion activa. Inicia sesion de nuevo para guardar avance.';
+          return;
+        }
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('progress')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        const currentProgress = profile?.progress && typeof profile.progress === 'object' ? profile.progress : {};
+        const quizProgress =
+          currentProgress.quiz_progress && typeof currentProgress.quiz_progress === 'object'
+            ? currentProgress.quiz_progress
+            : {};
+
+        const nextProgress = {
+          ...currentProgress,
+          quiz_progress: {
+            ...quizProgress,
+            [moduleId]: true,
+          },
+          [`modulo${moduleId}`]: true,
+          last_quiz_module: moduleId,
+          last_quiz_at: new Date().toISOString(),
+        };
+
+        await supabase.from('profiles').upsert({ id: user.id, progress: nextProgress }, { onConflict: 'id' });
+        savingEl.textContent = 'Quiz completado. Progreso actualizado.';
+      } catch (error) {
+        console.error('Error guardando progreso del quiz:', error);
+        savingEl.textContent = 'No se pudo guardar ahora, pero puedes continuar.';
+      }
+    }
+
+    function showResult() {
+      hide(quizEl);
+      show(resultEl);
+
+      if (!resultTitleEl || !resultScoreEl || !resultActionsEl) return;
+
+      const aprobado = puntos >= 2;
+      resultTitleEl.textContent = aprobado ? 'Aprobado.' : 'Revisar.';
+      resultScoreEl.textContent = `Has alcanzado ${puntos} de ${preguntas.length} puntos posibles.`;
+
+      resultActionsEl.innerHTML = '';
+
+      if (aprobado) {
+        saveProgressIfPassed();
+
+        if (nextModuleId) {
+          const nextLink = document.createElement('a');
+          nextLink.href = `/modulos/${nextModuleId}`;
+          nextLink.className = 'btn btn-lg btn-primary';
+          nextLink.textContent = 'Ir al siguiente modulo';
+          resultActionsEl.appendChild(nextLink);
+        }
+
+        const backLink = document.createElement('a');
+        backLink.href = '/dashboard';
+        backLink.className = 'btn btn-lg btn-secondary';
+        backLink.textContent = 'Volver al dashboard';
+        resultActionsEl.appendChild(backLink);
+        return;
+      }
+
+      if (savingEl) savingEl.textContent = '';
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.className = 'btn btn-lg btn-secondary';
+      retry.textContent = 'Reintentar quiz';
+      retry.addEventListener('click', () => window.location.reload());
+      resultActionsEl.appendChild(retry);
+    }
+
+    function answerQuestion(indice) {
+      const pregunta = preguntas[preguntaActual];
+      if (!pregunta) return;
+
+      if (indice === pregunta.correcta) puntos += 1;
+
+      if (preguntaActual + 1 < preguntas.length) {
+        preguntaActual += 1;
+        renderQuestion();
+        return;
+      }
+
+      showResult();
+    }
+
+    startBtn?.addEventListener('click', () => {
+      hide(introEl);
+      show(quizEl);
+      renderQuestion();
+    });
+
+    ensureSession();
+  </script>
+</Layout>
+
+

@@ -1,113 +1,84 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
+import { COURSE_MODULES, formatMadridDate, getModuleById } from '../../lib/course-data';
 
-export async function getStaticPaths() {
-  return [
-    { params: { id: '1' } },
-    { params: { id: '2' } },
-    { params: { id: '3' } },
-    { params: { id: '4' } },
-    { params: { id: '5' } },
-    { params: { id: '6' } },
-  ];
-}
+const { id = '1' } = Astro.params;
+const moduleData = getModuleById(id) || COURSE_MODULES[0];
 
-const { id } = Astro.params;
-
-const modulosData = {
-  '1': {
-    title: 'Bases de la Neuroeducacion',
-    numero: '01',
-    content:
-      'La neuroeducacion musical integra desarrollo cerebral, ritmo y vinculacion afectiva para construir aprendizaje estable.',
-  },
-  '2': {
-    title: 'Ritmo y Psicomotricidad',
-    numero: '02',
-    content:
-      'El ritmo organiza movimiento, atencion y lenguaje. Entrena sincronizacion y anticipacion en edades tempranas.',
-  },
-  '3': {
-    title: 'Voz y Lenguaje Musical',
-    numero: '03',
-    content:
-      'La voz cantada fortalece discriminacion auditiva, prosodia y seguridad expresiva en primera infancia.',
-  },
-  '4': {
-    title: 'Emocion y Memoria',
-    numero: '04',
-    content:
-      'La experiencia sonora significativa mejora codificacion emocional y consolidacion de memoria.',
-  },
-  '5': {
-    title: 'Diseno de Sesiones',
-    numero: '05',
-    content:
-      'Aprende a planificar secuencias musicales con objetivos observables y evaluacion realista en aula.',
-  },
-  '6': {
-    title: 'Integracion y Transferencia',
-    numero: '06',
-    content:
-      'Cierra el proceso conectando neurociencia, didactica y aplicacion sostenida para distintos perfiles de alumnado.',
-  },
-};
-
-const modulo = modulosData[id] || modulosData['1'];
+const moduleNumber = Number(moduleData.id);
+const nextModule = COURSE_MODULES.find((module) => Number(module.id) === moduleNumber + 1) || null;
+const unlockLabel = formatMadridDate(moduleData.unlockAtIso);
 ---
 
-<Layout title={`Modulo ${modulo.numero} | El Arbol Que Suena`}>
+<Layout title={`Modulo ${moduleData.numero} | El Arbol Que Suena`}>
   <Header mode="learning" />
 
-  <main class="bg-white min-h-screen pt-24 md:pt-28 pb-16 md:pb-20">
-    <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
-    <article class="content-shell max-w-4xl font-sans">
-      <header class="mb-16">
-        <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold mb-4 block">
-          Modulo {modulo.numero}
-        </span>
-        <h1 class="font-display text-6xl md:text-8xl italic tracking-tighter leading-none mb-10 text-ink">{modulo.title}</h1>
-        <div class="h-px w-full bg-clay/30"></div>
-      </header>
+  <main class="bg-white min-h-screen pt-20 md:pt-24 pb-16 md:pb-20">
+    <section class="section-shell pt-6 md:pt-8 pb-14 md:pb-16">
+      <article class="content-shell max-w-4xl font-sans">
+        <header class="mb-12 md:mb-14 space-y-5" data-reveal>
+          <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold block">
+            Modulo {moduleData.numero}
+          </span>
+          <h1 class="font-display text-5xl md:text-7xl italic tracking-tight leading-[0.95] text-ink">{moduleData.title}</h1>
+          <p class="text-sm text-ink/62">Apertura oficial: {unlockLabel} (Europe/Madrid)</p>
+          <div class="h-px w-full bg-clay/30"></div>
+        </header>
 
-      <section class="space-y-8 text-ink/80 leading-relaxed">
-        <p class="text-2xl font-display italic text-ink border-l-4 border-moss pl-6 py-1">{modulo.content}</p>
+        <section class="space-y-8 text-ink/80 leading-relaxed" data-reveal style="--reveal-delay:90ms">
+          <p class="text-2xl font-display italic text-ink border-l-4 border-moss pl-6 py-1">{moduleData.overview}</p>
 
-        <p class="text-lg">
-          Este modulo combina fundamentos cientificos y actividades listas para aplicar en contextos reales de aula, con foco en
-          edades de 0 a 6 anos.
-        </p>
+          <p class="text-lg">
+            Este modulo combina fundamentos de neuroeducacion musical y actividades listas para aplicar en aula con alumnado de 0 a 6,
+            transferibles a 0 a 9.
+          </p>
 
-        <div class="ui-panel p-10 my-12">
-          <h2 class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-moss mb-4">Recurso de apoyo</h2>
-          <p class="font-display text-2xl italic text-ink">Guia de observacion docente (disponible dentro del aula virtual)</p>
-        </div>
-      </section>
+          <div class="ui-panel p-8 md:p-10 space-y-4">
+            <h2 class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-moss">Recursos de este modulo</h2>
+            <ul class="space-y-2 text-base text-ink/78">
+              <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-ochre"></span>Clase principal grabada y guion de aplicacion.</li>
+              <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-ochre"></span>Ficha descargable para aula y observacion docente.</li>
+              <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-ochre"></span>Quiz de consolidacion para marcar progreso del bloque.</li>
+            </ul>
+          </div>
+        </section>
 
-      <footer class="mt-20 pt-12 border-t border-clay/30 flex flex-col md:flex-row justify-between items-center gap-10">
-        <div>
-          <p class="font-sans text-[10px] uppercase tracking-widest text-ink/45 font-bold mb-2">Siguiente paso</p>
-          <p class="font-display text-3xl italic">Valida lo aprendido en el examen.</p>
-        </div>
-        <a href="/examen-1" class="btn btn-lg btn-primary">
-          Realizar examen modulo {modulo.numero}
-        </a>
-      </footer>
-    </article>
+        <footer class="mt-16 pt-10 border-t border-clay/30 flex flex-col md:flex-row justify-between items-center gap-8" data-reveal style="--reveal-delay:140ms">
+          <div class="space-y-1">
+            <p class="font-sans text-[10px] uppercase tracking-widest text-ink/45 font-bold">Siguiente paso</p>
+            <p class="font-display text-3xl italic">Completa el quiz del modulo.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 justify-center">
+            <a href={`/examen/${moduleData.id}`} class="btn btn-lg btn-primary">
+              Realizar quiz modulo {moduleData.numero}
+            </a>
+            {nextModule && <a href={`/modulos/${nextModule.id}`} class="btn btn-lg btn-secondary">Ir al siguiente modulo</a>}
+          </div>
+        </footer>
+      </article>
     </section>
   </main>
 
-  <script>
+  <script define:vars={{ unlockAtIso: moduleData.unlockAtIso }}>
+    import { AUTH_PREVIEW_MODE } from '../../lib/auth-config';
     import { buildLoginRedirect, resolveSessionUser } from '../../lib/auth-client';
 
     async function ensureSession() {
-      const user = await resolveSessionUser(7000);
+      const user = await resolveSessionUser(8500);
 
-      if (user) return;
-      window.location.replace(buildLoginRedirect(window.location.pathname));
+      if (!user) {
+        window.location.replace(buildLoginRedirect(window.location.pathname));
+        return;
+      }
+
+      const unlockAt = new Date(unlockAtIso);
+      if (!AUTH_PREVIEW_MODE && !Number.isNaN(unlockAt.getTime()) && Date.now() < unlockAt.getTime()) {
+        window.location.replace('/dashboard?module=locked');
+      }
     }
 
     ensureSession();
   </script>
 </Layout>
+

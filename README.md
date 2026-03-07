@@ -1,46 +1,61 @@
-# Astro Starter Kit: Basics
+# El Arbol Que Suena - Web Cohorte 01
 
-```sh
-npm create astro@latest -- --template basics
-```
+Web de lanzamiento para la Escuela Internacional de Neuroeducacion Musical.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Stack
 
-## 🚀 Project Structure
+- Astro 5 + Tailwind
+- Supabase (auth + datos)
+- Stripe Checkout (pago)
+- Resend (emails)
+- Vercel adapter (runtime server)
 
-Inside of your Astro project, you'll see the following folders and files:
+## Variables de entorno
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+Copia `.env.example` a `.env` y completa:
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+- `PUBLIC_SUPABASE_URL`
+- `PUBLIC_SUPABASE_ANON_KEY`
+- `PUBLIC_SITE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_PRICE_ID` (opcional, si no se usa se crea precio inline a 390 EUR)
+- `STRIPE_WEBHOOK_SECRET`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+- `CRON_SECRET`
 
-## 🧞 Commands
+## Base de datos
 
-All commands are run from the root of the project, from a terminal:
+Ejecuta `supabase/launch_schema.sql` en el SQL editor de Supabase.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Scripts
 
-## 👀 Want to learn more?
+- `npm run dev`
+- `npm run build`
+- `npm run preview`
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Endpoints implementados
+
+- `GET /api/launch/status`
+- `POST /api/newsletter/subscribe`
+- `POST /api/checkout/create-session`
+- `GET /api/checkout/status?session_id=...`
+- `POST /api/stripe/webhook`
+- `POST /api/cron/campaign?kind=weekly|conversion|closing&token=...`
+
+## Flujo principal
+
+1. Home -> `/registro`
+2. `/registro` valida disponibilidad (fecha/plazas) y crea Stripe Checkout
+3. Stripe redirige a `/gracias?session_id=...`
+4. `/gracias` valida pago real y activa onboarding
+5. Login -> Dashboard -> Modulos -> Quiz
+
+## Cohorte 01 (2026)
+
+- Precio lanzamiento: 390 EUR
+- Precio posterior: 490 EUR
+- Plazas: 20
+- Cierre carrito: 12 abril 2026, 23:59 (Europe/Madrid)
+- Itinerario: 10 modulos con apertura por calendario y quiz por modulo

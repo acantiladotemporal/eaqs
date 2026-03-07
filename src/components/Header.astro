@@ -50,7 +50,7 @@ const isLearning = mode === 'learning';
             <div class="mobile-nav">
               <a href="/dashboard">Ruta</a>
               <a href="/foro">Comunidad</a>
-              <a href="/examen-1">Examen</a>
+              <a href="/examen/1">Examen</a>
             </div>
           ) : (
             <div class="mobile-nav">
@@ -72,7 +72,7 @@ const isLearning = mode === 'learning';
               <span data-user-name class="name-swap">Docente</span>
             </span>
             <a href="/login" data-header-login class="btn btn-sm btn-header-access hidden">Acceso</a>
-            <button type="button" data-header-logout class="btn btn-sm btn-header-access">Salir</button>
+            <button type="button" data-header-logout class="btn btn-sm btn-header-access hidden">Salir</button>
           </>
         ) : (
           <>
@@ -102,6 +102,10 @@ const isLearning = mode === 'learning';
     if (user && nameTargets.length) {
       const firstName = getPreferredName(user);
       nameTargets.forEach((target) => animateNameSwap(target, firstName));
+    }
+
+    if (user && logoutButton instanceof HTMLButtonElement) {
+      logoutButton.classList.remove('hidden');
     }
 
     if (!user && loginLink instanceof HTMLAnchorElement) {

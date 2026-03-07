@@ -4,46 +4,28 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Button from '../components/ui/Button.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
+import {
+  COURSE_MODULES,
+  COURSE_SEAT_LIMIT,
+  COURSE_TIMELINE,
+  COURSE_LAUNCH_PRICE_EUR,
+  COURSE_STANDARD_PRICE_EUR,
+  INTEGRATION_WEEKEND,
+} from '../lib/course-data';
 
-const moduleRows = [
-  {
-    id: '01',
-    title: 'Arquitectura Cerebral',
-    description: 'Como procesa el cerebro infantil el sonido, el ritmo y la repeticion.',
-  },
-  {
-    id: '02',
-    title: 'Sincronia Ritmica',
-    description: 'Pulso, coordinacion y movimiento para activar atencion real en clase.',
-  },
-  {
-    id: '03',
-    title: 'Neurofonia',
-    description: 'Voz, lenguaje y musicalidad para enriquecer expresion y comunicacion.',
-  },
-  {
-    id: '04',
-    title: 'Sistema Limbico',
-    description: 'Emocion, memoria y seguridad afectiva como base del aprendizaje.',
-  },
-  {
-    id: '05',
-    title: 'Laboratorio de Aula',
-    description: 'Secuencias concretas para aplicar con grupos de 0 a 6 y 0 a 9.',
-  },
-  {
-    id: '06',
-    title: 'Integracion Final',
-    description: 'Cierre metodologico, evaluacion y certificacion de la Escuela.',
-  },
-];
+const moduleRows = COURSE_MODULES.map((module) => ({
+  id: module.numero,
+  title: module.title,
+  description: module.description,
+}));
 
 const formationFeatures = [
-  '6 modulos con aplicacion directa en aula',
+  '10 modulos con recursos y prueba por cada bloque',
   'Acceso permanente a clases y materiales',
   'Certificacion oficial de la Escuela',
   'Comunidad docente internacional',
   'Mentoria en directo con Azahara',
+  'Apertura por calendario de cohorte + progreso por quiz',
 ];
 
 const faqs = [
@@ -54,6 +36,11 @@ const faqs = [
   {
     question: 'Cuanto tiempo necesito cada semana?',
     answer: 'Entre 2 y 4 horas semanales entre clase, observacion y aplicacion en aula.',
+  },
+  {
+    question: 'Como se desbloquean los modulos?',
+    answer:
+      'La apertura es por calendario de edicion. Cada modulo incluye quiz y recursos propios para consolidar el aprendizaje.',
   },
   {
     question: 'Es teorico o practico?',
@@ -84,13 +71,16 @@ const faqs = [
         </p>
 
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4" data-reveal style="--reveal-delay:220ms">
-          <Button href="/registro?source=home_hero" size="lg" variant="primary" class="cta-breathe">Quiero transformar mi aula</Button>
+          <Button id="home-hero-reserve" href="/registro?source=home_hero" size="lg" variant="primary" class="cta-breathe">
+            Quiero transformar mi aula
+          </Button>
           <a href="/#curso" class="btn btn-secondary btn-lg">Ver programa completo</a>
         </div>
 
         <p class="sales-note mt-8" data-reveal style="--reveal-delay:280ms">
-          Proxima edicion: <span class="ink-underline-subtle">plazas limitadas a 20 docentes</span>. Prioridad para 0 a 6 anos.
+          Proxima edicion: <span class="ink-underline-subtle">plazas limitadas a {COURSE_SEAT_LIMIT} docentes</span>. Prioridad para 0 a 6 anos.
         </p>
+        <p id="home-launch-status" class="sales-note mt-2" data-reveal style="--reveal-delay:320ms"></p>
       </div>
     </section>
 
@@ -146,6 +136,33 @@ const faqs = [
       </div>
     </section>
 
+    <section id="calendario" class="section-shell section-tone-ivory">
+      <div class="content-shell max-w-4xl">
+        <div class="price-shell" data-reveal>
+          <div class="text-center mb-8 md:mb-10">
+            <p class="editorial-kicker mb-3">Calendario operativo</p>
+            <h2 class="headline-luxe section-title">Cohorte 01 . marzo a mayo 2026</h2>
+          </div>
+
+          <div class="space-y-0 border-t border-clay/70 border-b border-clay/70">
+            {COURSE_TIMELINE.map((entry) => (
+              <article class="grid md:grid-cols-[220px_minmax(0,1fr)] gap-4 py-4 border-b border-clay/55 last:border-b-0">
+                <p class="font-sans text-[11px] uppercase tracking-[0.18em] text-ink/58">{entry.dateRange}</p>
+                <div class="space-y-1">
+                  <h3 class="font-display text-[1.8rem] leading-none text-note">{entry.label}</h3>
+                  <p class="text-ink/72 leading-relaxed">{entry.detail}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <p class="mt-6 text-sm text-ink/60 text-center">
+            {INTEGRATION_WEEKEND.title}: {INTEGRATION_WEEKEND.detail}
+          </p>
+        </div>
+      </div>
+    </section>
+
     <section id="quienes" class="section-shell section-tone-ivory">
       <div class="content-shell">
         <div class="grid lg:grid-cols-12 gap-10 md:gap-12 items-start">
@@ -178,8 +195,13 @@ const faqs = [
           <div class="text-center mb-10">
             <p class="editorial-kicker mb-4">Inversion en tu futuro docente</p>
             <h2 class="headline-luxe headline-rhythm-soft section-title mb-5">La formacion.</h2>
-            <p class="font-display text-6xl md:text-7xl text-note mb-2">390 EUR</p>
-            <p class="text-[11px] uppercase tracking-[0.2em] text-ink/54">Oferta lanzamiento . luego 490 EUR</p>
+            <p class="font-display text-6xl md:text-7xl text-note mb-2">{COURSE_LAUNCH_PRICE_EUR} EUR</p>
+            <p class="text-[11px] uppercase tracking-[0.2em] text-ink/54">
+              Oferta lanzamiento . luego {COURSE_STANDARD_PRICE_EUR} EUR
+            </p>
+            <p class="mt-3 text-xs uppercase tracking-[0.14em] text-ink/58">
+              Cierre automatico: 12 abril 2026 . 23:59 (Europe/Madrid)
+            </p>
           </div>
 
           <div class="max-w-2xl mx-auto">
@@ -192,9 +214,11 @@ const faqs = [
           </div>
 
           <div class="text-center pt-10">
-            <Button href="/registro?source=home_precio" size="lg" variant="primary" class="cta-breathe">Reservar mi plaza - 390 EUR</Button>
+            <Button id="home-price-reserve" href="/registro?source=home_precio" size="lg" variant="primary" class="cta-breathe">
+              Reservar mi plaza - {COURSE_LAUNCH_PRICE_EUR} EUR
+            </Button>
             <p class="mt-5 text-sm text-ink/54 italic">
-              Garantia de 14 dias. Maximo 20 plazas por curso. Si no encaja contigo, devolvemos la inversion.
+              Garantia de 14 dias. Maximo {COURSE_SEAT_LIMIT} plazas por curso. Si no encaja contigo, devolvemos la inversion.
             </p>
           </div>
         </div>
@@ -222,7 +246,9 @@ const faqs = [
             <p class="lead-copy max-w-3xl mx-auto mb-7">
               Tu aula puede sonar distinta desde este mes. Reserva tu plaza y entra en la primera edicion de la Escuela.
             </p>
-            <Button href="/registro?source=home_faq_cta" size="lg" variant="primary" class="cta-breathe">Reservar plaza</Button>
+            <Button id="home-faq-reserve" href="/registro?source=home_faq_cta" size="lg" variant="primary" class="cta-breathe">
+              Reservar plaza
+            </Button>
           </div>
         </div>
       </div>
@@ -230,6 +256,54 @@ const faqs = [
   </main>
 
   <Footer />
+
+  <script>
+    async function syncLaunchStatus() {
+      const statusNode = document.getElementById('home-launch-status');
+      const reserveLinks = [
+        document.getElementById('home-hero-reserve'),
+        document.getElementById('home-price-reserve'),
+        document.getElementById('home-faq-reserve'),
+      ].filter(Boolean);
+
+      if (!statusNode || !reserveLinks.length) return;
+
+      try {
+        const response = await fetch('/api/launch/status');
+        const payload = await response.json();
+
+        if (!response.ok || !payload) return;
+
+        const closeDate = new Date(payload.closesAtIso);
+        const closeLabel = new Intl.DateTimeFormat('es-ES', {
+          day: '2-digit',
+          month: 'short',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Europe/Madrid',
+        }).format(closeDate);
+
+        if (payload.open) {
+          statusNode.textContent = `Plazas disponibles: ${payload.seatsLeft}/${payload.seatLimit}. Cierre previsto: ${closeLabel}.`;
+          return;
+        }
+
+        statusNode.textContent = payload.soldOut
+          ? 'Convocatoria completa. Puedes entrar a la newsletter para la siguiente cohorte.'
+          : 'Convocatoria cerrada por fecha. Entra en la newsletter para la proxima apertura.';
+
+        reserveLinks.forEach((node) => {
+          if (!(node instanceof HTMLAnchorElement)) return;
+          node.href = '/#newsletter';
+          node.textContent = 'Quiero entrar en la newsletter';
+        });
+      } catch (_error) {
+        statusNode.textContent = '';
+      }
+    }
+
+    syncLaunchStatus();
+  </script>
 </Layout>
 
 

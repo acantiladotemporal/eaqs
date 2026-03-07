@@ -1,20 +1,62 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
-import { COURSE_MODULES } from '../lib/course-data';
 
-const modules = COURSE_MODULES;
+const modulos = [
+  {
+    id: '1',
+    numero: '01',
+    titulo: 'Bases de la Neuroeducacion',
+    descripcion: 'Fundamentos neurosonoros para ordenar atencion y seguridad en aula.',
+    activo: false,
+  },
+  {
+    id: '2',
+    numero: '02',
+    titulo: 'Ritmo y Psicomotricidad',
+    descripcion: 'Pulso y movimiento para mejorar coordinacion, foco y regulacion.',
+    activo: false,
+  },
+  {
+    id: '3',
+    numero: '03',
+    titulo: 'Voz y Lenguaje Musical',
+    descripcion: 'Herramientas vocales para comunicacion, escucha y expresion.',
+    activo: false,
+  },
+  {
+    id: '4',
+    numero: '04',
+    titulo: 'Emocion y Memoria',
+    descripcion: 'Diseno de experiencias musicales con anclaje afectivo duradero.',
+    activo: false,
+  },
+  {
+    id: '5',
+    numero: '05',
+    titulo: 'Diseno de Sesiones',
+    descripcion: 'Secuencias aplicables en clase con objetivos claros y evaluables.',
+    activo: false,
+  },
+  {
+    id: '6',
+    numero: '06',
+    titulo: 'Integracion y Transferencia',
+    descripcion: 'Cierre metodologico para sostener la practica en el tiempo.',
+    activo: false,
+  },
+];
 ---
 
-<Layout title="Dashboard | El Arbol Que Suena" description="Portal del alumnado para acceder a modulos, examenes y comunidad docente.">
+<Layout title="Dashboard | El Arbol Que Suena" description="Portal del alumnado para acceder a modulos, examen y comunidad docente.">
   <Header mode="learning" />
 
-  <main class="bg-white pt-20 md:pt-24 pb-16 md:pb-20">
-    <section class="section-shell pt-6 md:pt-8 pb-14 md:pb-16">
+  <main class="bg-white pt-24 md:pt-28 pb-16 md:pb-20">
+    <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
       <div class="content-shell space-y-8 md:space-y-9">
         <header class="max-w-3xl space-y-4" data-reveal>
           <p class="editorial-kicker">Portal del alumnado</p>
-          <h1 class="headline-luxe section-title md:!text-[3.25rem] leading-[0.95]">
+          <h1 class="headline-luxe section-title md:!text-[3.45rem] leading-[0.95]">
             Hola, <span id="welcome-name-target" class="name-swap not-italic">Docente</span>.
           </h1>
           <p id="dashboard-feedback" class="text-sm text-ink/62 min-h-6" aria-live="polite">
@@ -30,7 +72,7 @@ const modules = COURSE_MODULES;
           <div class="max-w-2xl space-y-4">
             <p class="editorial-kicker">Acceso requerido</p>
             <h2 class="headline-luxe text-3xl md:text-4xl">Tu sesion no esta activa.</h2>
-            <p class="lead-copy">Inicia sesion para recuperar tu progreso y entrar al itinerario completo de 10 modulos.</p>
+            <p class="lead-copy">Inicia sesion para recuperar tu progreso y entrar a todos los modulos.</p>
             <div class="flex flex-wrap gap-3 pt-2">
               <a id="dashboard-login-link" href="/login?next=/dashboard" class="btn btn-md btn-primary">Iniciar sesion</a>
               <a href="/registro" class="btn btn-md btn-secondary">Comprar plaza</a>
@@ -42,34 +84,27 @@ const modules = COURSE_MODULES;
           <section class="ui-panel p-5 md:p-7" data-reveal style="--reveal-delay:120ms">
             <div class="flex flex-wrap items-center gap-3">
               <a href="/foro" class="btn btn-md btn-secondary">Comunidad</a>
-              <a id="dashboard-exam-link" href="/examen/1" class="btn btn-md btn-secondary">Ir al quiz activo</a>
+              <a href="/examen-1" class="btn btn-md btn-secondary">Examen 1</a>
               <a href="/programa-completo.pdf" class="program-pdf-link" download>Descargar programa en PDF</a>
             </div>
-            <p class="text-sm text-ink/62 mt-4">
-              Apertura por calendario de cohorte. El quiz consolida aprendizaje y marca progreso de cada modulo.
-            </p>
           </section>
 
           <section class="ui-panel p-5 md:p-7" data-reveal style="--reveal-delay:140ms">
             <p class="font-sans text-[10px] uppercase tracking-[0.28em] text-moss font-bold mb-5">Ruta de aprendizaje</p>
             <div class="module-list">
-              {modules.map((module, index) => (
-                <article
-                  class="module-row"
-                  data-module-id={module.id}
-                  data-unlock-at={module.unlockAtIso}
-                  data-reveal
-                  style={`--reveal-delay:${index * 50}ms`}
-                >
-                  <span class="module-index">{module.numero}</span>
+              {modulos.map((modulo, index) => (
+                <article class="module-row" data-reveal style={`--reveal-delay:${index * 65}ms`}>
+                  <span class="module-index">{modulo.numero}</span>
                   <div>
-                    <a data-module-link href={`/modulos/${module.id}`} class="inline-block">
-                      <h2>{module.title}</h2>
-                    </a>
+                    {modulo.activo ? (
+                      <a href={`/modulos/${modulo.id}`} class="inline-block">
+                        <h2>{modulo.titulo}</h2>
+                      </a>
+                    ) : (
+                      <h2 class="opacity-70">{modulo.titulo}</h2>
+                    )}
                   </div>
-                  <p data-module-description data-default-description={module.description}>
-                    {module.description}
-                  </p>
+                  <p>{modulo.activo ? modulo.descripcion : 'Modulo sin activar. Se habilitara segun calendario de la edicion.'}</p>
                 </article>
               ))}
             </div>
@@ -80,109 +115,8 @@ const modules = COURSE_MODULES;
   </main>
 
   <script>
-    import { AUTH_PREVIEW_MODE } from '../lib/auth-config';
     import { animateNameSwap, buildLoginRedirect, getPreferredName, resolveSessionUser } from '../lib/auth-client';
     import { supabase } from '../lib/supabase';
-
-    function formatUnlockDate(isoValue) {
-      return new Intl.DateTimeFormat('es-ES', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        timeZone: 'Europe/Madrid',
-      }).format(new Date(isoValue));
-    }
-
-    function normalizeQuizProgress(progress) {
-      if (!progress || typeof progress !== 'object') return {};
-
-      const bag = progress.quiz_progress && typeof progress.quiz_progress === 'object'
-        ? progress.quiz_progress
-        : progress;
-
-      const normalized = {};
-      Object.entries(bag).forEach(([key, value]) => {
-        if (!value) return;
-        const keyAsString = String(key);
-        if (keyAsString.startsWith('quiz_')) {
-          normalized[keyAsString.replace('quiz_', '')] = true;
-          return;
-        }
-        if (keyAsString.startsWith('modulo')) {
-          normalized[keyAsString.replace('modulo', '')] = true;
-          return;
-        }
-        normalized[keyAsString] = true;
-      });
-
-      return normalized;
-    }
-
-    function applyModulesState(quizProgress) {
-      const rows = document.querySelectorAll('[data-module-id]');
-      const now = Date.now();
-      let firstAvailableWithoutQuiz = null;
-
-      rows.forEach((row) => {
-        if (!(row instanceof HTMLElement)) return;
-
-        const moduleId = row.dataset.moduleId || '';
-        const unlockAtIso = row.dataset.unlockAt || '';
-        const link = row.querySelector('[data-module-link]');
-        const description = row.querySelector('[data-module-description]');
-        const defaultDescription = description?.getAttribute('data-default-description') || '';
-
-        const unlockAt = new Date(unlockAtIso);
-        const availableByDate = AUTH_PREVIEW_MODE || (!Number.isNaN(unlockAt.getTime()) && now >= unlockAt.getTime());
-        const quizCompleted = Boolean(quizProgress[moduleId]);
-
-        if (link instanceof HTMLAnchorElement) {
-          if (availableByDate) {
-            link.href = `/modulos/${moduleId}`;
-            link.removeAttribute('aria-disabled');
-            link.classList.remove('opacity-70', 'pointer-events-none');
-          } else {
-            link.removeAttribute('href');
-            link.setAttribute('aria-disabled', 'true');
-            link.classList.add('opacity-70', 'pointer-events-none');
-          }
-        }
-
-        if (description instanceof HTMLElement) {
-          if (!availableByDate) {
-            description.textContent = `Modulo bloqueado hasta ${formatUnlockDate(unlockAtIso)} (Europe/Madrid).`;
-            return;
-          }
-
-          if (quizCompleted) {
-            description.textContent = `${defaultDescription} . Estado: quiz completado.`;
-            return;
-          }
-
-          description.textContent = `${defaultDescription} . Estado: disponible para avanzar.`;
-          if (!firstAvailableWithoutQuiz) {
-            firstAvailableWithoutQuiz = moduleId;
-          }
-        }
-      });
-
-      return firstAvailableWithoutQuiz;
-    }
-
-    async function loadProfileProgress(userId) {
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('progress')
-          .eq('id', userId)
-          .maybeSingle();
-
-        if (error) return {};
-        return normalizeQuizProgress(data?.progress || {});
-      } catch (_error) {
-        return {};
-      }
-    }
 
     async function initDashboard() {
       const feedback = document.getElementById('dashboard-feedback');
@@ -191,7 +125,6 @@ const modules = COURSE_MODULES;
       const gate = document.getElementById('dashboard-gate');
       const content = document.getElementById('dashboard-content');
       const loginLink = document.getElementById('dashboard-login-link');
-      const examLink = document.getElementById('dashboard-exam-link');
 
       if (loginLink instanceof HTMLAnchorElement) {
         loginLink.href = buildLoginRedirect('/dashboard');
@@ -212,7 +145,7 @@ const modules = COURSE_MODULES;
         }
       };
 
-      const user = await resolveSessionUser(8500);
+      const user = await resolveSessionUser(7000);
 
       if (!user) {
         showGate('No detectamos una sesion activa.');
@@ -221,23 +154,11 @@ const modules = COURSE_MODULES;
 
       applyUser(user);
 
-      const quizProgress = await loadProfileProgress(user.id);
-      const nextExamModule = applyModulesState(quizProgress);
-      if (examLink instanceof HTMLAnchorElement && nextExamModule) {
-        examLink.href = `/examen/${nextExamModule}`;
-      }
-
       if (loading) loading.classList.add('hidden');
       if (gate) gate.classList.add('hidden');
       if (content) content.classList.remove('hidden');
       if (feedback) {
-        const params = new URLSearchParams(window.location.search);
-        const moduleLocked = params.get('module') === 'locked';
-        feedback.textContent = AUTH_PREVIEW_MODE
-          ? 'Modo vista previa activo: acceso completo para revisar toda el aula.'
-          : moduleLocked
-          ? 'Ese modulo aun no esta liberado en calendario. Hemos vuelto a tu ruta.'
-          : 'Sesion activa. Tu aula ya esta lista.';
+        feedback.textContent = 'Sesion activa. Tu aula ya esta lista.';
         feedback.className = 'text-sm text-ink/62 min-h-6';
       }
 

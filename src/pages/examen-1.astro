@@ -3,20 +3,215 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 ---
 
-<Layout title="Quiz modulo 1 | El Arbol Que Suena" description="Redireccion al quiz del modulo 1.">
+<Layout title="Examen modulo 1 | El Arbol Que Suena">
   <Header mode="learning" />
-  <main class="bg-white min-h-screen pt-20 md:pt-24 pb-16 md:pb-20">
-    <section class="section-shell pt-6 md:pt-8 pb-14 md:pb-16">
-      <div class="content-shell max-w-3xl ui-panel p-8 md:p-10 text-center space-y-5" data-reveal>
-        <p class="editorial-kicker">Redireccion</p>
-        <h1 class="headline-luxe section-title">Abriendo quiz del modulo 1...</h1>
-        <a href="/examen/1" class="btn btn-lg btn-primary">Ir ahora</a>
+  <main class="bg-white min-h-screen pt-24 md:pt-28 pb-16 md:pb-20">
+    <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
+    <section class="content-shell max-w-4xl py-4 md:py-6">
+      <div id="exam-intro" class="text-center space-y-12">
+        <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold">
+          Validacion de conocimientos
+        </span>
+        <h1 class="font-display text-7xl md:text-9xl italic tracking-tighter leading-none text-ink">Modulo 01.</h1>
+        <p class="font-sans text-ink/55 max-w-sm mx-auto italic text-lg leading-relaxed">
+          Un breve alto en el camino para consolidar las bases biologicas de tu formacion.
+        </p>
+        <button id="exam-start" class="btn btn-lg btn-primary">Comenzar evaluacion</button>
       </div>
+
+      <div id="exam-quiz" class="space-y-12 hidden">
+        <header class="flex justify-between items-end border-b border-clay/30 pb-8 gap-8">
+          <h2 id="exam-question" class="font-display text-4xl md:text-5xl italic text-ink max-w-xl leading-tight"></h2>
+          <div class="text-right">
+            <span class="font-sans text-[10px] font-bold text-moss tracking-widest uppercase">Cuestion</span>
+            <p id="exam-counter" class="font-display text-3xl italic"></p>
+          </div>
+        </header>
+        <div id="exam-options" class="grid gap-6"></div>
+      </div>
+
+      <div id="exam-result" class="text-center space-y-10 hidden">
+        <h2 id="exam-result-title" class="font-display text-8xl md:text-[10rem] italic tracking-tighter leading-none"></h2>
+        <p id="exam-result-score" class="font-sans text-ink/60 text-xl italic"></p>
+        <p id="exam-saving" class="text-sm text-ink/55 min-h-6" aria-live="polite"></p>
+        <div id="exam-result-actions" class="pt-6"></div>
+      </div>
+    </section>
     </section>
   </main>
 
   <script>
-    window.location.replace('/examen/1');
+    import { AUTH_PREVIEW_MODE } from '../lib/auth-config';
+    import { buildLoginRedirect, resolveSessionUser } from '../lib/auth-client';
+    import { supabase } from '../lib/supabase';
+
+    const preguntas = [
+      {
+        titulo: 'Que etapa es mas critica para la discriminacion auditiva?',
+        opciones: ['0 a 6 anos', '12 a 18 anos', 'Edad adulta'],
+        correcta: 0,
+      },
+      {
+        titulo: 'Que zonas se activan con trabajo ritmico intencional?',
+        opciones: ['Solo corteza visual', 'Corteza motora y cerebelo', 'No hay activacion relevante'],
+        correcta: 1,
+      },
+      {
+        titulo: 'La musica favorece plasticidad cerebral porque...',
+        opciones: ['Solo entretiene', 'Genera nuevas conexiones neuronales', 'No influye en neurodesarrollo'],
+        correcta: 1,
+      },
+    ];
+
+    const introEl = document.getElementById('exam-intro');
+    const quizEl = document.getElementById('exam-quiz');
+    const resultEl = document.getElementById('exam-result');
+    const startBtn = document.getElementById('exam-start');
+    const questionEl = document.getElementById('exam-question');
+    const counterEl = document.getElementById('exam-counter');
+    const optionsEl = document.getElementById('exam-options');
+    const resultTitleEl = document.getElementById('exam-result-title');
+    const resultScoreEl = document.getElementById('exam-result-score');
+    const resultActionsEl = document.getElementById('exam-result-actions');
+    const savingEl = document.getElementById('exam-saving');
+
+    let preguntaActual = 0;
+    let puntos = 0;
+
+    async function ensureSession() {
+      const user = await resolveSessionUser(7000);
+
+      if (user) return;
+      window.location.replace(buildLoginRedirect('/examen-1'));
+    }
+
+    function show(el) {
+      el?.classList.remove('hidden');
+    }
+
+    function hide(el) {
+      el?.classList.add('hidden');
+    }
+
+    function renderQuestion() {
+      const pregunta = preguntas[preguntaActual];
+      if (!pregunta || !questionEl || !counterEl || !optionsEl) return;
+
+      questionEl.textContent = pregunta.titulo;
+      counterEl.textContent = `${preguntaActual + 1}/${preguntas.length}`;
+      optionsEl.innerHTML = '';
+
+      pregunta.opciones.forEach((opcion, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className =
+          'group flex justify-between items-center p-8 border border-clay/40 rounded-sm hover:bg-ink hover:text-bone transition-all duration-500 text-left';
+
+        const optionText = document.createElement('span');
+        optionText.className = 'font-sans text-xs uppercase tracking-[0.2em] font-medium';
+        optionText.textContent = opcion;
+
+        const optionArrow = document.createElement('span');
+        optionArrow.className = 'text-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+        optionArrow.textContent = '\u2192';
+
+        button.append(optionText, optionArrow);
+        button.addEventListener('click', () => answerQuestion(index));
+        optionsEl.appendChild(button);
+      });
+    }
+
+    async function saveProgressIfPassed() {
+      if (!savingEl) return;
+
+      if (AUTH_PREVIEW_MODE) {
+        savingEl.textContent = 'Modo vista previa: progreso simulado correctamente.';
+        return;
+      }
+
+      savingEl.textContent = 'Guardando progreso...';
+
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) {
+          savingEl.textContent = 'Sin sesion activa. Inicia sesion de nuevo y repite el guardado.';
+          return;
+        }
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('progress')
+          .eq('id', user.id)
+          .single();
+
+        const currentProgress = profile?.progress || {};
+        await supabase
+          .from('profiles')
+          .update({ progress: { ...currentProgress, modulo1: true } })
+          .eq('id', user.id);
+
+        savingEl.textContent = 'Progreso guardado correctamente.';
+      } catch (error) {
+        console.error('Error guardando progreso:', error);
+        savingEl.textContent = 'No se pudo guardar el progreso, pero puedes continuar.';
+      }
+    }
+
+    function showResult() {
+      hide(quizEl);
+      show(resultEl);
+
+      if (!resultTitleEl || !resultScoreEl || !resultActionsEl) return;
+
+      const aprobado = puntos >= 2;
+      resultTitleEl.textContent = aprobado ? 'Aprobado.' : 'Revisar.';
+      resultScoreEl.textContent = `Has alcanzado ${puntos} de ${preguntas.length} puntos posibles.`;
+
+      resultActionsEl.innerHTML = '';
+
+      if (aprobado) {
+        const link = document.createElement('a');
+        link.href = '/dashboard';
+        link.className = 'btn btn-lg btn-primary';
+        link.textContent = 'Volver al dashboard';
+        resultActionsEl.appendChild(link);
+        saveProgressIfPassed();
+      } else {
+        if (savingEl) savingEl.textContent = '';
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'btn btn-lg btn-secondary';
+        retry.textContent = 'Reintentar evaluacion';
+        retry.addEventListener('click', () => window.location.reload());
+        resultActionsEl.appendChild(retry);
+      }
+    }
+
+    function answerQuestion(indice) {
+      const pregunta = preguntas[preguntaActual];
+      if (!pregunta) return;
+
+      if (indice === pregunta.correcta) puntos += 1;
+
+      if (preguntaActual + 1 < preguntas.length) {
+        preguntaActual += 1;
+        renderQuestion();
+        return;
+      }
+
+      showResult();
+    }
+
+    startBtn?.addEventListener('click', () => {
+      hide(introEl);
+      show(quizEl);
+      renderQuestion();
+    });
+
+    ensureSession();
   </script>
 </Layout>
 

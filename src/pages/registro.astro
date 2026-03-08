@@ -2,111 +2,93 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import {
+  CAPTURE_WEEKS,
+  CHECKOUT_CLOSE_AT_ISO,
+  COURSE_LAUNCH_PRICE_EUR,
+  COURSE_MODULES,
+  COURSE_SEAT_LIMIT,
+  COURSE_STANDARD_PRICE_EUR,
+} from '../lib/course-data';
 ---
 
 <Layout
   title="Reservar plaza | El Arbol Que Suena"
-  description="Informacion del curso y formulario de pago en un solo paso para reservar plaza."
+  description="Checkout de la Cohorte 01 con pago seguro y acceso privado al aula."
 >
   <Header />
 
-  <main class="bg-white pt-24 md:pt-28 pb-16 md:pb-20">
-    <section class="section-shell pt-8 md:pt-10 pb-14 md:pb-16">
-      <div class="content-shell max-w-5xl space-y-10 md:space-y-12">
+  <main class="bg-white pt-20 md:pt-24 pb-16 md:pb-20">
+    <section class="section-shell pt-6 md:pt-8 pb-14 md:pb-16">
+      <div class="content-shell max-w-4xl space-y-10 md:space-y-12">
         <header class="text-center max-w-3xl mx-auto space-y-5" data-reveal>
           <p class="editorial-kicker">Reserva en un solo paso</p>
-          <h1 class="headline-luxe section-title">Tu plaza, tu pago, tu acceso privado.</h1>
+          <h1 class="headline-luxe section-title">Tu plaza, tu pago y tu acceso privado.</h1>
           <p class="lead-copy">
-            Aqui tienes toda la informacion de la formacion y el formulario de pago tipo Stripe integrado en la misma pantalla.
+            Vas a completar el pago seguro para entrar en la Cohorte 01. Despues recibiras confirmacion y acceso al aula privada.
           </p>
+          <p id="checkout-availability" class="text-sm text-ink/65"></p>
         </header>
 
-        <section class="ui-panel p-7 md:p-10" data-reveal style="--reveal-delay:120ms">
-          <div class="grid lg:grid-cols-12 gap-8 md:gap-10">
-            <aside class="lg:col-span-5 space-y-6">
-              <div class="space-y-2">
-                <p class="editorial-kicker">Lo que compras hoy</p>
-                <h2 class="font-display text-4xl md:text-5xl text-note leading-[1.02]">
-                  Curso de Neuroeducacion Musical para docentes de 0 a 9 anos.
-                </h2>
-                <p class="text-sm text-ink/62">Foco principal: primera infancia (0 a 6 anos).</p>
-              </div>
+        <section class="ui-panel p-7 md:p-10 space-y-9" data-reveal style="--reveal-delay:120ms">
+          <div class="space-y-5">
+            <p class="editorial-kicker">Lo que compras hoy</p>
+            <h2 class="font-display text-4xl md:text-5xl text-note leading-[1.02]">
+              Curso de Neuroeducacion Musical para docentes de 0 a 9 anos.
+            </h2>
+            <p class="text-sm text-ink/66">Foco principal: primera infancia (0 a 6 anos).</p>
+          </div>
 
-              <div class="space-y-3 text-sm text-ink/78">
-                <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Primera edicion 2026 . formato online.</p>
-                <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>6 modulos de especializacion + certificacion oficial.</p>
-                <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Acceso privado a dashboard, foro y evaluaciones.</p>
-                <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Plazas limitadas: maximo 20 docentes por convocatoria.</p>
-              </div>
+          <div class="space-y-3 text-sm text-ink/78">
+            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>{COURSE_MODULES.length} modulos de especializacion, cada uno con recursos y quiz.</p>
+            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Acceso privado a dashboard, comunidad y evaluaciones por modulo.</p>
+            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Apertura por calendario oficial de cohorte y cierre pedagogico a final de mayo.</p>
+            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Plazas limitadas: maximo {COURSE_SEAT_LIMIT} docentes por convocatoria.</p>
+          </div>
 
-              <div class="border-t border-clay/60 pt-6 space-y-2">
-                <div class="flex items-end justify-between gap-4">
-                  <p class="text-sm text-ink/72">Precio hoy</p>
-                  <p class="font-display text-5xl italic text-note">390 EUR</p>
-                </div>
-                <p class="text-xs uppercase tracking-[0.18em] text-ink/58">Oferta de lanzamiento . luego 490 EUR</p>
-              </div>
-            </aside>
+          <div class="border-t border-clay/60 pt-6 space-y-2">
+            <div class="flex flex-wrap items-end justify-between gap-4">
+              <p class="text-sm text-ink/72">Precio hoy</p>
+              <p class="font-display text-5xl italic text-note">{COURSE_LAUNCH_PRICE_EUR} EUR</p>
+            </div>
+            <p class="text-xs uppercase tracking-[0.18em] text-ink/58">Oferta de lanzamiento . luego {COURSE_STANDARD_PRICE_EUR} EUR</p>
+            <p class="text-xs text-ink/62">Cierre automatico: domingo 12 abril 2026 . 23:59 (Europe/Madrid).</p>
+          </div>
 
-            <section class="lg:col-span-7 space-y-5">
-              <div class="space-y-2">
-                <p class="editorial-kicker">Pago seguro</p>
-                <h3 class="font-display text-3xl md:text-4xl text-note">Formulario tipo Stripe</h3>
-              </div>
+          <form id="checkout-form" class="space-y-5 pt-2" novalidate>
+            <label class="block">
+              <span class="field-label">Nombre completo</span>
+              <input id="checkout-name" class="input-base" type="text" placeholder="Nombre Apellido" autocomplete="name" required />
+            </label>
 
-              <form id="checkout-demo-form" class="space-y-4" novalidate>
-                <label class="block">
-                  <span class="field-label">Correo electronico</span>
-                  <input class="input-base" type="email" placeholder="tu@email.com" required />
-                </label>
+            <label class="block">
+              <span class="field-label">Correo electronico</span>
+              <input id="checkout-email" class="input-base" type="email" placeholder="tu@email.com" autocomplete="email" required />
+            </label>
 
-                <label class="block">
-                  <span class="field-label">Nombre del titular</span>
-                  <input class="input-base" type="text" placeholder="Nombre Apellido" required />
-                </label>
+            <label class="flex items-start gap-3 text-sm text-ink/70">
+              <input id="checkout-consent" type="checkbox" class="mt-1" required />
+              <span>Acepto terminos, politica de privacidad y condiciones de compra.</span>
+            </label>
 
-                <label class="block">
-                  <span class="field-label">Numero de tarjeta</span>
-                  <input class="input-base" type="text" placeholder="4242 4242 4242 4242" inputmode="numeric" required />
-                </label>
+            <p id="checkout-feedback" class="text-sm text-ink/60 min-h-6" aria-live="polite"></p>
 
-                <div class="grid grid-cols-2 gap-3">
-                  <label class="block">
-                    <span class="field-label">Caducidad</span>
-                    <input class="input-base" type="text" placeholder="MM / AA" required />
-                  </label>
-                  <label class="block">
-                    <span class="field-label">CVC</span>
-                    <input class="input-base" type="text" placeholder="123" inputmode="numeric" required />
-                  </label>
-                </div>
+            <button id="checkout-submit" type="submit" class="btn btn-lg btn-primary cta-breathe w-full">
+              Ir al pago seguro . {COURSE_LAUNCH_PRICE_EUR} EUR
+            </button>
+          </form>
 
-                <label class="block">
-                  <span class="field-label">Pais o region</span>
-                  <select class="input-base" required>
-                    <option>Espana</option>
-                    <option>Mexico</option>
-                    <option>Colombia</option>
-                    <option>Argentina</option>
-                    <option>Chile</option>
-                    <option>Otro</option>
-                  </select>
-                </label>
+          <p class="text-xs text-ink/55">
+            Pago procesado en Stripe. Tras el pago recibiras confirmacion y acceso a tu perfil privado.
+          </p>
 
-                <label class="flex items-start gap-3 pt-2 text-sm text-ink/70">
-                  <input type="checkbox" class="mt-1" required />
-                  <span>Acepto terminos, politica de privacidad y condiciones de compra.</span>
-                </label>
-
-                <p id="checkout-demo-feedback" class="text-sm text-ink/60 min-h-6" aria-live="polite"></p>
-
-                <button type="submit" class="btn btn-lg btn-primary cta-breathe w-full">Reservar plaza . 390 EUR</button>
-              </form>
-
-              <p class="text-xs text-ink/55">
-                Demo visual del formulario. En la version final aqui se conectara Stripe Checkout/Elements.
-              </p>
-            </section>
+          <div class="pt-4 border-t border-clay/55">
+            <p class="text-xs uppercase tracking-[0.16em] text-ink/58 mb-2">Plan de captacion activo</p>
+            <div class="space-y-2 text-sm text-ink/70">
+              {CAPTURE_WEEKS.map((week) => (
+                <p>{week.label}: {week.focus}</p>
+              ))}
+            </div>
           </div>
         </section>
       </div>
@@ -115,15 +97,144 @@ import Footer from '../components/Footer.astro';
 
   <Footer />
 
-  <script>
-    const form = document.getElementById('checkout-demo-form');
-    const feedback = document.getElementById('checkout-demo-feedback');
+  <script define:vars={{ closeAtIso: CHECKOUT_CLOSE_AT_ISO, launchPrice: COURSE_LAUNCH_PRICE_EUR }}>
+    const form = document.getElementById('checkout-form');
+    const nameInput = document.getElementById('checkout-name');
+    const emailInput = document.getElementById('checkout-email');
+    const consentInput = document.getElementById('checkout-consent');
+    const feedback = document.getElementById('checkout-feedback');
+    const submitButton = document.getElementById('checkout-submit');
+    const availabilityNode = document.getElementById('checkout-availability');
 
-    form?.addEventListener('submit', (event) => {
-      event.preventDefault();
+    let checkoutOpen = true;
+
+    function setFeedback(message, isError = false) {
       if (!feedback) return;
-      feedback.textContent = 'Vista previa de pago: el cobro real con Stripe aun no esta activo en este formulario.';
-      feedback.className = 'text-sm text-ink/70 min-h-6';
+      feedback.textContent = message;
+      feedback.className = isError ? 'text-sm text-red-700 min-h-6' : 'text-sm text-ink/60 min-h-6';
+    }
+
+    function setCheckoutState(isOpen, message) {
+      checkoutOpen = isOpen;
+
+      if (availabilityNode) {
+        availabilityNode.textContent = message;
+        availabilityNode.className = isOpen ? 'text-sm text-ink/65' : 'text-sm text-red-700';
+      }
+
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = !isOpen;
+      }
+    }
+
+    async function loadAvailability() {
+      try {
+        const response = await fetch('/api/launch/status');
+        const payload = await response.json();
+
+        if (!response.ok || !payload) {
+          setCheckoutState(true, '');
+          return;
+        }
+
+        const closeDate = new Intl.DateTimeFormat('es-ES', {
+          day: '2-digit',
+          month: 'short',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Europe/Madrid',
+        }).format(new Date(payload.closesAtIso || closeAtIso));
+
+        if (payload.open) {
+          setCheckoutState(true, `Plazas disponibles: ${payload.seatsLeft}/${payload.seatLimit}. Cierre estimado: ${closeDate}.`);
+          return;
+        }
+
+        const message = payload.soldOut
+          ? 'Convocatoria completa: ya no quedan plazas disponibles para esta cohorte.'
+          : 'Convocatoria cerrada por fecha. Puedes entrar a la newsletter para la siguiente apertura.';
+
+        setCheckoutState(false, message);
+      } catch (_error) {
+        setCheckoutState(true, '');
+      }
+    }
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!checkoutOpen) {
+        setFeedback('Convocatoria cerrada. Puedes entrar en la newsletter para la siguiente cohorte.', true);
+        return;
+      }
+
+      const fullName = nameInput instanceof HTMLInputElement ? nameInput.value.trim() : '';
+      const email = emailInput instanceof HTMLInputElement ? emailInput.value.trim().toLowerCase() : '';
+      const hasConsent = consentInput instanceof HTMLInputElement ? consentInput.checked : false;
+      const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+      if (!fullName || !validEmail) {
+        setFeedback('Completa nombre y correo con formato valido.', true);
+        return;
+      }
+
+      if (!hasConsent) {
+        setFeedback('Debes aceptar terminos y condiciones para continuar.', true);
+        return;
+      }
+
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Conectando con Stripe...';
+      }
+      setFeedback('');
+
+      try {
+        const response = await fetch('/api/checkout/create-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fullName,
+            email,
+            source: 'registro_page',
+          }),
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || payload?.ok === false) {
+          const message = payload?.message || 'No fue posible iniciar el checkout.';
+          setFeedback(message, true);
+
+          if (submitButton instanceof HTMLButtonElement) {
+            submitButton.disabled = false;
+            submitButton.textContent = `Ir al pago seguro . ${launchPrice} EUR`;
+          }
+          return;
+        }
+
+        if (payload?.checkoutUrl) {
+          window.location.assign(payload.checkoutUrl);
+          return;
+        }
+
+        setFeedback('No se recibio URL de checkout. Intentalo de nuevo.', true);
+      } catch (_error) {
+        setFeedback('Error de conexion con el checkout. Revisa tu red e intentalo otra vez.', true);
+      }
+
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = false;
+        submitButton.textContent = `Ir al pago seguro . ${launchPrice} EUR`;
+      }
     });
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('checkout') === 'cancelled') {
+      setFeedback('Pago cancelado. Tu plaza sigue disponible si vuelves a intentarlo ahora.', true);
+    }
+
+    loadAvailability();
   </script>
 </Layout>

@@ -2,8 +2,10 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 import vue from '@astrojs/vue';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  // Asegúrate de que tailwind() esté aquí dentro
+  output: 'server',
+  adapter: vercel(),
   integrations: [tailwind(), react(), vue()],
 });

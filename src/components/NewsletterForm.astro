@@ -63,8 +63,6 @@ const feedbackId = `newsletter-feedback-${source}`;
 </section>
 
 <script define:vars={{ formId, emailId, feedbackId, buttonId, source, ctaLabel }}>
-  import { supabase } from '../lib/supabase';
-
   const form = document.getElementById(formId);
   const emailInput = document.getElementById(emailId);
   const feedback = document.getElementById(feedbackId);
@@ -95,14 +93,18 @@ const feedbackId = `newsletter-feedback-${source}`;
     setFeedback('');
 
     try {
-      const { error } = await supabase.from('newsletter_subscribers').insert([
-        {
-          email,
-          source,
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ]);
+        body: JSON.stringify({ email, source }),
+      });
 
-      if (error && error.code !== '23505') throw error;
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || payload?.ok === false) {
+        throw new Error(payload?.message || 'No se pudo completar la suscripcion.');
+      }
 
       setFeedback('Ya estas dentro. Te leemos la proxima semana.');
       if (form instanceof HTMLFormElement) form.reset();

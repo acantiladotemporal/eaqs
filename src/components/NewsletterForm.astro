@@ -35,7 +35,7 @@ const feedbackId = `newsletter-feedback-${source}`;
   }
 
   <form id={formId} class={variant === 'inline' ? 'space-y-3' : 'space-y-4'} novalidate>
-    <label for={emailId} class={variant === 'inline' ? 'sr-only' : 'field-label'}>Tu correo profesional</label>
+    <label for={emailId} class={variant === 'inline' ? 'sr-only' : 'field-label'}>Tu correo</label>
     <div class={`flex flex-col sm:flex-row gap-3 ${variant === 'inline' ? 'items-center' : ''}`}>
       <input
         id={emailId}
@@ -56,7 +56,7 @@ const feedbackId = `newsletter-feedback-${source}`;
     </div>
     <input type="hidden" name="source" value={source} />
     <p class="text-xs text-ink/60">
-      {variant === 'inline' ? 'Sin spam. Solo valor semanal para tu aula.' : 'Un correo semanal. Sin ruido.'}
+      {variant === 'inline' ? 'Si te apuntas, todos los martes a las 14:00 te llegará un email sobre música y desarrollo cerebral' : 'Un correo semanal. Sin ruido.'}
     </p>
     <p id={feedbackId} class="text-sm min-h-6 text-ink/60" aria-live="polite"></p>
   </form>

@@ -54,31 +54,32 @@ const faqs = [
 ---
 
 <Layout
-  title="Curso de Neuroeducacion Musical | El Arbol Que Suena"
-  description="Escuela internacional de neuroeducacion musical. Primera edicion para docentes de 0 a 9 anos con foco en primera infancia."
+  title="Curso de Neuroeducación Musical | El Árbol Que Suena"
+  description="Escuela Internacional de Neuroeducación Musical. Primera edición para docentes de 0 a 9 años con foco en primera infancia."
 >
   <Header />
 
   <main class="rhythm-layer sales-home overflow-hidden">
     <section class="section-shell pt-44 md:pt-56">
       <div class="content-shell max-w-5xl text-center">
-        <p class="editorial-kicker mb-8" data-reveal>Escuela internacional de neuroeducacion musical</p>
+        <p class="editorial-kicker mb-8" data-reveal>Escuela Internacional de Neuroeducación Musical</p>
         <h1 class="headline-luxe headline-rhythm hero-title sales-hero-title mb-7" data-reveal style="--reveal-delay:90ms">
-          Sincroniza tu tempo interno con el de tus alumnos
+        Donde vuelves a ser el maestro que siempre quisiste tener
+
         </h1>
         <p class="lead-copy max-w-3xl mx-auto mb-8" data-reveal style="--reveal-delay:150ms">
-          Vuelve a disfrutar ensenando: clases con mas calma, mas atencion y mas alegria en ninos y ninas de 0 a 6 anos.
+          Donde el silencio suena. Donde tus alumnos brillan. Donde tu aula se transforma desde la música, el vínculo y la neurociencia. Todo cambia cuando dejas de buscar resultados inmediatos. El aprendizaje no siempre hace ruido. El tiempo también enseña. No ofrecemos más recursos para hacer más cosas, ofrecemos herramientas para entender lo que ya está ocurriendo.
         </p>
 
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4" data-reveal style="--reveal-delay:220ms">
           <Button id="home-hero-reserve" href="/registro?source=home_hero" size="lg" variant="primary" class="cta-breathe">
-            Quiero transformar mi aula
+            Quiero reservar mi plaza
           </Button>
-          <a href="/#curso" class="btn btn-secondary btn-lg">Ver programa completo</a>
+          <a href="/#curso" class="btn btn-secondary btn-lg">Ver programa certificado</a>
         </div>
 
         <p class="sales-note mt-8" data-reveal style="--reveal-delay:280ms">
-          Proxima edicion: <span class="ink-underline-subtle">plazas limitadas a {COURSE_SEAT_LIMIT} docentes</span>. Prioridad para 0 a 6 anos.
+          Próxima edición: <span class="ink-underline-subtle">plazas limitadas a {COURSE_SEAT_LIMIT} docentes</span>. Ideal para docentes de niños y niñas de 0 a 6 años.
         </p>
         <p id="home-launch-status" class="sales-note mt-2" data-reveal style="--reveal-delay:320ms"></p>
       </div>
@@ -90,11 +91,11 @@ const faqs = [
           <div class="space-y-4 max-w-none">
             <p class="editorial-kicker mb-3">Newsletter semanal</p>
             <h2 class="headline-luxe headline-rhythm-soft text-4xl md:text-5xl mb-3">
-              Correos con metodo,
+              Una pausa de pensamiento y aprendizaje lento a la semana,
               <span class="ink-underline">sin ruido.</span>
             </h2>
             <p class="lead-copy">
-              Si aun no te apuntas al curso, deja tu email y recibe una idea accionable cada semana.
+              Si aún no es tu momento de apuntarte al curso, déjanos tu email y recibe nuestra newsletter sobre neurodesarrollo y música cada semana. 
             </p>
           </div>
           <div>
@@ -114,7 +115,7 @@ const faqs = [
           </h2>
           <p class="lead-copy">
             No es solo teoria. Es una metodologia para ordenar la clase desde el ritmo, el vinculo y la atencion.
-            Menos caos, mas presencia y aprendizaje que si se sostiene en el tiempo.
+            Menos caos, mas presencia y aprendizaje que si se sostiene en el tiempo. Formación para docentes que quieren entender que ocurre cuando aparentamente no ocurre nada
           </p>
         </div>
 
@@ -132,33 +133,6 @@ const faqs = [
           <a href="/programa-completo.pdf" class="program-pdf-link" download>
             Descargar programa completo en PDF
           </a>
-        </div>
-      </div>
-    </section>
-
-    <section id="calendario" class="section-shell section-tone-ivory">
-      <div class="content-shell max-w-4xl">
-        <div class="price-shell" data-reveal>
-          <div class="text-center mb-8 md:mb-10">
-            <p class="editorial-kicker mb-3">Calendario operativo</p>
-            <h2 class="headline-luxe section-title">Cohorte 01 . marzo a mayo 2026</h2>
-          </div>
-
-          <div class="space-y-0 border-t border-clay/70 border-b border-clay/70">
-            {COURSE_TIMELINE.map((entry) => (
-              <article class="grid md:grid-cols-[220px_minmax(0,1fr)] gap-4 py-4 border-b border-clay/55 last:border-b-0">
-                <p class="font-sans text-[11px] uppercase tracking-[0.18em] text-ink/58">{entry.dateRange}</p>
-                <div class="space-y-1">
-                  <h3 class="font-display text-[1.8rem] leading-none text-note">{entry.label}</h3>
-                  <p class="text-ink/72 leading-relaxed">{entry.detail}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <p class="mt-6 text-sm text-ink/60 text-center">
-            {INTEGRATION_WEEKEND.title}: {INTEGRATION_WEEKEND.detail}
-          </p>
         </div>
       </div>
     </section>

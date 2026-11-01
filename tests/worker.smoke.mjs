@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { auditNavigation } from './navigation.audit.mjs';
 const url = new URL(process.env.EAQS_WORKER_TEST_URL || 'http://127.0.0.1:4389');
-assert.ok(url.hostname === '127.0.0.1' || (url.protocol === 'https:' && url.hostname.startsWith('eaqs.') && url.hostname.endsWith('.workers.dev')), 'Use the school Worker preview, not an arbitrary live site');
+assert.ok(url.hostname === '127.0.0.1' || (url.protocol === 'https:' && ['eaqs.elarbolquesuena-web.workers.dev', 'www.elarbolquesuena.com'].includes(url.hostname)), 'Use the school Worker or canonical domain, not an arbitrary live site');
 const base = url.origin;
 const statusResponse = await fetch(base + '/api/launch/status');
 assert.equal(statusResponse.status, 200);
@@ -33,4 +33,10 @@ assert.match(home.headers.get('x-robots-tag'), /noindex/);
 assert.ok(home.headers.get('content-security-policy').includes("frame-ancestors 'none'"));
 checks++;
 const navigation = await auditNavigation(base);
+if (url.hostname === 'www.elarbolquesuena.com') {
+  const root = await fetch('https://elarbolquesuena.com/programa?utm_source=ensayo', { redirect: 'manual' });
+  assert.equal(root.status, 308);
+  assert.equal(root.headers.get('location'), base + '/programa?utm_source=ensayo');
+  checks++;
+}
 console.log(`${checks} read-only Worker checks passed; ${navigation.links} links/anchors across ${navigation.pages} pages/states. No forms sent, no real accounts and no payments.`);

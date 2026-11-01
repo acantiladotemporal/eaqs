@@ -10,6 +10,12 @@ export function canonicalUrl(path: string, site: URL): string {
   return new URL(canonicalPath(path), site).href;
 }
 
+/** Only the school's root domain redirects; previews and local development keep their origin. */
+export function canonicalHostRedirect(requestUrl: URL, site: URL | undefined): string | null {
+  if (site?.origin !== 'https://www.elarbolquesuena.com' || requestUrl.hostname !== 'elarbolquesuena.com') return null;
+  return site.origin + requestUrl.pathname + requestUrl.search;
+}
+
 export function isSearchPage(path: string): boolean {
   const normalized = canonicalPath(path);
   return (SEARCH_PAGES as readonly string[]).includes(normalized) || normalized === '/blog' || normalized.startsWith('/blog/');

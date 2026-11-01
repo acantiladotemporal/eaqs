@@ -1,8 +1,17 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { canIndexSite, canonicalPath, canonicalUrl, escapeXml, isSearchPage, pageStructuredData, sitemapUrls } from '../src/lib/seo';
+import { canIndexSite, canonicalHostRedirect, canonicalPath, canonicalUrl, escapeXml, isSearchPage, pageStructuredData, sitemapUrls } from '../src/lib/seo';
 
 const site = new URL('https://www.elarbolquesuena.com');
+
+test('school root redirects to HTTPS www preserving paths and campaign parameters without accepting another host', () => {
+  assert.equal(canonicalHostRedirect(new URL('http://elarbolquesuena.com/programa?utm_source=ensayo'), site), 'https://www.elarbolquesuena.com/programa?utm_source=ensayo');
+  assert.equal(canonicalHostRedirect(new URL('https://elarbolquesuena.com//evil.invalid/path'), site), 'https://www.elarbolquesuena.com//evil.invalid/path');
+  for (const host of ['www.elarbolquesuena.com', 'eaqs.elarbolquesuena-web.workers.dev', '127.0.0.1', 'elarbolquesuena.com.evil.invalid']) {
+    assert.equal(canonicalHostRedirect(new URL(`https://${host}/programa`), site), null);
+  }
+  assert.equal(canonicalHostRedirect(new URL('https://elarbolquesuena.com'), undefined), null);
+});
 
 test('canonical URLs use the configured origin without queries, fragments or duplicate trailing slashes', () => {
   assert.equal(canonicalUrl('/programa/?utm_source=ensayo#modulo-1', site), 'https://www.elarbolquesuena.com/programa');

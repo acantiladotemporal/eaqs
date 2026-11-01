@@ -2,7 +2,7 @@ import { defineMiddleware } from 'astro:middleware';
 import { requestClient, userIsAdmin } from './lib/server/auth';
 import { safeNext } from './lib/server/security';
 import { env } from './lib/server/config';
-import { canIndexSite, canonicalPath, isSearchPage } from './lib/seo';
+import { canIndexSite, canonicalHostRedirect, canonicalPath, isSearchPage } from './lib/seo';
 
 const privatePage = /^\/(dashboard|modulos|examen|foro|trabajo-final|certificado|tutorias)(\/|$)/;
 const accountPage = /^\/(admin|mi-solicitud)(\/|$)/;
@@ -13,8 +13,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.isAdmin = false;
   context.locals.enrollment = null;
   const path = context.url.pathname;
+  const hostRedirect = canonicalHostRedirect(context.url, context.site);
   const needsSession = privatePage.test(path) || accountPage.test(path) || /^\/api\/(auth|admin|learning|materials|submissions|certificates)/.test(path) || path === '/auth/confirm';
-  if (needsSession) {
+  if (needsSession && !hostRedirect) {
     const db = requestClient(context);
     context.locals.db = db;
     if (db) {
@@ -28,7 +29,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
   let response: Response;
-  if ((context.request.method === 'GET' || context.request.method === 'HEAD') && isSearchPage(path) && path !== canonicalPath(path)) {
+  if (hostRedirect) {
+    response = context.redirect(hostRedirect, 308);
+  } else if ((context.request.method === 'GET' || context.request.method === 'HEAD') && isSearchPage(path) && path !== canonicalPath(path)) {
     response = context.redirect(canonicalPath(path) + context.url.search, 301);
   } else if ((privatePage.test(path) || accountPage.test(path)) && !context.locals.user) {
     response = context.redirect(`/login?next=${encodeURIComponent(safeNext(path + context.url.search))}`, 303);

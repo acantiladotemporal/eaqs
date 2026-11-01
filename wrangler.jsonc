@@ -5,6 +5,10 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "preview_urls": false,
+  "routes": [
+    { "pattern": "www.elarbolquesuena.com", "custom_domain": true },
+    { "pattern": "elarbolquesuena.com", "custom_domain": true }
+  ],
   "vars": {
     "PUBLIC_SITE_URL": "https://www.elarbolquesuena.com",
     "PUBLIC_SUPABASE_URL": "",

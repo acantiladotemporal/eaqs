@@ -8,7 +8,7 @@ const astroPackage = JSON.parse(readFileSync(packageUrl, 'utf8'));
 const cli = fileURLToPath(new URL(astroPackage.bin.astro, packageUrl));
 const result = spawnSync(process.execPath, [cli, 'build'], {
   cwd: fileURLToPath(new URL('..', import.meta.url)),
-  env: { ...process.env, EAQS_BUILD_TARGET: 'cloudflare', ASTRO_TELEMETRY_DISABLED: '1' },
+  env: { ...process.env, EAQS_BUILD_TARGET: 'cloudflare', ASTRO_TELEMETRY_DISABLED: '1', WRANGLER_SEND_METRICS: 'false', CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: 'false' },
   stdio: 'inherit',
 });
 if (result.error) throw result.error;

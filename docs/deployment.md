@@ -38,4 +38,10 @@ Conectar `www.elarbolquesuena.com` solo después de validar el Worker. Añadir l
 
 Antes de cada actualización: revisar el diff, ejecutar las comprobaciones afectadas, subir el commit y desplegar el artefacto Cloudflare correspondiente. Registrar el identificador de versión para poder usar `wrangler rollback`. La integración automática de Git se considera operativa únicamente cuando Cloudflare confirme el enlace al repositorio y la rama `main`; una publicación por CLI no acredita esa conexión.
 
+## Comprobaciones previas completadas
+
+La comprobación completa local pasa con 36 pruebas de aplicación, 19 comprobaciones SQL/RLS, 98 archivos sin errores/advertencias/indicaciones y 46 comprobaciones HTTP. El rastreo cubre 68 destinos y anclas en 34 páginas/estados. La construcción Cloudflare se ha completado con el prerenderizador Node; su entrada, recursos, flags cerrados y ausencia de aprovisionamiento adicional se han comprobado. La cuenta Cloudflare autorizada contiene el ámbito de trabajo previsto; todavía debe acreditarse el contenido servido y el dominio tras desplegar.
+
+La historia saneada contiene los 14 commits originales filtrados y el commit de implementación. Se conserva el mismo árbol de archivos de la implementación y no quedan rutas de PocketBase ni del log retirado alcanzables desde esa historia. El bundle local de recuperación tiene acceso restringido al usuario de Windows, administradores y sistema, y permanece excluido de Git. No se han revocado credenciales ni se afirma haber purgado cachés de GitHub o copias de terceros.
+
 Referencias: [adaptador oficial de Astro](https://docs.astro.build/en/guides/integrations-guide/cloudflare/), [cuotas de Workers](https://developers.cloudflare.com/workers/platform/pricing/) y [dominios de Workers](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).

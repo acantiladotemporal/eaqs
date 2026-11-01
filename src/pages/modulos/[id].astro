@@ -1,84 +1,83 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import { COURSE_MODULES, formatMadridDate, getModuleById } from '../../lib/course-data';
-
-const { id = '1' } = Astro.params;
-const moduleData = getModuleById(id) || COURSE_MODULES[0];
-
-const moduleNumber = Number(moduleData.id);
-const nextModule = COURSE_MODULES.find((module) => Number(module.id) === moduleNumber + 1) || null;
-const unlockLabel = formatMadridDate(moduleData.unlockAtIso);
+import LearningShell from '../../components/LearningShell.astro';
+import { formNotice } from '../../components/learning';
+const { db, user } = Astro.locals;
+if (!db || !user) return Astro.redirect('/login');
+const moduleId = Astro.params.id || '';
+const { data: module, error } = await db.from('modules').select('id,position,title,summary,body,unlock_at').eq('id', moduleId).maybeSingle();
+if (error || !module) return new Response('Este módulo no está disponible.', { status: 404 });
+const [resourcesResult, questionsResult, participationResult] = await Promise.all([
+  db.from('resources').select('id,title,kind').eq('module_id', module.id),
+  db.from('quiz_questions').select('id').eq('module_id', module.id),
+  db.from('quiz_participations').select('completed_at').eq('module_id', module.id).eq('user_id', user.id).maybeSingle(),
+]);
+const resources = resourcesResult.data || [];
+const videos = resources.filter(resource => resource.kind === 'video');
+const documents = resources.filter(resource => resource.kind !== 'video');
+const paragraphs = (module.body || '').split(/\n\s*\n/).filter(Boolean);
+const notice = formNotice(Astro.url);
 ---
-
-<Layout title={`Modulo ${moduleData.numero} | El Arbol Que Suena`}>
-  <Header mode="learning" />
-
-  <main class="bg-white min-h-screen pt-20 md:pt-24 pb-16 md:pb-20">
-    <section class="section-shell pt-6 md:pt-8 pb-14 md:pb-16">
-      <article class="content-shell max-w-4xl font-sans">
-        <header class="mb-12 md:mb-14 space-y-5" data-reveal>
-          <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold block">
-            Modulo {moduleData.numero}
-          </span>
-          <h1 class="font-display text-5xl md:text-7xl italic tracking-tight leading-[0.95] text-ink">{moduleData.title}</h1>
-          <p class="text-sm text-ink/62">Apertura oficial: {unlockLabel} (Europe/Madrid)</p>
-          <div class="h-px w-full bg-clay/30"></div>
-        </header>
-
-        <section class="space-y-8 text-ink/80 leading-relaxed" data-reveal style="--reveal-delay:90ms">
-          <p class="text-2xl font-display italic text-ink border-l-4 border-moss pl-6 py-1">{moduleData.overview}</p>
-
-          <p class="text-lg">
-            Este modulo combina fundamentos de neuroeducacion musical y actividades listas para aplicar en aula con alumnado de 0 a 6,
-            transferibles a 0 a 9.
-          </p>
-
-          <div class="ui-panel p-8 md:p-10 space-y-4">
-            <h2 class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-moss">Recursos de este modulo</h2>
-            <ul class="space-y-2 text-base text-ink/78">
-              <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-ochre"></span>Clase principal grabada y guion de aplicacion.</li>
-              <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-ochre"></span>Ficha descargable para aula y observacion docente.</li>
-              <li class="flex items-start gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-ochre"></span>Quiz de consolidacion para marcar progreso del bloque.</li>
-            </ul>
-          </div>
-        </section>
-
-        <footer class="mt-16 pt-10 border-t border-clay/30 flex flex-col md:flex-row justify-between items-center gap-8" data-reveal style="--reveal-delay:140ms">
-          <div class="space-y-1">
-            <p class="font-sans text-[10px] uppercase tracking-widest text-ink/45 font-bold">Siguiente paso</p>
-            <p class="font-display text-3xl italic">Completa el quiz del modulo.</p>
-          </div>
-          <div class="flex flex-wrap items-center gap-3 justify-center">
-            <a href={`/examen/${moduleData.id}`} class="btn btn-lg btn-primary">
-              Realizar quiz modulo {moduleData.numero}
-            </a>
-            {nextModule && <a href={`/modulos/${nextModule.id}`} class="btn btn-lg btn-secondary">Ir al siguiente modulo</a>}
-          </div>
-        </footer>
+<LearningShell eyebrow={`Módulo ${String(module.position).padStart(2, '0')}`} title={module.title} description={module.summary}>
+  {notice && <p class={`notice ${notice.kind}`} role="status">{notice.message}</p>}
+  <a class="back-link" href="/dashboard">← Volver Al Itinerario</a>
+  <div class="lesson-workspace">
+    <div class="lesson-main stack">
+      <section class="stack" aria-label="Clase grabada">
+        {resourcesResult.error ? <p class="notice error" role="alert">No hemos podido cargar la clase y los materiales. Vuelve a intentarlo más tarde.</p> : videos.length ? videos.map(resource => <figure class="video-resource stack">
+          <figcaption><h2>{resource.title}</h2></figcaption>
+          <video controls preload="metadata" playsinline src={`/api/materials/${resource.id}?stream=1`} data-renewable-video aria-label={resource.title}><a href={`/api/materials/${resource.id}`}>Abrir el vídeo</a></video>
+          <details class="video-help"><summary>¿Se ha interrumpido el vídeo?</summary><p>Puedes renovar el acceso sin salir de la lección.</p><a class="button button-secondary" href={`/api/materials/${resource.id}?stream=1`} data-renew-video>Renovar acceso al vídeo</a></details>
+        </figure>) : <p class="empty-state">La clase grabada todavía no está publicada.</p>}
+      </section>
+      <article class="lesson-body">
+        <p class="eyebrow">Para volver a las ideas de la clase</p><h2>Lectura del módulo</h2>
+        {paragraphs.length ? paragraphs.map((paragraph: string) => <p>{paragraph}</p>) : <p class="muted">La escuela está preparando la lectura de esta lección.</p>}
       </article>
-    </section>
-  </main>
-
-  <script define:vars={{ unlockAtIso: moduleData.unlockAtIso }}>
-    import { AUTH_PREVIEW_MODE } from '../../lib/auth-config';
-    import { buildLoginRedirect, resolveSessionUser } from '../../lib/auth-client';
-
-    async function ensureSession() {
-      const user = await resolveSessionUser(8500);
-
-      if (!user) {
-        window.location.replace(buildLoginRedirect(window.location.pathname));
-        return;
-      }
-
-      const unlockAt = new Date(unlockAtIso);
-      if (!AUTH_PREVIEW_MODE && !Number.isNaN(unlockAt.getTime()) && Date.now() < unlockAt.getTime()) {
-        window.location.replace('/dashboard?module=locked');
-      }
+    </div>
+    <aside class="lesson-tools stack">
+      <section class="panel stack" aria-labelledby="resources-heading">
+        <p class="eyebrow">Para llevar al aula</p><h2 id="resources-heading">Materiales</h2>
+        {resourcesResult.error ? <p class="muted">Los materiales no se han podido cargar.</p> : documents.length ? documents.map(resource => <a class="material-link" href={`/api/materials/${resource.id}`}><span>{resource.title}</span><span aria-hidden="true">↓</span></a>) : <p class="muted">Todavía no hay documentos publicados.</p>}
+      </section>
+      <section class="panel stack quiz-invitation">
+        <p class="eyebrow">Tu siguiente paso</p><h2>Cuestionario</h2><p>No hay nota mínima. Participar te permite integrar lo aprendido y avanzar.</p>
+        {participationResult.error || questionsResult.error ? <p class="notice error">No hemos podido cargar el estado del cuestionario.</p> : participationResult.data ? <p class="status">Participación completada</p> : questionsResult.data?.length ? <a class="button" href={`/examen/${module.id}`}>Completar cuestionario ↗</a> : <p class="muted">El cuestionario aún no se ha publicado.</p>}
+      </section>
+    </aside>
+  </div>
+</LearningShell>
+<script>
+  document.querySelectorAll<HTMLVideoElement>('[data-renewable-video]').forEach(video=>{
+    const link=video.parentElement?.querySelector<HTMLAnchorElement>('[data-renew-video]');
+    let lastPosition=0;
+    let lastRenewal=0;
+    let wasPlaying=false;
+    video.addEventListener('timeupdate',()=>{if(Number.isFinite(video.currentTime))lastPosition=video.currentTime;});
+    video.addEventListener('play',()=>{wasPlaying=true;});
+    video.addEventListener('pause',()=>{if(!video.error)wasPlaying=false;});
+    function renew() {
+      if(!link || Date.now()-lastRenewal<5000)return;
+      lastRenewal=Date.now();
+      const position=lastPosition;
+      const resume=wasPlaying;
+      const source=new URL(link.href);
+      source.searchParams.set('renewed',String(lastRenewal));
+      video.addEventListener('loadedmetadata',()=>{video.currentTime=Math.min(position,Number.isFinite(video.duration)?video.duration:position);if(resume)void video.play().catch(()=>{});},{once:true});
+      video.src=source.href;
+      video.load();
     }
-
-    ensureSession();
-  </script>
-</Layout>
-
+    link?.addEventListener('click',event=>{event.preventDefault();renew();});
+    video.addEventListener('error',renew);
+  });
+</script>
+<style>
+.back-link{display:inline-flex;align-items:center;min-height:44px;margin:0 0 16px}
+.lesson-workspace{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:24px;align-items:start}
+.lesson-main{min-width:0;gap:32px}.lesson-tools{position:sticky;top:24px}.lesson-tools .panel{padding:24px;gap:16px;font-size:.86rem}.lesson-tools h2{font-size:1.8rem}.lesson-tools .button{width:100%;gap:.6rem;font-size:.77rem}
+.lesson-body{max-width:48rem;font-size:1.05rem;line-height:1.85;white-space:pre-line}.lesson-body h2{font-size:2rem;margin:12px 0 24px}.lesson-body p+p{margin-top:1.5rem}
+.material-link{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:48px;padding:12px 0;border-bottom:1px solid var(--line);color:inherit}
+.video-resource{margin:0}.video-resource h2{font-size:1.6rem}.video-resource video{display:block;width:100%;max-height:70vh;background:var(--ink);border-radius:2px}
+.video-help{font-size:.78rem;color:var(--muted)}.video-help summary{min-height:44px;padding:10px 0;cursor:pointer}.video-help p{margin-bottom:12px}
+@media(max-width:1200px){.lesson-workspace{grid-template-columns:minmax(0,1fr)}.lesson-tools{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.lesson-tools{grid-template-columns:minmax(0,1fr)}}
+</style>

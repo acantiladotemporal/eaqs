@@ -1,0 +1,144 @@
+/* Dirección editorial de la portada. Los acentos no modifican el tema del aula. */
+.home-narrative{--home-accent:var(--ochre);--home-tint:var(--accent-tint);--gold:var(--ochre);--home-line:var(--line);--footer-dark:#24211d;--footer-paper:#f8f3e8}
+.home-narrative,.home-narrative+.site-footer{--home-section-space:clamp(88px,8vw,112px)}
+.home-narrative>.section,.home-narrative .story-hero,.home-newsletter-band,.school-note{padding-block:var(--home-section-space)}
+.home-narrative+.site-footer{padding-block:var(--home-section-space)}
+.home-narrative+.site-footer .footer-bottom{padding-bottom:0}
+.home-narrative .story-hero{text-align:center}
+.hero-intro{width:100%;margin:0 0 28px;font-size:.75rem;line-height:1.65;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);text-wrap:balance}
+.hero-layout{display:flex;flex-direction:column;align-items:center;max-width:1000px;margin-inline:auto}
+.hero-heading{min-width:0}
+.story-hero h1{font-size:clamp(4rem,7.2vw,6.5rem);line-height:1.03;letter-spacing:-.045em;margin:0;max-width:none;text-wrap:balance}
+.hero-title-line{display:block}
+.story-hero h1 em{width:fit-content;margin:.08em auto 0;padding:0 .04em .12em;color:var(--ink);font-weight:400}
+.story-hero .actions{justify-content:center;gap:28px;margin-top:24px}
+.story-hero .button{min-height:52px;padding:16px 24px}
+.story-hero .text-link{font-size:.8rem;min-height:48px;align-items:center}
+.story-hero-lead,.hero-edition{line-height:1.85;color:var(--muted);max-width:45rem;text-wrap:pretty}
+.story-hero-lead{font-size:1rem;margin-top:36px}
+.story-hero .hero-edition{font-size:.82rem;line-height:1.8;max-width:38rem;margin:28px 0 0}
+.hero-edition>span{display:block}
+.hero-edition>span+span{margin-top:4px}
+.hero-edition strong{font-weight:600;color:var(--ink)}
+.hero-edition a{text-decoration:underline;text-underline-offset:.2em;color:var(--ink)}
+.hero-challenge{color:var(--ink);font-weight:500}
+.story-hero-lead .hero-invitation{margin-top:0}
+.story-hero-lead>p+p{margin-top:24px}
+.story-hero-lead .hero-promise{max-width:38rem;margin-inline:auto;font-size:1.03rem;line-height:1.7;color:var(--ink);text-wrap:balance}
+.hero-promise strong{font-weight:600}
+.hero-invitation strong{display:block;font:400 clamp(1.65rem,2.3vw,2.1rem)/1.22 var(--serif);letter-spacing:-.025em;color:var(--ink)}
+.home-newsletter-band{background:#2d2924}
+.home-newsletter.shell{width:min(1000px,calc(100% - 96px));margin-top:0;padding:0;border:0;border-radius:0;background:transparent}
+.home-school{background:var(--home-tint);margin-top:0;border-block:1px solid var(--line)}
+.school-note{text-align:left}
+.school-note .eyebrow{margin-bottom:24px;color:var(--ink)}
+.school-editorial{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);border:1px solid var(--line)}
+.school-identity{display:flex;flex-direction:column;justify-content:space-between;gap:40px;background:var(--home-accent);padding:clamp(32px,4vw,56px);color:var(--ink)}
+.school-note h2{font-size:clamp(3.2rem,4.7vw,4.8rem);line-height:1.04;letter-spacing:-.04em;color:inherit}
+.school-identity p{max-width:24rem;font-size:.94rem;line-height:1.85;color:var(--ink)}
+.school-perspective{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(32px,4vw,56px);background:#ffffff70}
+.school-perspective p{max-width:27rem;font:400 clamp(1.8rem,2.6vw,2.55rem)/1.4 var(--serif);letter-spacing:-.02em;text-wrap:pretty}
+.school-perspective .text-link{margin-top:32px;min-height:44px}
+.home-course .section-heading{display:block;margin-bottom:56px}
+.home-course .section-heading>div{max-width:1050px}
+.home-course .section-title{font-size:clamp(2.6rem,4.5vw,4.2rem);line-height:1.12;letter-spacing:-.035em;text-wrap:balance}
+.home-course .section-title>span:first-child{display:block}
+.home-course .section-title em{display:block;width:fit-content;max-width:100%;margin-top:.08em;color:var(--ink)}
+.home-course .section-heading>p{max-width:35rem;margin:24px 0 0;font-size:.94rem;line-height:1.8}
+.home-course .program-list{border-top-color:var(--line)}
+.home-course .program-row{grid-template-columns:42px minmax(0,1.2fr) minmax(0,.9fr) 22px;gap:32px;align-items:center;padding:40px 12px;border-color:var(--home-line);position:relative;transition:background-color .22s}
+.home-course .program-row:hover,.home-course .program-row:focus-visible{background:var(--home-tint)}
+.home-course .program-number{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--home-accent);border-radius:50%;background:var(--home-accent);color:var(--ink);font-size:.72rem}
+.home-course .program-row h3{font-size:clamp(2rem,2.7vw,2.45rem);line-height:1.15}
+.home-course .program-row p{font-size:.88rem;line-height:1.7}
+.program-arrow{color:var(--ink);font-size:1.2rem;transition:transform .22s}
+.home-course .program-footer{font-size:.8rem;justify-content:flex-end}
+.home-price{background:var(--footer-dark);color:var(--footer-paper)}
+.home-price .admission-grid{grid-template-columns:minmax(0,1fr);gap:56px;justify-items:center;text-align:center}
+.home-price .admission-process{width:100%;max-width:62rem}
+.home-price .investment{width:100%;max-width:40rem;background:#2d2924;color:var(--footer-paper);border:1px solid #5e5540;padding:48px}
+.home-price .investment:before{display:none}
+.home-price .investment .eyebrow{color:var(--gold)}
+.home-price .price{color:var(--footer-paper);font-size:6.5rem}
+.home-price .investment>p{color:#e0d9cb}
+.home-price .investment li{border-color:#5e5540}
+.home-price .investment ul{border-color:#5e5540;text-align:left}
+.home-price .admission-process>.eyebrow{color:var(--gold)}
+.home-price .admission-process .section-title{font-size:clamp(2.5rem,4vw,3.8rem);line-height:1.1}
+.home-price .admission-steps{grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;max-width:none;margin:48px 0 0;position:relative;text-align:center}
+.home-price .admission-steps:before{content:'';position:absolute;left:16.6667%;right:16.6667%;top:27px;border-top:1px solid #5e5540}
+.home-price .admission-steps li{position:relative;display:flex;flex-direction:column;align-items:center;gap:24px;font-size:.93rem;line-height:1.8}
+.home-price .admission-steps .step-number{display:grid;place-items:center;width:56px;height:56px;flex:none;padding:0;border:1px solid #8b7b4e;border-radius:50%;background:var(--footer-dark);color:var(--gold);font:400 2rem/1 var(--serif)}
+.home-price .admission-steps h3{font-size:1.9rem;line-height:1.15;letter-spacing:-.02em}
+.home-price .admission-steps p{margin-top:12px;color:#e0d9cb;font-size:.88rem;line-height:1.8}
+.admission-note{font-size:.8rem;line-height:1.8;color:#e0d9cb;margin:36px auto 0;max-width:38rem}
+.home-narrative .faq-list summary:after{display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;background:var(--home-accent);color:var(--ink);border-radius:50%;transition:transform .2s}
+.home-narrative .faq .section-title em{color:var(--ink)}
+
+/* Movimiento breve, contenido siempre visible y sin animaciones en bucle. */
+@media(prefers-reduced-motion:no-preference){
+  .home-course .program-row h3{transition:transform .25s cubic-bezier(.2,.7,.3,1)}
+  .home-course .program-row:focus-visible h3{transform:translateX(8px)}
+  .hero-title-line{animation:home-title-arrive .7s cubic-bezier(.2,.7,.3,1) both}
+  .hero-title-line:nth-child(2){animation-delay:70ms}
+  .hero-title-line:nth-child(3){animation-delay:140ms}
+  .home-narrative [data-entrance].has-entered{animation:home-section-arrive .6s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes home-title-arrive{from{transform:translateY(12px)}to{transform:translateY(0)}}
+  @keyframes home-section-arrive{from{transform:translateY(14px)}to{transform:translateY(0)}}
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .home-course .program-row:hover h3{transform:translateX(8px)}
+  .home-narrative .button [aria-hidden],.home-narrative .text-link [aria-hidden]{transition:transform .2s}
+  .home-narrative .button:hover [aria-hidden],.home-narrative .text-link:hover [aria-hidden],.home-course .program-row:hover .program-arrow{transform:translate(3px,-3px)}
+}
+@media(max-width:760px){
+  .home-narrative,.home-narrative+.site-footer{--home-section-space:72px}
+  .hero-intro{font-size:.68rem;letter-spacing:.08em;margin-bottom:20px;text-wrap:initial}
+  .hero-heading{width:100%}
+  .story-hero h1{font-size:clamp(3rem,12.8vw,5rem);line-height:1.05;letter-spacing:-.04em}
+  .story-hero .actions{width:100%;max-width:28rem;flex-direction:column;align-items:stretch;gap:16px;margin-top:24px}
+  .story-hero .button{width:100%;max-width:none}
+  .story-hero .text-link{align-self:center;min-height:44px}
+  .story-hero-lead{margin-top:32px;line-height:1.8}
+  .hero-invitation strong{font-size:1.8rem;line-height:1.25}
+  .story-hero .hero-edition{margin-top:28px;line-height:1.8}
+  .home-newsletter.shell{width:calc(100% - 40px);margin-top:0;padding:0}
+  .school-editorial{grid-template-columns:minmax(0,1fr)}
+  .school-identity{padding:32px 28px;gap:28px}
+  .school-note h2{font-size:clamp(2.8rem,10.8vw,3.7rem)}
+  .school-identity p{font-size:.9rem}
+  .school-perspective{padding:32px 28px}
+  .school-perspective p{font-size:clamp(1.8rem,7vw,2.25rem);line-height:1.4}
+  .home-course .section-heading{margin-bottom:40px}
+  .home-course .section-heading .eyebrow{font-size:.64rem;line-height:1.8}
+  .home-course .section-title{font-size:clamp(2.15rem,8.6vw,2.9rem);line-height:1.16;text-wrap:initial}
+  .home-course .section-heading>p{font-size:.92rem;margin-top:20px}
+  .home-course .program-row{grid-template-columns:28px minmax(0,1fr) 20px;gap:12px 14px;align-items:start;padding:32px 0}
+  .home-course .program-number{grid-column:1;grid-row:1;width:26px;height:26px;font-size:.64rem;margin-top:2px}
+  .home-course .program-row h3{grid-column:2;grid-row:1;font-size:clamp(1.8rem,7.5vw,2.2rem);line-height:1.15}
+  .home-course .program-row p{grid-column:2;grid-row:2;margin:0;font-size:.84rem;line-height:1.7}
+  .program-arrow{grid-column:3;grid-row:1;font-size:1rem}
+  .home-course .program-footer{display:grid;gap:16px;padding-top:24px}
+  .home-course .program-footer .text-link{margin-top:0;width:fit-content;min-height:44px}
+  .home-price .admission-grid{gap:40px}
+  .home-price .admission-steps{grid-template-columns:minmax(0,1fr);gap:0;margin-top:36px;text-align:left}
+  .home-price .admission-steps:before{display:none}
+  .home-price .admission-steps li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:20px;align-items:start;padding-bottom:32px}
+  .home-price .admission-steps li:not(:last-child):after{content:'';position:absolute;left:25px;top:52px;bottom:0;border-left:1px solid #5e5540}
+  .home-price .admission-steps li:last-child{padding-bottom:0}
+  .home-price .admission-steps .step-number{width:52px;height:52px;font-size:1.85rem}
+  .home-price .admission-steps h3{font-size:1.7rem;padding-top:10px}
+  .home-price .admission-steps p{margin-top:8px}
+  .home-price .investment{padding:28px 24px}
+  .home-price .price{font-size:6rem}
+}
+@media print{
+  .home-narrative{--home-accent:transparent}
+  .home-price,.home-school{background:white;color:black}
+  .school-identity,.school-perspective{background:white;color:black}
+  .school-identity p,.school-perspective em{color:black}
+  .home-price .investment{background:white;color:black}
+  .home-price .investment .eyebrow,.home-price .price,.home-price .investment>p{color:black}
+  .home-price .admission-note,.home-price .admission-process>.eyebrow,.home-price .admission-steps span{color:black}
+  .home-narrative [data-entrance],.hero-title-line{animation:none!important;transform:none!important}
+}

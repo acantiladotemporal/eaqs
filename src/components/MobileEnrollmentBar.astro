@@ -1,0 +1,56 @@
+---
+import { COURSE_LAUNCH_PRICE_EUR } from '../lib/course-data';
+---
+<aside class="mobile-enrollment" aria-label="Solicitud de plaza" data-enrollment-bar hidden>
+  <div><span>Formación online</span><strong>{COURSE_LAUNCH_PRICE_EUR} € <small>de lanzamiento</small></strong></div>
+  <a class="button" href="/registro">Solicitar Plaza <span aria-hidden="true">↗</span></a>
+</aside>
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-enrollment-bar]');
+  const header = document.querySelector('.site-header');
+  const primaryActions = document.querySelectorAll('[data-enrollment-trigger], main a.button[href="/registro"]');
+  const quietSections = document.querySelectorAll('.site-footer, [data-newsletter-capture]');
+  if (bar && header && 'IntersectionObserver' in window) {
+    let passed = false;
+    const visibleActions = new Set<Element>();
+    const visibleSections = new Set<Element>();
+    const mobile = window.matchMedia('(max-width: 760px)');
+    const update = () => {
+      const editing = document.activeElement?.matches('input, textarea, select') || false;
+      bar.hidden = !mobile.matches || !passed || visibleActions.size > 0 || visibleSections.size > 0 || editing;
+    };
+    new IntersectionObserver(entries => {
+      passed = entries[0].boundingClientRect.bottom < 0;
+      update();
+    }).observe(header);
+    const actionObserver = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) visibleActions.add(entry.target);
+        else visibleActions.delete(entry.target);
+      }
+      update();
+    });
+    primaryActions.forEach(action => actionObserver.observe(action));
+    const quietObserver = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) visibleSections.add(entry.target);
+        else visibleSections.delete(entry.target);
+      }
+      update();
+    });
+    quietSections.forEach(section => quietObserver.observe(section));
+    mobile.addEventListener('change', update);
+    document.addEventListener('focusin', update);
+    document.addEventListener('focusout', () => requestAnimationFrame(update));
+  }
+</script>
+<style>
+  .mobile-enrollment{display:none}
+  @media(max-width:760px){
+    .mobile-enrollment:not([hidden]){position:fixed;bottom:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:#fffdf8;border-top:1px solid var(--line);box-shadow:0 -5px 24px #24211d0a}
+    .mobile-enrollment>div{display:grid;font-size:.68rem;color:var(--muted);line-height:1.5}
+    .mobile-enrollment strong{font-size:.94rem;color:var(--ink);font-weight:500}
+    .mobile-enrollment small{font-size:.64rem;font-weight:400}
+    .mobile-enrollment .button{font-size:.78rem;gap:.7rem;min-height:48px;padding:.8rem 1rem;flex-shrink:0}
+  }
+</style>

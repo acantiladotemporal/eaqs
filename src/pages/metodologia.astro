@@ -1,71 +1,20 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import Layout from '../layouts/Layout.astro'; import Header from '../components/Header.astro'; import Footer from '../components/Footer.astro';
+import CourseInvitation from '../components/CourseInvitation.astro';
 ---
-
-<Layout
-  title="Metodologia | El Arbol Que Suena"
-  description="Conoce el enfoque neuro-organico: evidencia cientifica, practica docente y regulacion emocional a traves de la musica."
->
-  <Header />
-  <main class="bg-white text-ink pt-40 pb-20">
-    <div class="max-w-[1800px] mx-auto px-6 md:px-12">
-      <header class="max-w-4xl mb-28">
-        <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold mb-4 block">Metodo neuro-organico</span>
-        <h1 class="font-display text-7xl md:text-9xl italic tracking-tighter leading-none mb-10">
-          Evidencia.
-          <br />
-          Sensibilidad.
-          <br />
-          Aula.
-        </h1>
-        <p class="font-sans text-xl md:text-2xl text-ink/60 leading-relaxed italic">
-          Traducimos investigacion neurocientifica en decisiones pedagogicas concretas para docentes de 0 a 9 anos.
-        </p>
-      </header>
-
-      <section class="grid lg:grid-cols-12 gap-16 items-start">
-        <div class="lg:col-span-4 space-y-10">
-          <article class="border-t border-clay/30 pt-7">
-            <h2 class="font-display text-3xl italic mb-3">01. Rigor cientifico</h2>
-            <p class="font-sans text-sm text-ink/65 leading-relaxed">
-              Cada leccion se apoya en hallazgos de neurodesarrollo, plasticidad y aprendizaje temprano publicados en los ultimos anos.
-            </p>
-          </article>
-          <article class="border-t border-clay/30 pt-7">
-            <h2 class="font-display text-3xl italic mb-3">02. Transferencia al aula</h2>
-            <p class="font-sans text-sm text-ink/65 leading-relaxed">
-              No nos quedamos en teoria: cada modulo incluye actividades aplicables para infantil y primeros cursos de primaria.
-            </p>
-          </article>
-          <article class="border-t border-clay/30 pt-7">
-            <h2 class="font-display text-3xl italic mb-3">03. Cuidado emocional</h2>
-            <p class="font-sans text-sm text-ink/65 leading-relaxed">
-              La musica se trabaja como herramienta de regulacion, apego y seguridad afectiva en el entorno educativo.
-            </p>
-          </article>
-        </div>
-
-        <div class="lg:col-span-8 ui-panel p-10 md:p-20">
-          <div class="font-sans text-ink/80 leading-relaxed space-y-7">
-            <h2 class="font-display text-4xl italic text-ink mb-8">Nucleo de investigacion aplicada</h2>
-            <p>
-              Durante mas de una decada hemos observado como la estimulacion ritmica temprana no solo mejora habilidades musicales:
-              tambien fortalece atencion, lenguaje y coordinacion motora.
-            </p>
-            <p>
-              Nuestro marco integra tres ejes operativos: <strong>sincronia ritmica</strong>, <strong>desarrollo vocal</strong> y
-              <strong>regulacion emocional</strong>. Cada eje incorpora objetivos observables, protocolos de aula y criterios de evaluacion.
-            </p>
-            <div class="h-px w-24 bg-moss my-10"></div>
-            <p class="italic text-2xl font-display text-moss">
-              "Una buena experiencia sonora en primera infancia deja huella cognitiva y vincular."
-            </p>
-          </div>
-        </div>
-      </section>
-    </div>
-  </main>
-  <Footer />
+<Layout title="Música, infancia y práctica docente · Nuestra mirada" description="Nuestra mirada sobre música, aprendizaje y primera infancia: observar el aula, escuchar y contrastar la evidencia para acompañar la práctica docente.">
+  <Header /><main id="main-content">
+    <header class="shell page-heading"><p class="eyebrow">Nuestra mirada</p><h1>Escuchar con atención.<br /><em><span class="editorial-accent">Acompañar con sentido.</span></em></h1><p class="lead">La música como experiencia compartida. La primera infancia como un tiempo que merece cuidado, curiosidad y presencia.</p></header>
+    <section class="shell page-body"><div class="manifesto rule manifesto-bordered"><p class="eyebrow">Música · Desarrollo · Pedagogía</p><div><h2>Una pregunta antes<br />de otra actividad.</h2><p class="lead">¿Qué está ocurriendo en el grupo? ¿Qué expresa ese movimiento? ¿Qué lugar ocupa el silencio? La formación invita a observar antes de intervenir y a relacionar lo que aprendemos con las situaciones del aula.</p><p class="lead">El itinerario recorre las bases del procesamiento sonoro, el ritmo, la voz y el vínculo, para llegar al diseño de experiencias, la evaluación sensible y el análisis de casos.</p></div></div>
+      <div class="principle-grid"><article><p class="eyebrow">01 · Comprender</p><h2>Una base para<br />tomar decisiones.</h2><p>Explorar conceptos de neurodesarrollo y aprendizaje musical, con atención a sus límites y a su relación con la práctica educativa.</p></article><article><p class="eyebrow">02 · Observar</p><h2>Lo que sucede<br />en el aula.</h2><p>Mirar al grupo, escuchar y reconocer los procesos que acompañamos. Convertir la experiencia cotidiana en materia de reflexión.</p></article><article><p class="eyebrow">03 · Compartir</p><h2>Pensar junto<br />a otras docentes.</h2><p>Conversar sobre preguntas y casos en tutorías y en el foro. Desarrollar un trabajo final que integre el recorrido.</p></article></div>
+      <section class="method-grounding" aria-labelledby="method-presence"><p class="eyebrow">Tiempo y presencia</p><h2 id="method-presence">Una pausa también tiene lugar.</h2><p>Queremos hacer espacio para escuchar, observar y volver a una pregunta. El silencio es una posibilidad de la experiencia musical, junto a la voz y el movimiento. Participar puede adoptar distintas formas; estar quieto no es una medida de aprendizaje.</p><p>Cuando hablamos de aprendizaje invisible, nos referimos a procesos que no se traducen de inmediato en una respuesta o un producto visible. La ausencia de una respuesta no permite concluir, por sí sola, qué ha aprendido un niño o una niña.</p></section>
+      <section class="method-grounding" aria-labelledby="method-evidence"><p class="eyebrow">Rigor y límites</p><h2 id="method-evidence">Observar, contrastar, revisar.</h2><p>La música tiene valor como experiencia artística, expresiva y compartida. Relacionarla con el aprendizaje exige distinguir lo que observamos, las hipótesis que planteamos y lo que la investigación permite afirmar.</p><p>Los resultados de un estudio no se convierten automáticamente en una receta para cualquier aula. Las propuestas necesitan atender a la edad, al contexto y a las distintas formas de participar. Nuestra mirada es educativa: una observación del aula no equivale a un diagnóstico.</p></section>
+      <CourseInvitation />
+    </section>
+  </main><Footer />
 </Layout>
+<style>
+  .method-grounding{max-width:50rem;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--line)}
+  .method-grounding h2{font-size:clamp(2rem,3.5vw,3rem);margin:1rem 0 1.5rem}
+  .method-grounding>p:not(.eyebrow){color:var(--muted);line-height:1.85}
+</style>

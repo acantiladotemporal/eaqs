@@ -1,0 +1,23 @@
+{
+  "inspectedOn": "2026-11-01",
+  "stage": "Historical snapshot before applying migrations; current state is in supabase-verification.json",
+  "projectRef": "bgmkkvgcaygtcfphkvlv",
+  "apiUrl": "https://bgmkkvgcaygtcfphkvlv.supabase.co",
+  "server": "supabase_eaqs",
+  "postgresVersion": "17.6",
+  "inspectionWasReadOnly": true,
+  "applicationTables": 0,
+  "authUsers": 0,
+  "storageBuckets": 0,
+  "migrations": [],
+  "securityAdvisorNotices": 0,
+  "performanceAdvisorNotices": 0,
+  "localRlsTestsPassed": 19,
+  "preparedMigration": "20261101103010_escuela_admision_aula.sql",
+  "preparedMigrationSha256": "29159B22F26CCE86217B1C88A864955A896E44A80F0DC236F10FDA4ABB8A8CB0",
+  "remoteMigrationApplied": false,
+  "publicLocalEnvironmentConfigured": true,
+  "serverAndEmailKeysConfigured": false,
+  "writeOAuthCompleted": true,
+  "writeToolsReloadPending": true
+}

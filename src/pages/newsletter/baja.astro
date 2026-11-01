@@ -1,0 +1,15 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+const token = Astro.url.searchParams.get('token') || '';
+const valid = /^[\w-]{43}$/.test(token);
+const error = Astro.url.searchParams.get('error');
+const pending = Astro.url.searchParams.get('done') === 'pending';
+Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+Astro.response.headers.set('Cache-Control', 'no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+---
+<Layout title="Baja de la newsletter | El Árbol Que Suena" experience="focused"><Header mode="focused" /><main id="main-content" class="shell section stack preference-page"><p class="eyebrow">Tus preferencias</p><h1 class="display">Cada pausa<br /><em><span class="editorial-accent">tiene su tiempo.</span></em></h1>
+  {pending ? <section class="panel stack"><h2>Tu baja está registrada.</h2><p>La hemos guardado en la escuela. Estamos terminando de actualizarla en el servicio de envío. No necesitas volver a solicitarla.</p><a class="button button-secondary" href="/">Volver a la escuela</a></section> : error === 'unavailable' ? <section class="panel stack"><h2>No hemos podido registrar la baja.</h2><p>Inténtalo más tarde abriendo de nuevo el enlace del correo. Si necesitas ayuda, contacta con la escuela.</p><a class="button button-secondary" href="/contacto">Contactar</a></section> : valid && !error ? <form method="post" action="/api/newsletter/unsubscribe" class="panel stack"><p>Confirma que deseas darte de baja de la newsletter. Esta decisión no modifica tu solicitud ni tu acceso al curso.</p><input type="hidden" name="token" value={token} /><div><button class="button" type="submit">Confirmar mi baja</button></div></form> : <section class="panel stack"><p>Este enlace no es válido. Utiliza el enlace de baja incluido en uno de nuestros correos o contacta con la escuela.</p><a class="button button-secondary" href="/contacto">Contactar</a></section>}
+</main><Footer mode="focused" /></Layout>

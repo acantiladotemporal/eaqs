@@ -1,136 +1,35 @@
 ---
-interface Props {
-  mode?: 'default' | 'learning';
-}
-
-const { mode = 'default' } = Astro.props;
-const isLearning = mode === 'learning';
+import BrandLockup from './BrandLockup.astro';
+import MobileEnrollmentBar from './MobileEnrollmentBar.astro';
+interface Props { mode?: 'default' | 'learning' | 'focused'; preview?: boolean; }
+const learning = Astro.props.mode === 'learning';
+const focused = Astro.props.mode === 'focused';
+const preview = import.meta.env.DEV && Astro.props.preview;
+const items = [['/programa', 'La Formación'], ['/escuela-internacional-neuroeducacion-musical', 'La Escuela'], ['/contacto', 'Contacto']];
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const active = (href: string) => path === href || (href === '/escuela-internacional-neuroeducacion-musical' && path === '/metodologia');
+const capture = !learning && !focused && ['/', '/programa', '/escuela-internacional-neuroeducacion-musical', '/contacto'].includes(path);
 ---
-
-<header data-site-header class={`site-header ${isLearning ? 'site-header-learning' : ''}`}>
-  <span data-scroll-progress class="site-header-progress" aria-hidden="true"></span>
-
-  <nav class="content-shell header-shell" aria-label="Principal">
-    <a href="/" class="group inline-flex items-center gap-3 header-brand" aria-label="Inicio El Arbol Que Suena">
-      <img
-        src="/images/elarbolquesuena-escuela-neuroeducacion-musical.png"
-        alt=""
-        class="brand-mark-image"
-        loading="eager"
-        decoding="async"
-      />
-      <span class="inline-flex flex-col min-w-0">
-        <span class="font-display whitespace-nowrap header-brand-title leading-none text-note tracking-tight">El Árbol que Suena.</span>
-        <span class="h-px w-0 group-hover:w-full bg-ochre transition-all duration-500"></span>
-      </span>
-    </a>
-
-    {
-      isLearning ? (
-        <div class="header-center-nav hidden lg:flex font-sans text-[10px] uppercase tracking-[0.2em]">
-          <a href="/dashboard" class="nav-link header-nav-link">Ruta</a>
-          <a href="/foro" class="nav-link header-nav-link">Comunidad</a>
-        </div>
-      ) : (
-        <div class="header-center-nav hidden xl:flex font-sans text-[11px] uppercase tracking-[0.18em]">
-          <a href="/#curso" class="nav-link header-nav-link">La formacion</a>
-          <a href="/#newsletter" class="nav-link header-nav-link">Newsletter</a>
-          <a href="/#quienes" class="nav-link header-nav-link">Escuela</a>
-          <a href="/#precio" class="nav-link header-nav-link">Inscripciones</a>
-          <a href="/contacto" class="nav-link header-nav-link">Contacto</a>
-        </div>
-      )
-    }
-
+<header class:list={['site-header', { 'header-learning': learning, 'header-focused': focused }]}>
+  <nav class="shell header-inner" aria-label="Principal">
+    <BrandLockup variant="header" />
+    {!learning && !focused && <div class="desktop-nav">{items.map(([href, label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}</div>}
     <div class="header-actions">
-      <details class="lg:hidden relative">
-        <summary class="menu-summary btn btn-secondary btn-sm !px-5">Menu</summary>
-        {
-          isLearning ? (
-            <div class="mobile-nav">
-              <a href="/dashboard">Ruta</a>
-              <a href="/foro">Comunidad</a>
-              <a href="/examen/1">Examen</a>
-            </div>
-          ) : (
-            <div class="mobile-nav">
-              <a href="/#curso">La formacion</a>
-              <a href="/#newsletter">Newsletter</a>
-              <a href="/#quienes">Escuela</a>
-              <a href="/#precio">Inscripciones</a>
-              <a href="/contacto">Contacto</a>
-            </div>
-          )
-        }
-      </details>
-
-      {
-        isLearning ? (
-          <>
-            <span class="hidden xl:inline-flex items-center rounded-full border border-clay px-4 py-2 text-[11px] uppercase tracking-[0.16em] text-ink/80">
-              <span class="mr-2 text-ink/45">Aula de</span>
-              <span data-user-name class="name-swap">Docente</span>
-            </span>
-            <a href="/login" data-header-login class="btn btn-sm btn-header-access hidden">Acceso</a>
-            <button type="button" data-header-logout class="btn btn-sm btn-header-access hidden">Salir</button>
-          </>
-        ) : (
-          <>
-            <a href="/login" class="hidden md:inline-flex btn btn-sm btn-header-access">Acceso</a>
-            <a href="/registro?source=header_reserva" class="btn btn-sm btn-header-reserve">Reservar plaza</a>
-          </>
-        )
-      }
+      {learning ? <a class="learning-home-link" href={preview ? '/vista-previa' : '/'} aria-label={preview ? 'Mapa De Revisión De La Web' : 'Volver A La Web De La Escuela'}><span class="learning-home-full">{preview ? 'Recorrido Web' : 'Volver A La Web'}</span><span class="learning-home-short">{preview ? 'Mapa' : 'Web'}</span> <span aria-hidden="true">↗</span></a> : focused ? <a class="focused-context-link" href="/programa"><span>Ver La Formación</span><span aria-hidden="true">↗</span></a> : <>
+        <a class="access-link" href="/login">Aula <span aria-hidden="true">↗</span></a>
+        <a class="button button-small" href="/registro">Solicitar Plaza <span aria-hidden="true">↗</span></a>
+        <details class="mobile-menu"><summary aria-label="Abrir navegación">Menú <span class="menu-indicator" aria-hidden="true">+</span></summary><div>{items.map(([href, label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}<a class="menu-access" href="/login">Acceso Al Aula <span aria-hidden="true">↗</span></a><a class="button" href="/registro">Solicitar Plaza <span aria-hidden="true">↗</span></a></div></details>
+      </>}
     </div>
   </nav>
 </header>
-
+{capture && <MobileEnrollmentBar />}
 <script>
-  import { AUTH_PREVIEW_MODE } from '../lib/auth-config';
-  import { animateNameSwap, getPreferredName, resolveSessionUser } from '../lib/auth-client';
-  import { supabase } from '../lib/supabase';
-
-  async function bindLearningHeader() {
-    const nameTargets = document.querySelectorAll('[data-user-name]');
-    const logoutButton = document.querySelector('[data-header-logout]');
-    const loginLink = document.querySelector('[data-header-login]');
-
-    if (!nameTargets.length && !logoutButton && !loginLink) return;
-
-    const user = await resolveSessionUser(4500);
-
-    if (user && nameTargets.length) {
-      const firstName = getPreferredName(user);
-      nameTargets.forEach((target) => animateNameSwap(target, firstName));
-    }
-
-    if (user && logoutButton instanceof HTMLButtonElement) {
-      logoutButton.classList.remove('hidden');
-    }
-
-    if (!user && loginLink instanceof HTMLAnchorElement) {
-      loginLink.classList.remove('hidden');
-    }
-
-    if (!user && logoutButton instanceof HTMLButtonElement) {
-      logoutButton.classList.add('hidden');
-    }
-
-    if (AUTH_PREVIEW_MODE && loginLink instanceof HTMLAnchorElement) {
-      loginLink.classList.add('hidden');
-    }
-
-    if (AUTH_PREVIEW_MODE && logoutButton instanceof HTMLButtonElement) {
-      logoutButton.classList.add('hidden');
-    }
-
-    if (!AUTH_PREVIEW_MODE && logoutButton instanceof HTMLButtonElement) {
-      logoutButton.addEventListener('click', async () => {
-        await supabase.auth.signOut();
-        window.location.href = '/login';
-      });
-    }
+  const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu');
+  if (menu) {
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary')?.focus(); }
+    });
+    document.addEventListener('click', event => { if (event.target instanceof Node && !menu.contains(event.target)) menu.open = false; });
   }
-
-  bindLearningHeader();
 </script>

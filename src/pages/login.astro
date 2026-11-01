@@ -2,121 +2,29 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import Button from '../components/ui/Button.astro';
-import Field from '../components/ui/Field.astro';
+import { safeNext } from '../lib/server/security';
+const sent = Astro.url.searchParams.has('sent');
+const failure = Astro.url.searchParams.get('error');
+const next = safeNext(Astro.url.searchParams.get('next'));
 ---
-
-<Layout title="Acceso | El Arbol Que Suena" description="Inicia sesion para entrar al aula y continuar tu recorrido formativo.">
-  <Header />
-
-  <main class="bg-white pt-20 md:pt-24 pb-16 md:pb-20">
-    <section class="section-shell pt-6 md:pt-8 pb-14 md:pb-16">
-      <div class="content-shell max-w-3xl space-y-10 md:space-y-12">
-        <header class="text-center max-w-2xl mx-auto space-y-5" data-reveal>
-          <p class="editorial-kicker">Acceso al aula</p>
-          <h1 class="headline-luxe section-title">Inicia sesion y vuelve a tu recorrido.</h1>
-          <p class="lead-copy">
-            Todo tu avance queda guardado en tu cuenta: modulos, examen y comunidad docente.
-          </p>
-        </header>
-
-        <section class="ui-panel p-7 md:p-10 max-w-2xl mx-auto" data-reveal style="--reveal-delay:120ms">
-          <form id="login-form" class="space-y-6" novalidate>
-            <Field id="email" type="email" label="Correo electronico" placeholder="tu@email.com" autocomplete="email" required />
-            <Field
-              id="password"
-              type="password"
-              label="Contrasena"
-              placeholder="Tu contrasena"
-              autocomplete="current-password"
-              required
-            />
-            <p id="login-feedback" class="text-sm text-ink/60 min-h-6" aria-live="polite"></p>
-            <Button id="btn-login" type="submit" variant="primary" size="lg" block>Entrar al aula</Button>
-          </form>
-
-          <p class="text-center font-sans text-xs text-ink/55 mt-6">
-            Aun no tienes cuenta?
-            <a href="/registro" class="text-ink underline decoration-1 underline-offset-4 hover:text-moss">Reservar plaza</a>
-          </p>
-        </section>
-      </div>
-    </section>
+<Layout title="Acceso | El Árbol Que Suena" description="Accede a tu solicitud y a tu aula con un enlace privado enviado a tu correo." experience="focused">
+  <Header mode="focused" />
+  <main id="main-content" class="section shell">
+    <div class="access-layout">
+      <header class="page-heading"><p class="eyebrow">Tu espacio en la escuela</p><h1 class="display">Volver a<br/><em><span class="editorial-accent">escuchar.</span></em></h1><p class="lead">Tu solicitud, tus clases y tu comunidad, en un mismo lugar.</p><p class="muted">Te enviaremos un enlace privado de acceso. No necesitas recordar una contraseña.</p></header>
+      <section class="panel stack">
+        <h2>Accede con tu correo</h2>
+        {sent && <p class="notice" role="status">Si el correo es válido, recibirás un enlace para entrar. Revisa también la carpeta de correo no deseado.</p>}
+        {failure && <p class="notice" role="alert">{failure === 'expired' ? 'El enlace ha caducado o ya se ha utilizado. Solicita uno nuevo.' : 'Ahora mismo no podemos enviar el enlace. Inténtalo más tarde o contacta con la escuela.'}</p>}
+        <form method="post" action="/api/auth/login" class="stack">
+          <input type="hidden" name="next" value={next}/>
+          <div class="field"><label for="access-email">Correo electrónico</label><input id="access-email" name="email" type="email" autocomplete="email" required maxlength="254"/></div>
+          <div hidden aria-hidden="true"><label>Deja este campo vacío<input name="website" tabindex="-1" autocomplete="off"/></label></div>
+          <button class="button" type="submit">Recibir enlace de acceso <span aria-hidden="true">↗</span></button>
+        </form>
+        <p class="muted">¿Aún no has solicitado tu plaza? <a href="/registro">Solicitar Plaza</a></p>
+      </section>
+    </div>
   </main>
-
-  <Footer />
-
-  <script>
-    import { getSafeNextPath, resolveSessionUser } from '../lib/auth-client';
-    import { isSupabaseConfigured, supabase } from '../lib/supabase';
-
-    const form = document.getElementById('login-form');
-    const feedback = document.getElementById('login-feedback');
-    const button = document.getElementById('btn-login');
-
-    function setFeedback(message, isError = false) {
-      if (!feedback) return;
-      feedback.textContent = message;
-      feedback.className = isError ? 'text-sm text-red-700 min-h-6' : 'text-sm text-ink/60 min-h-6';
-    }
-
-    form?.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      if (!isSupabaseConfigured) {
-        setFeedback('Supabase no esta configurada en este entorno.', true);
-        return;
-      }
-
-      const emailInput = document.getElementById('email');
-      const passwordInput = document.getElementById('password');
-
-      const email = (emailInput instanceof HTMLInputElement ? emailInput.value : '').trim();
-      const password = passwordInput instanceof HTMLInputElement ? passwordInput.value : '';
-
-      if (!email || !password) {
-        setFeedback('Completa email y contrasena.', true);
-        return;
-      }
-
-      if (button instanceof HTMLButtonElement) {
-        button.disabled = true;
-        button.textContent = 'Accediendo...';
-      }
-
-      setFeedback('');
-
-      try {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-          setFeedback(error.message, true);
-          if (button instanceof HTMLButtonElement) {
-            button.disabled = false;
-            button.textContent = 'Entrar al aula';
-          }
-          return;
-        }
-
-        const user = await resolveSessionUser(7000);
-        if (!user) {
-          setFeedback('No se pudo recuperar la sesion. Intenta de nuevo.', true);
-          if (button instanceof HTMLButtonElement) {
-            button.disabled = false;
-            button.textContent = 'Entrar al aula';
-          }
-          return;
-        }
-
-        const params = new URLSearchParams(window.location.search);
-        const safeNext = getSafeNextPath(params.get('next'), '/dashboard');
-        window.location.assign(safeNext);
-      } catch (_error) {
-        setFeedback('Error de conexion. Revisa tu red e intentalo otra vez.', true);
-        if (button instanceof HTMLButtonElement) {
-          button.disabled = false;
-          button.textContent = 'Entrar al aula';
-        }
-      }
-    });
-  </script>
+  <Footer mode="focused" />
 </Layout>

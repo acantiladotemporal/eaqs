@@ -1,0 +1,17 @@
+---
+import LearningShell from '../components/LearningShell.astro';
+import { INITIAL_COHORT_ID, madridDate } from '../components/learning';
+const { db, user, enrollment } = Astro.locals;
+if (!db || !user) return Astro.redirect('/login');
+const cohortId = enrollment?.cohort_id || INITIAL_COHORT_ID;
+const result = await db.from('tutoring_sessions').select('id,title,starts_at,meeting_url,notes').eq('cohort_id', cohortId).order('starts_at');
+const sessions = result.data || [];
+const upcoming = sessions.filter((session) => new Date(session.starts_at).getTime() >= Date.now());
+const past = sessions.filter((session) => new Date(session.starts_at).getTime() < Date.now());
+---
+<LearningShell title="Un encuentro para seguir pensando." eyebrow="Tutorías y acompañamiento" description="Los encuentros en directo de tu cohorte, con horarios de referencia de Madrid.">
+  <p class="notice">Consulta la diferencia horaria con tu país antes de cada encuentro.</p>
+  {result.error ? <p class="notice error">No hemos podido cargar el calendario. Vuelve a intentarlo más tarde.</p> : upcoming.length ? <section class="stack section" aria-label="Próximos encuentros">{upcoming.map((session) => <article class="panel stack"><p class="eyebrow">{madridDate(session.starts_at, true)} · Madrid</p><h2>{session.title}</h2>{session.notes && <p class="preserve-lines">{session.notes}</p>}{session.meeting_url ? <a class="button" href={session.meeting_url} target="_blank" rel="noopener noreferrer">Entrar al encuentro ↗</a> : <p class="muted">El enlace se publicará antes de la sesión.</p>}</article>)}</section> : <section class="empty-state section"><h2>Los próximos encuentros se anunciarán aquí.</h2><p>La escuela está preparando el calendario de acompañamiento.</p></section>}
+  {past.length > 0 && <section class="section stack"><h2>Encuentros anteriores</h2>{past.map((session) => <article class="panel"><p class="eyebrow">{madridDate(session.starts_at, true)} · Madrid</p><h3>{session.title}</h3>{session.notes && <p class="preserve-lines">{session.notes}</p>}</article>)}</section>}
+</LearningShell>
+<style>.preserve-lines{white-space:pre-line;overflow-wrap:anywhere}</style>

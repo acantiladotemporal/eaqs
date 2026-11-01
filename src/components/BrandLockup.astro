@@ -1,0 +1,32 @@
+---
+interface Props { variant: 'header' | 'footer'; }
+const { variant } = Astro.props;
+---
+<a class:list={['brand-lockup', `brand-lockup-${variant}`]} href="/" aria-label={variant === 'header' ? 'El Árbol Que Suena · Inicio' : 'El Árbol Que Suena · Escuela Internacional de Neuroeducación Musical · Inicio'}>
+  <span class="brand-tree" aria-hidden="true">
+    <img src="/images/brand-logo.png" alt="" width="1254" height="1254" loading={variant === 'footer' ? 'lazy' : 'eager'} />
+  </span>
+  <!-- Both lines share an advance width. Only spacing adjusts; glyphs retain their proportions. -->
+  <svg class="brand-lettering" viewBox={variant === 'header' ? '0 0 600 90' : '0 0 600 122'} width="600" height={variant === 'header' ? '90' : '122'} aria-hidden="true" focusable="false">
+    <text class="brand-name" x="0" y="72" textLength="600" lengthAdjust="spacing">El Árbol Que Suena</text>
+    {variant === 'footer' && <text class="brand-descriptor" x="0" y="113" textLength="600" lengthAdjust="spacing">Escuela Internacional de Neuroeducación Musical</text>}
+  </svg>
+</a>
+
+<style>
+  .brand-lockup{display:inline-flex;align-items:center;color:inherit}
+  .brand-tree{display:block;position:relative;overflow:hidden;flex:none;width:88px;aspect-ratio:22/23}
+  .brand-tree img{position:absolute;max-width:none;width:168.181818%;height:auto;left:50%;top:-21.73913%;transform:translateX(-50%)}
+  .brand-lettering{display:block;min-width:0;width:100%;height:auto;overflow:visible;fill:currentColor}
+  .brand-name{font:400 72px var(--serif)}
+  .brand-descriptor{font:400 26px var(--sans);fill:var(--brand-descriptor-color,var(--muted))}
+  .brand-lockup-header{width:300px;max-width:calc(100% - 76px);flex-shrink:0;gap:12px}
+  .brand-lockup-header .brand-tree{width:42px}
+  .brand-lockup-header .brand-lettering{flex:1;width:0}
+  .brand-lockup-footer{width:min(100%,clamp(280px,32vw,440px));flex-direction:column;gap:16px;--brand-descriptor-color:#e0d9cb}
+  @media(max-width:760px){
+    .brand-lockup-header{width:270px;gap:9px}
+    .brand-lockup-header .brand-tree{width:32px}
+    .brand-lockup-footer{gap:12px}
+  }
+</style>

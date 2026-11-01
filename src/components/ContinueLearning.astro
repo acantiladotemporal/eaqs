@@ -1,0 +1,15 @@
+---
+interface Props { href: string; title: string; position: number | string; review?: boolean; }
+const { href, title, position, review = false } = Astro.props;
+---
+<section class="continue-card" aria-label="Continuar la formación">
+  <div><p class="eyebrow">{review ? 'Para volver a lo aprendido' : 'Tu siguiente paso'}</p><h2>{title}</h2><p>Módulo {String(position).padStart(2, '0')} · Clase y materiales</p></div>
+  <a class="button" href={href}>{review ? 'Repasar el módulo' : 'Continuar el módulo'} <span aria-hidden="true">↗</span></a>
+</section>
+<style>
+  .continue-card{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:28px;background:var(--accent-tint);border:1px solid var(--line);margin-bottom:24px}
+  h2{font-size:clamp(1.7rem,2.5vw,2.2rem);margin:.6rem 0 .5rem}
+  p:not(.eyebrow){font-size:.8rem;color:var(--muted)}
+  .button{flex-shrink:0;gap:16px}
+  @media(max-width:760px){.continue-card{align-items:stretch;flex-direction:column;padding:24px}.button{width:100%}}
+</style>

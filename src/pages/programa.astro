@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CourseInvitation from '../components/CourseInvitation.astro';
+import { COURSE_MODULES, COURSE_LAUNCH_PRICE_EUR, COURSE_SEAT_LIMIT } from '../lib/course-data';
+---
+<Layout title="Curso de neuroeducación musical · Programa de 10 módulos" description="Conoce los diez módulos de neuroeducación musical para docentes de Infantil: ritmo, voz, desarrollo y práctica de aula. Formación online y certificado propio.">
+  <Header />
+  <main id="main-content">
+    <header class="shell page-heading"><p class="eyebrow">Programa de formación online</p><h1>Escuchar, comprender,<br /><em><span class="editorial-accent">llevar al aula.</span></em></h1><p class="lead">Neuroeducación musical para docentes de niños y niñas de 0 a 6 años, especialmente de 3 a 6.</p><div class="actions no-print"><a href="/registro" class="button">Solicitar Plaza <span aria-hidden="true">↗</span></a><a href="#modulos" class="text-link">Ver Los Diez Módulos <span aria-hidden="true">↓</span></a></div><p class="page-note">Enero 2027 · {COURSE_LAUNCH_PRICE_EUR} € · {COURSE_SEAT_LIMIT} plazas. La solicitud no implica ningún pago.</p></header>
+    <section class="shell page-body">
+      <div class="program-intro"><p>Diez módulos que conectan el procesamiento sonoro, el vínculo y la práctica educativa. El recorrido incluye clases grabadas, materiales, tutorías y foro de la cohorte.</p><p>La próxima edición será en enero de 2027. Los módulos se abrirán según el calendario detallado, que se comunicará antes de la matrícula. La participación en los cuestionarios y la aprobación docente del trabajo final permitirán obtener el certificado propio de la escuela.</p></div>
+      <div class="program-list" id="modulos">{COURSE_MODULES.map((module) => <article class="program-row" id={`modulo-${module.id}`}><span class="program-number">{module.id}</span><h2 class="program-module-title">{module.title}</h2><div><p>{module.description}</p><p>{module.overview}</p></div></article>)}</div>
+      <div class="program-tools no-print"><p>Puedes guardar el programa como PDF desde la opción de impresión de tu navegador.</p><button id="print-program" class="print-button" type="button">Imprimir Programa</button></div>
+      <CourseInvitation programme />
+    </section>
+  </main><Footer />
+</Layout>
+<script>document.getElementById('print-program')?.addEventListener('click', () => window.print());</script>

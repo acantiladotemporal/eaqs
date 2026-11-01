@@ -1,0 +1,21 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+if (!import.meta.env.DEV) return new Response('No encontrado.', { status: 404 });
+const publicPages = [['/','Portada'],['/programa','La formación y el programa'],['/metodologia','La mirada'],['/escuela-internacional-neuroeducacion-musical','La escuela'],['/registro','Solicitud de plaza'],['/login','Acceso por correo'],['/contacto','Contacto'],['/blog','Blog']];
+const classroom = [['aula','Mi itinerario'],['modulo','Clase y materiales'],['cuestionario','Cuestionario de participación'],['comunidad','Foro de la cohorte'],['tutorias','Tutorías'],['trabajo-final','Trabajo final'],['certificado','Certificado propio']];
+const legal = [['/privacidad','Privacidad'],['/cookies','Cookies'],['/aviso-legal','Aviso legal'],['/terminos','Condiciones']];
+---
+<Layout title="Recorrido de revisión · El Árbol Que Suena" noindex>
+  <Header />
+  <main id="main-content" class="shell page-body">
+    <header class="page-heading"><p class="eyebrow">Revisión local · Mapa de navegación</p><h1>Recorre la escuela,<br /><em>de principio a fin.</em></h1><p class="lead">Todas las pantallas en un mismo lugar para que puedas explorar su estructura, navegación y presentación antes de ajustar el diseño.</p></header>
+    <p class="notice">Las páginas públicas son las de la web actual. El aula y la gestión se muestran con datos de ejemplo. Los envíos de correo, las solicitudes reales y los cobros continúan pendientes de activación.</p>
+    <section class="review-section"><div class="review-heading"><p class="eyebrow">01 · La web pública</p><h2>Desde la primera visita.</h2><p>Usa también el menú, el pie de página y los enlaces de cada pantalla para recorrer la navegación real.</p></div><div class="review-links">{publicPages.map(([href,label])=><a href={href}>{label}<span aria-hidden="true">↗</span></a>)}</div></section>
+    <section class="review-section"><div class="review-heading"><p class="eyebrow">02 · El aula</p><h2>La experiencia del alumnado.</h2><p>Demostración local: puedes probar cuestionarios, conversaciones y selección de un trabajo de ejemplo. Las clases y los materiales definitivos aún no están cargados.</p></div><div class="review-links">{classroom.map(([path,label])=><a href={`/vista-previa/${path}`}>{label}<span aria-hidden="true">↗</span></a>)}</div></section>
+    <section class="review-section"><div class="review-heading"><p class="eyebrow">03 · Admisión y escuela</p><h2>El otro lado del recorrido.</h2><p>Revisa los estados de una solicitud y las pantallas de gestión. Aceptar una solicitud sigue dejando la matrícula pendiente de pago.</p></div><div class="review-links"><a href="/vista-previa/solicitud">Estado de una solicitud<span aria-hidden="true">↗</span></a><a href="/vista-previa/solicitud?estado=aceptada">Matrícula pendiente de pago<span aria-hidden="true">↗</span></a><a href="/vista-previa/administracion">Panel de la escuela<span aria-hidden="true">↗</span></a></div></section>
+    <section class="review-section"><div class="review-heading"><p class="eyebrow">04 · Información y condiciones</p><h2>Los textos que acompañan.</h2><p>Las páginas legales tienen campos pendientes de completar antes de publicar y activar la captación.</p></div><div class="review-links">{legal.map(([href,label])=><a href={href}>{label}<span aria-hidden="true">↗</span></a>)}</div></section>
+  </main><Footer />
+</Layout>
+<style>.review-section{display:grid;grid-template-columns:1fr 1.1fr;gap:5rem;padding:3.5rem 0;border-bottom:1px solid var(--line)}.review-heading h2{font-size:2.5rem;margin:1rem 0}.review-heading>p:last-child{color:var(--muted);max-width:30rem}.review-links{display:grid;align-content:start}.review-links a{display:flex;justify-content:space-between;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--line)}.review-links a:hover{color:var(--ink)}@media(max-width:760px){.review-section{grid-template-columns:1fr;gap:1rem;padding:2.5rem 0}.review-heading h2{font-size:2rem}}</style>

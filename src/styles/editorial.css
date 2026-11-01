@@ -1,0 +1,100 @@
+/* The same editorial language, with a quieter density for forms and the aula. */
+:root{--section-space:clamp(88px,8vw,112px)}
+.editorial-accent{background-image:linear-gradient(transparent 73%,var(--ochre) 73%,var(--ochre) 91%,transparent 91%);box-decoration-break:clone;-webkit-box-decoration-break:clone;padding-inline:.035em}
+.experience-public .section,.experience-focused .section{padding-block:var(--section-space)}
+.experience-public .page-heading,.experience-focused .page-heading{padding-top:var(--section-space);padding-bottom:48px}
+.experience-public .page-heading h1,.experience-focused .page-heading h1{font-size:clamp(3rem,5.6vw,5.25rem);line-height:1.06;text-wrap:balance}
+.experience-public .page-heading .eyebrow,.experience-focused .page-heading .eyebrow{max-width:44rem}
+.experience-public .page-body,.experience-focused .page-body{padding-bottom:var(--section-space)}
+.page-heading .actions{margin-top:28px}
+.page-heading .page-note{font-size:.83rem;color:var(--muted);margin-top:20px;max-width:42rem}
+.experience-public .program-intro{gap:clamp(24px,6vw,80px);padding-bottom:48px}
+.experience-public .program-intro p+p{margin-top:0}
+.experience-public .program-row{padding-block:32px;scroll-margin-top:32px}
+.experience-public .program-module-title{font-size:clamp(1.9rem,3vw,2.6rem);line-height:1.15;transition:transform .2s ease}
+.experience-public .program-row:is(:hover,:focus-within) .program-module-title{transform:translateX(8px)}
+.program-tools{display:flex;justify-content:space-between;align-items:center;gap:24px;margin:32px 0 48px}
+.program-tools p{font-size:.83rem;color:var(--muted);max-width:38rem}
+.course-invitation{background:var(--accent-tint);padding:clamp(28px,5vw,64px);margin-top:clamp(56px,6vw,88px);display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center}
+.course-invitation h2{font-size:clamp(2.2rem,3.7vw,3.6rem);max-width:19ch;margin:16px 0 24px;text-wrap:balance}
+.course-invitation :where(p:not(.eyebrow)){color:var(--muted);max-width:39rem;font-size:.95rem}
+.course-invitation .invitation-offer{border-left:1px solid color-mix(in srgb,var(--ink) 18%,transparent);padding-left:40px;display:grid;gap:14px;justify-items:start}
+.course-invitation .invitation-price{font:400 clamp(3.8rem,6vw,5rem)/1 var(--serif);letter-spacing:-.04em;color:var(--ink)}
+.course-invitation .invitation-note{font-size:.8rem}
+.school-heading{text-align:center}
+.school-heading h1,.school-heading .lead{margin-inline:auto}
+.school-heading .eyebrow{margin-inline:auto}
+.school-story{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(32px,6vw,88px);align-items:start}
+.school-identity{background:var(--ochre);padding:clamp(28px,4vw,52px);display:grid;gap:28px}
+.school-identity h2{font-size:clamp(2.5rem,4vw,3.8rem);line-height:1.04;max-width:9ch}
+.school-identity .identity-experience{font:400 4.5rem/1 var(--serif);letter-spacing:-.04em}
+.school-identity .identity-experience span{display:block;font:500 .72rem/1.7 var(--sans);letter-spacing:.1em;text-transform:uppercase;margin-top:12px}
+.school-identity .identity-practice{font-size:.91rem;border-top:1px solid #24211d33;padding-top:24px}
+.school-copy{padding-block:12px}
+.school-copy h2{font-size:clamp(2rem,3.3vw,3rem);margin-bottom:28px;max-width:20ch}
+.school-copy p{color:var(--muted);max-width:42rem;line-height:1.85}
+.school-copy .text-link{margin-top:28px}
+.experience-public .principle-grid{gap:clamp(24px,4vw,48px);margin-block:56px}
+.experience-public .principle-grid article{border-top:3px solid var(--ochre);padding-top:24px}
+.experience-public .manifesto-bordered{padding-top:40px}
+.experience-public .method-grounding{max-width:52rem;margin-top:56px;padding-top:32px}
+.experience-public .contact-grid{gap:clamp(32px,7vw,88px);align-items:start}
+.experience-public .contact-title{font-size:clamp(3.5rem,7vw,6rem);margin-top:20px}
+.experience-public .contact-actions{margin-top:28px}
+.experience-public .contact-details{border:0;background:var(--accent-tint);padding:clamp(28px,4vw,48px)}
+.experience-public .contact-details .eyebrow{margin:0 0 20px;color:var(--ink)}
+.experience-public .contact-details a{display:inline-block;font-size:clamp(1.05rem,1.75vw,1.5rem);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
+.experience-public .article-prose{font-size:1rem;line-height:1.85}
+.experience-public .article-prose h2{font-size:clamp(1.8rem,3vw,2.3rem);line-height:1.15}
+.experience-public .journal-item a h2{transition:transform .2s ease}
+.experience-public .journal-item a:is(:hover,:focus-visible) h2{transform:translateX(6px)}
+.experience-focused .application-heading{padding-top:clamp(48px,5vw,72px);padding-bottom:36px}
+.experience-focused .application-heading h1{font-size:clamp(2.6rem,4.8vw,4.5rem);max-width:20ch}
+.experience-focused .application-form{background:var(--cream);padding:clamp(24px,4vw,44px)}
+.experience-focused .application-main>.notice{margin-bottom:24px}
+.experience-focused .application-aside{border-top:3px solid var(--ochre);padding-top:24px}
+.experience-focused .application-aside h2{font-size:clamp(1.8rem,3vw,2.4rem)}
+.access-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(32px,7vw,88px);align-items:center}
+.experience-focused .access-layout .page-heading{padding:0}
+.access-layout .panel{padding:clamp(24px,3.5vw,40px);background:var(--cream)}
+.access-layout .panel>p{font-size:.88rem}
+.access-layout .panel a:not(.button){text-decoration:underline;text-underline-offset:4px}
+.experience-focused .preference-page{max-width:760px;gap:24px}
+.preference-page h1{font-size:clamp(2.8rem,5.6vw,4.6rem)}
+.preference-page .panel{padding:clamp(24px,4vw,40px);margin-top:12px}
+.preference-page .panel h2{font-size:clamp(1.7rem,3vw,2.2rem)}
+.header-focused .header-inner{min-height:96px}
+.focused-context-link{font-size:.8rem;display:inline-flex;align-items:center;gap:.6rem;min-height:44px}
+.focused-context-link>span:first-child{border-bottom:1px solid var(--line)}
+.footer-focused{padding-block:56px 24px}
+.footer-focused .footer-brand{margin-bottom:36px}
+.footer-focused .footer-links{padding:0 0 32px}
+.footer-focused .footer-bottom{margin-top:0}
+input[type=checkbox],input[type=radio],progress{accent-color:var(--ochre)}
+.experience-learning .section{padding-block:40px}
+.experience-learning .panel,.experience-learning .ui-panel{border-radius:var(--control-radius)}
+.experience-learning .panel>h2{line-height:1.15}
+.experience-learning a:not(.button):not(.brand-lockup):hover{ text-decoration-color:var(--ochre) }
+.experience-learning .empty-state{border-style:solid;border-color:var(--line);background:var(--accent-tint)}
+@media(max-width:760px){
+ :root{--section-space:72px}
+ .experience-public .page-heading,.experience-focused .page-heading{padding-bottom:32px}
+ .experience-public .page-heading h1,.experience-focused .page-heading h1{font-size:clamp(2.7rem,10.5vw,4rem)}
+ .experience-public .program-row{padding-block:28px}
+ .program-tools{align-items:start;flex-direction:column;margin-bottom:32px}
+ .course-invitation,.school-story,.access-layout{grid-template-columns:1fr;gap:32px}
+ .course-invitation .invitation-offer{border-left:0;border-top:1px solid #24211d33;padding:28px 0 0;justify-items:start;width:100%}
+ .school-identity{grid-template-columns:1fr auto;align-items:start;gap:20px}
+ .school-identity>.eyebrow,.school-identity>.identity-practice{grid-column:1/-1}
+ .school-identity h2{font-size:clamp(2.2rem,9vw,3.3rem)}
+ .school-identity .identity-experience{font-size:3.4rem;text-align:right}
+ .school-identity .identity-experience span{font-size:.59rem;max-width:12ch}
+ .school-copy{padding:0}
+ .experience-focused .application-heading{padding-top:48px}
+ .header-focused .header-inner{min-height:88px}
+ .focused-context-link{font-size:.74rem;max-width:9ch;line-height:1.3;gap:.4rem}
+ .footer-focused{padding-top:48px}
+ .experience-learning .section{padding-block:32px}
+}
+@media(prefers-reduced-motion:reduce){.program-module-title,.journal-item a h2{transition:none!important;transform:none!important}}
+@media print{.course-invitation{break-inside:avoid}.course-invitation :is(.button,.text-link){display:none}.experience-public .page-heading{padding-block:24px}.experience-public .program-row{break-inside:avoid;padding-block:16px}.experience-public .program-module-title{font-size:16pt}.program-tools{display:none}}

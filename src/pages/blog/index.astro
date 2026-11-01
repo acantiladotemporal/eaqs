@@ -1,73 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-
-// Obtenemos los posts y los ordenamos por fecha (el más reciente primero)
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+import { getCollection } from 'astro:content'; import Layout from '../../layouts/Layout.astro'; import Header from '../../components/Header.astro'; import Footer from '../../components/Footer.astro';
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort((a,b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
-
-<Layout title="Archivo Editorial | El Árbol Que Suena">
-  <Header />
-  
-  <main class="bg-white text-ink pt-48 pb-32 px-6 md:px-12">
-    <div class="max-w-[1800px] mx-auto">
-      
-      <!-- Cabecera del Blog -->
-      <header class="mb-32 border-b border-clay/30 pb-16">
-        <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold mb-6 block">Investigación y Reflexión</span>
-        <h1 class="font-display text-7xl md:text-9xl italic tracking-tighter leading-none">
-          El <span class="not-italic">Archivo.</span>
-        </h1>
-      </header>
-
-      <!-- Listado Editorial -->
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-y-24 md:gap-y-40">
-        {posts.map((post, index) => (
-          <article class={`md:col-span-8 ${index % 2 !== 0 ? 'md:col-start-5' : ''} group`}>
-            <a href={`/blog/${post.slug}`} class="space-y-10 block">
-              <div class="flex flex-col md:flex-row gap-12 items-start">
-                <!-- Fecha vertical -->
-                <div class="hidden md:block">
-                    <p class="font-sans text-[10px] uppercase tracking-[0.3em] text-moss font-bold rotate-180 [writing-mode:vertical-lr] py-4 border-l border-clay/30">
-                        {post.data.pubDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' })}
-                    </p>
-                </div>
-
-                <div class="flex-1 space-y-8">
-                    <div class="aspect-[16/9] overflow-hidden bg-clay/10 rounded-sm">
-                        {post.data.image && (
-                          <img 
-                            src={post.data.image} 
-                            alt={post.data.title} 
-                            class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
-                          />
-                        )}
-                    </div>
-                    
-                    <div class="max-w-2xl">
-                        <h2 class="font-display text-4xl md:text-6xl italic leading-tight group-hover:text-moss transition-colors duration-500">
-                            {post.data.title}
-                        </h2>
-                        <p class="font-sans text-ink/50 mt-6 text-lg leading-relaxed line-clamp-2">
-                            {post.data.description}
-                        </p>
-                        <div class="pt-8 flex items-center gap-4">
-                            <div class="h-px w-12 bg-ink group-hover:w-24 group-hover:bg-moss transition-all duration-500"></div>
-                            <span class="font-sans text-[10px] uppercase tracking-widest font-bold">Leer artículo</span>
-                        </div>
-                    </div>
-                </div>
-              </div>
-            </a>
-          </article>
-        ))}
-      </div>
-    </div>
-  </main>
-
-  <Footer />
+<Layout title="Música y aprendizaje en Infantil · Cuaderno de la escuela" description="Reflexiones sobre música, infancia y práctica docente de El Árbol Que Suena. Preguntas y lecturas para observar y pensar lo que ocurre en el aula." noindex={!posts.length}>
+  <Header /><main id="main-content"><header class="shell page-heading"><p class="eyebrow">Música, infancia y práctica docente</p><h1>Un cuaderno<br /><em><span class="editorial-accent">para escuchar.</span></em></h1><p class="lead">Preguntas y reflexiones alrededor del aula. Un espacio que iremos construyendo con tiempo.</p></header><section class="shell page-body">
+    {posts.length ? <div class="journal-list">{posts.map((post) => <article class="journal-item"><time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</time><a href={'/blog/' + post.id}><h2>{post.data.title}</h2><p>{post.data.description}</p></a></article>)}</div> : <div class="empty-state"><h2>Las primeras páginas están por llegar.</h2><p>Puedes apuntarte a la newsletter para recibir las próximas reflexiones de la escuela.</p><a href="#newsletter" class="text-link">Recibir la newsletter <span aria-hidden="true">↓</span></a></div>}
+  </section></main><Footer />
 </Layout>

@@ -1,0 +1,18 @@
+---
+import { COURSE_LAUNCH_PRICE_EUR, COURSE_STANDARD_PRICE_EUR, COURSE_SEAT_LIMIT } from '../lib/course-data';
+interface Props { programme?: boolean; }
+const { programme = false } = Astro.props;
+---
+<section class="course-invitation" aria-label="La próxima edición">
+  <div>
+    <p class="eyebrow">Edición enero 2027 · Online y en español</p>
+    <h2>Un lugar para <em>revisar tu práctica.</em></h2>
+    <p>Diez módulos, clases grabadas, materiales, tutorías y una comunidad de hasta {COURSE_SEAT_LIMIT} docentes. Acceso permanente a clases y materiales.</p>
+    {programme && <p>Certificado propio de la escuela tras completar el recorrido y aprobar el trabajo final.</p>}
+  </div>
+  <div class="invitation-offer">
+    <p class="invitation-price">{COURSE_LAUNCH_PRICE_EUR} €</p>
+    <p class="invitation-note">Precio exclusivo Enero 2027.<br />Mayo 2027 sube a {COURSE_STANDARD_PRICE_EUR} €.</p>
+    <a href="/registro" class="button">Solicitar Plaza <span aria-hidden="true">↗</span></a>
+  </div>
+</section>

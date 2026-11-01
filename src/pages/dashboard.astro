@@ -1,262 +1,45 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import { COURSE_MODULES } from '../lib/course-data';
-
-const modules = COURSE_MODULES;
+import LearningShell from '../components/LearningShell.astro';
+import ContinueLearning from '../components/ContinueLearning.astro';
+import { INITIAL_COHORT_ID, madridDate, formNotice } from '../components/learning';
+const { db, user, enrollment } = Astro.locals;
+if (!db || !user) return Astro.redirect('/login');
+const cohortId = enrollment?.cohort_id || INITIAL_COHORT_ID;
+const [moduleResult, participationResult, cohortResult] = await Promise.all([
+  db.from('modules').select('id,position,title,summary,unlock_at').eq('cohort_id', cohortId).order('position'),
+  db.from('quiz_participations').select('module_id').eq('user_id', user.id),
+  db.from('cohorts').select('title,start_at').eq('id', cohortId).maybeSingle(),
+]);
+const failed = moduleResult.error || participationResult.error || cohortResult.error;
+const modules = moduleResult.data || [];
+const completed = new Set((participationResult.data || []).map((item) => item.module_id));
+const nextModule = modules.find(module => !completed.has(module.id)) || modules.at(-1);
+const notice = formNotice(Astro.url);
+const fullName = typeof user.user_metadata?.full_name === 'string' ? user.user_metadata.full_name.split(' ')[0] : 'docente';
 ---
-
-<Layout title="Dashboard | El Arbol Que Suena" description="Portal del alumnado para acceder a modulos, examenes y comunidad docente.">
-  <Header mode="learning" />
-
-  <main class="bg-white pt-20 md:pt-24 pb-16 md:pb-20">
-    <section class="section-shell pt-6 md:pt-8 pb-14 md:pb-16">
-      <div class="content-shell space-y-8 md:space-y-9">
-        <header class="max-w-3xl space-y-4" data-reveal>
-          <p class="editorial-kicker">Portal del alumnado</p>
-          <h1 class="headline-luxe section-title md:!text-[3.25rem] leading-[0.95]">
-            Hola, <span id="welcome-name-target" class="name-swap not-italic">Docente</span>.
-          </h1>
-          <p id="dashboard-feedback" class="text-sm text-ink/62 min-h-6" aria-live="polite">
-            Preparando tu aula...
-          </p>
-        </header>
-
-        <section id="dashboard-loading" class="ui-panel p-6 md:p-7" data-reveal style="--reveal-delay:80ms">
-          <p class="font-sans text-sm text-ink/68">Validando acceso al aula...</p>
-        </section>
-
-        <section id="dashboard-gate" class="ui-panel p-6 md:p-8 hidden" data-reveal style="--reveal-delay:100ms">
-          <div class="max-w-2xl space-y-4">
-            <p class="editorial-kicker">Acceso requerido</p>
-            <h2 class="headline-luxe text-3xl md:text-4xl">Tu sesion no esta activa.</h2>
-            <p class="lead-copy">Inicia sesion para recuperar tu progreso y entrar al itinerario completo de 10 modulos.</p>
-            <div class="flex flex-wrap gap-3 pt-2">
-              <a id="dashboard-login-link" href="/login?next=/dashboard" class="btn btn-md btn-primary">Iniciar sesion</a>
-              <a href="/registro" class="btn btn-md btn-secondary">Comprar plaza</a>
-            </div>
-          </div>
-        </section>
-
-        <section id="dashboard-content" class="space-y-8 md:space-y-9 hidden">
-          <section class="ui-panel p-5 md:p-7" data-reveal style="--reveal-delay:120ms">
-            <div class="flex flex-wrap items-center gap-3">
-              <a href="/foro" class="btn btn-md btn-secondary">Comunidad</a>
-              <a id="dashboard-exam-link" href="/examen/1" class="btn btn-md btn-secondary">Ir al quiz activo</a>
-              <a href="/programa-completo.pdf" class="program-pdf-link" download>Descargar programa en PDF</a>
-            </div>
-            <p class="text-sm text-ink/62 mt-4">
-              Apertura por calendario de cohorte. El quiz consolida aprendizaje y marca progreso de cada modulo.
-            </p>
-          </section>
-
-          <section class="ui-panel p-5 md:p-7" data-reveal style="--reveal-delay:140ms">
-            <p class="font-sans text-[10px] uppercase tracking-[0.28em] text-moss font-bold mb-5">Ruta de aprendizaje</p>
-            <div class="module-list">
-              {modules.map((module, index) => (
-                <article
-                  class="module-row"
-                  data-module-id={module.id}
-                  data-unlock-at={module.unlockAtIso}
-                  data-reveal
-                  style={`--reveal-delay:${index * 50}ms`}
-                >
-                  <span class="module-index">{module.numero}</span>
-                  <div>
-                    <a data-module-link href={`/modulos/${module.id}`} class="inline-block">
-                      <h2>{module.title}</h2>
-                    </a>
-                  </div>
-                  <p data-module-description data-default-description={module.description}>
-                    {module.description}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </section>
-        </section>
-      </div>
+<LearningShell title={`Un tiempo para aprender, ${fullName}.`} description="Avanza con calma, lleva cada propuesta al aula y comparte lo que descubres.">
+  {notice && <p class={`notice ${notice.kind}`} role="status">{notice.message}</p>}
+  {failed ? <p class="notice error" role="alert">No hemos podido cargar tu itinerario. Vuelve a intentarlo en unos minutos.</p> : <>
+    {nextModule && <ContinueLearning href={`/modulos/${nextModule.id}`} title={nextModule.title} position={nextModule.position} review={completed.has(nextModule.id)} />}
+    <section class="panel cohort-summary">
+      <div><p class="eyebrow">Tu grupo</p><h2>{cohortResult.data?.title || 'Primera edición'}</h2><p class="muted">Inicio: {madridDate(cohortResult.data?.start_at)} · Horario de referencia: Madrid</p></div>
+      <div><p class="progress-number">{completed.size}<span>/10</span></p><p class="muted">cuestionarios completados</p><progress value={completed.size} max="10" aria-label="Cuestionarios completados">{completed.size} de 10</progress></div>
     </section>
-  </main>
-
-  <script>
-    import { AUTH_PREVIEW_MODE } from '../lib/auth-config';
-    import { animateNameSwap, buildLoginRedirect, getPreferredName, resolveSessionUser } from '../lib/auth-client';
-    import { supabase } from '../lib/supabase';
-
-    function formatUnlockDate(isoValue) {
-      return new Intl.DateTimeFormat('es-ES', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        timeZone: 'Europe/Madrid',
-      }).format(new Date(isoValue));
-    }
-
-    function normalizeQuizProgress(progress) {
-      if (!progress || typeof progress !== 'object') return {};
-
-      const bag = progress.quiz_progress && typeof progress.quiz_progress === 'object'
-        ? progress.quiz_progress
-        : progress;
-
-      const normalized = {};
-      Object.entries(bag).forEach(([key, value]) => {
-        if (!value) return;
-        const keyAsString = String(key);
-        if (keyAsString.startsWith('quiz_')) {
-          normalized[keyAsString.replace('quiz_', '')] = true;
-          return;
-        }
-        if (keyAsString.startsWith('modulo')) {
-          normalized[keyAsString.replace('modulo', '')] = true;
-          return;
-        }
-        normalized[keyAsString] = true;
-      });
-
-      return normalized;
-    }
-
-    function applyModulesState(quizProgress) {
-      const rows = document.querySelectorAll('[data-module-id]');
-      const now = Date.now();
-      let firstAvailableWithoutQuiz = null;
-
-      rows.forEach((row) => {
-        if (!(row instanceof HTMLElement)) return;
-
-        const moduleId = row.dataset.moduleId || '';
-        const unlockAtIso = row.dataset.unlockAt || '';
-        const link = row.querySelector('[data-module-link]');
-        const description = row.querySelector('[data-module-description]');
-        const defaultDescription = description?.getAttribute('data-default-description') || '';
-
-        const unlockAt = new Date(unlockAtIso);
-        const availableByDate = AUTH_PREVIEW_MODE || (!Number.isNaN(unlockAt.getTime()) && now >= unlockAt.getTime());
-        const quizCompleted = Boolean(quizProgress[moduleId]);
-
-        if (link instanceof HTMLAnchorElement) {
-          if (availableByDate) {
-            link.href = `/modulos/${moduleId}`;
-            link.removeAttribute('aria-disabled');
-            link.classList.remove('opacity-70', 'pointer-events-none');
-          } else {
-            link.removeAttribute('href');
-            link.setAttribute('aria-disabled', 'true');
-            link.classList.add('opacity-70', 'pointer-events-none');
-          }
-        }
-
-        if (description instanceof HTMLElement) {
-          if (!availableByDate) {
-            description.textContent = `Modulo bloqueado hasta ${formatUnlockDate(unlockAtIso)} (Europe/Madrid).`;
-            return;
-          }
-
-          if (quizCompleted) {
-            description.textContent = `${defaultDescription} . Estado: quiz completado.`;
-            return;
-          }
-
-          description.textContent = `${defaultDescription} . Estado: disponible para avanzar.`;
-          if (!firstAvailableWithoutQuiz) {
-            firstAvailableWithoutQuiz = moduleId;
-          }
-        }
-      });
-
-      return firstAvailableWithoutQuiz;
-    }
-
-    async function loadProfileProgress(userId) {
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('progress')
-          .eq('id', userId)
-          .maybeSingle();
-
-        if (error) return {};
-        return normalizeQuizProgress(data?.progress || {});
-      } catch (_error) {
-        return {};
-      }
-    }
-
-    async function initDashboard() {
-      const feedback = document.getElementById('dashboard-feedback');
-      const nameTarget = document.getElementById('welcome-name-target');
-      const loading = document.getElementById('dashboard-loading');
-      const gate = document.getElementById('dashboard-gate');
-      const content = document.getElementById('dashboard-content');
-      const loginLink = document.getElementById('dashboard-login-link');
-      const examLink = document.getElementById('dashboard-exam-link');
-
-      if (loginLink instanceof HTMLAnchorElement) {
-        loginLink.href = buildLoginRedirect('/dashboard');
-      }
-
-      const applyUser = (user) => {
-        const firstName = getPreferredName(user);
-        animateNameSwap(nameTarget, firstName);
-      };
-
-      const showGate = (message) => {
-        if (loading) loading.classList.add('hidden');
-        if (content) content.classList.add('hidden');
-        if (gate) gate.classList.remove('hidden');
-        if (feedback) {
-          feedback.textContent = message;
-          feedback.className = 'text-sm text-red-700 min-h-6';
-        }
-      };
-
-      const user = await resolveSessionUser(8500);
-
-      if (!user) {
-        showGate('No detectamos una sesion activa.');
-        return;
-      }
-
-      applyUser(user);
-
-      const quizProgress = await loadProfileProgress(user.id);
-      const nextExamModule = applyModulesState(quizProgress);
-      if (examLink instanceof HTMLAnchorElement && nextExamModule) {
-        examLink.href = `/examen/${nextExamModule}`;
-      }
-
-      if (loading) loading.classList.add('hidden');
-      if (gate) gate.classList.add('hidden');
-      if (content) content.classList.remove('hidden');
-      if (feedback) {
-        const params = new URLSearchParams(window.location.search);
-        const moduleLocked = params.get('module') === 'locked';
-        feedback.textContent = AUTH_PREVIEW_MODE
-          ? 'Modo vista previa activo: acceso completo para revisar toda el aula.'
-          : moduleLocked
-          ? 'Ese modulo aun no esta liberado en calendario. Hemos vuelto a tu ruta.'
-          : 'Sesion activa. Tu aula ya esta lista.';
-        feedback.className = 'text-sm text-ink/62 min-h-6';
-      }
-
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-        if (!nextSession?.user) return;
-        applyUser(nextSession.user);
-      });
-
-      window.addEventListener(
-        'beforeunload',
-        () => {
-          subscription.unsubscribe();
-        },
-        { once: true }
-      );
-    }
-
-    initDashboard();
-  </script>
-</Layout>
+    <section class="section stack" aria-labelledby="itinerary-heading">
+      <div class="section-heading"><p class="eyebrow">Del conocimiento a la práctica</p><h2 id="itinerary-heading">Tu itinerario</h2></div>
+      {modules.length ? <ol class="learning-modules">{modules.map((module) => <li>
+        <span class="module-number">{String(module.position).padStart(2, '0')}</span>
+        <div><p class="status">{completed.has(module.id) ? 'Participación completada' : 'Disponible'}</p><h3><a href={`/modulos/${module.id}`}>{module.title}</a></h3><p>{module.summary}</p></div>
+        <a class="module-open" href={`/modulos/${module.id}`} aria-label={`Abrir ${module.title}`}>Entrar <span aria-hidden="true">↗</span></a>
+      </li>)}</ol> : <div class="empty-state"><h3>El itinerario se está preparando.</h3><p>Los módulos aparecerán aquí cuando la escuela los publique y llegue su fecha de apertura. No necesitas realizar ninguna acción.</p></div>}
+      {modules.length < 10 && <p class="muted">Los siguientes módulos se irán abriendo por calendario y participación en los cuestionarios anteriores.</p>}
+    </section>
+    <section class="grid-2 section">
+      <a class="panel support-link" href="/foro"><p class="eyebrow">Aprender en compañía</p><h2>La comunidad de tu cohorte <span aria-hidden="true">↗</span></h2><p>Preguntas, experiencias y conversaciones que continúan entre encuentros.</p></a>
+      <a class="panel support-link" href="/trabajo-final"><p class="eyebrow">Una mirada a tu práctica</p><h2>Tu trabajo final <span aria-hidden="true">↗</span></h2><p>Un espacio para integrar lo aprendido, con revisión de la docente.</p></a>
+    </section>
+  </>}
+</LearningShell>
+<style>
+.cohort-summary{display:flex;justify-content:space-between;gap:2rem;align-items:center}.progress-number{font-size:3rem;line-height:1.1;margin:0}.progress-number span{font-size:1.2rem;color:var(--muted,#716a60)}progress{accent-color:var(--ochre);width:100%;height:.5rem}.learning-modules{list-style:none;padding:0}.learning-modules li{display:grid;grid-template-columns:3rem 1fr auto;align-items:center;gap:1.5rem;border-top:1px solid var(--line,#e2d7c8);padding:1.8rem 0}.learning-modules h3{font-size:1.65rem;margin:.25rem 0}.learning-modules p{margin:.25rem 0}.module-number{align-self:start;color:var(--muted,#716a60);font-size:1.1rem}.module-open{white-space:nowrap}.support-link{color:inherit;text-decoration:none}.support-link h2{font-size:1.8rem}.support-link h2 span{float:right}@media(max-width:600px){.cohort-summary{align-items:start;flex-direction:column}.learning-modules li{grid-template-columns:2rem 1fr;gap:1rem}.module-open{grid-column:2}}
+</style>

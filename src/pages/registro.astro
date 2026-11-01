@@ -2,239 +2,39 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import {
-  CAPTURE_WEEKS,
-  CHECKOUT_CLOSE_AT_ISO,
-  COURSE_LAUNCH_PRICE_EUR,
-  COURSE_MODULES,
-  COURSE_SEAT_LIMIT,
-  COURSE_STANDARD_PRICE_EUR,
-} from '../lib/course-data';
+import { COURSE_LAUNCH_PRICE_EUR, COURSE_STANDARD_PRICE_EUR, COURSE_SEAT_LIMIT } from '../lib/course-data';
+const sent = Astro.url.searchParams.get('sent') === '1';
+const errorCode = Astro.url.searchParams.get('error');
+const errors: Record<string,string> = { validation: 'Revisa los campos y acepta la política de privacidad para enviar tu solicitud.', unavailable: 'No hemos podido recibir tu solicitud en este momento. Inténtalo de nuevo más tarde.', closed: 'Las solicitudes para esta edición están cerradas. Puedes apuntarte a la newsletter para recibir novedades.', rate: 'Has realizado varios intentos. Espera unos minutos antes de volver a enviarla.', rate_limit: 'Has realizado varios intentos. Espera unos minutos antes de volver a enviarla.' };
 ---
-
-<Layout
-  title="Reservar plaza | El Arbol Que Suena"
-  description="Checkout de la Cohorte 01 con pago seguro y acceso privado al aula."
->
-  <Header />
-
-  <main class="bg-white pt-20 md:pt-24 pb-16 md:pb-20">
-    <section class="section-shell pt-6 md:pt-8 pb-14 md:pb-16">
-      <div class="content-shell max-w-4xl space-y-10 md:space-y-12">
-        <header class="text-center max-w-3xl mx-auto space-y-5" data-reveal>
-          <p class="editorial-kicker">Reserva en un solo paso</p>
-          <h1 class="headline-luxe section-title">Tu plaza, tu pago y tu acceso privado.</h1>
-          <p class="lead-copy">
-            Vas a completar el pago seguro para entrar en la Cohorte 01. Despues recibiras confirmacion y acceso al aula privada.
-          </p>
-          <p id="checkout-availability" class="text-sm text-ink/65"></p>
-        </header>
-
-        <section class="ui-panel p-7 md:p-10 space-y-9" data-reveal style="--reveal-delay:120ms">
-          <div class="space-y-5">
-            <p class="editorial-kicker">Lo que compras hoy</p>
-            <h2 class="font-display text-4xl md:text-5xl text-note leading-[1.02]">
-              Curso de Neuroeducacion Musical para docentes de 0 a 9 anos.
-            </h2>
-            <p class="text-sm text-ink/66">Foco principal: primera infancia (0 a 6 anos).</p>
-          </div>
-
-          <div class="space-y-3 text-sm text-ink/78">
-            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>{COURSE_MODULES.length} modulos de especializacion, cada uno con recursos y quiz.</p>
-            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Acceso privado a dashboard, comunidad y evaluaciones por modulo.</p>
-            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Apertura por calendario oficial de cohorte y cierre pedagogico a final de mayo.</p>
-            <p class="flex items-start gap-3"><span class="w-1.5 h-1.5 rounded-full bg-ochre mt-2"></span>Plazas limitadas: maximo {COURSE_SEAT_LIMIT} docentes por convocatoria.</p>
-          </div>
-
-          <div class="border-t border-clay/60 pt-6 space-y-2">
-            <div class="flex flex-wrap items-end justify-between gap-4">
-              <p class="text-sm text-ink/72">Precio hoy</p>
-              <p class="font-display text-5xl italic text-note">{COURSE_LAUNCH_PRICE_EUR} EUR</p>
-            </div>
-            <p class="text-xs uppercase tracking-[0.18em] text-ink/58">Oferta de lanzamiento . luego {COURSE_STANDARD_PRICE_EUR} EUR</p>
-            <p class="text-xs text-ink/62">Cierre automatico: domingo 12 abril 2026 . 23:59 (Europe/Madrid).</p>
-          </div>
-
-          <form id="checkout-form" class="space-y-5 pt-2" novalidate>
-            <label class="block">
-              <span class="field-label">Nombre completo</span>
-              <input id="checkout-name" class="input-base" type="text" placeholder="Nombre Apellido" autocomplete="name" required />
-            </label>
-
-            <label class="block">
-              <span class="field-label">Correo electronico</span>
-              <input id="checkout-email" class="input-base" type="email" placeholder="tu@email.com" autocomplete="email" required />
-            </label>
-
-            <label class="flex items-start gap-3 text-sm text-ink/70">
-              <input id="checkout-consent" type="checkbox" class="mt-1" required />
-              <span>Acepto terminos, politica de privacidad y condiciones de compra.</span>
-            </label>
-
-            <p id="checkout-feedback" class="text-sm text-ink/60 min-h-6" aria-live="polite"></p>
-
-            <button id="checkout-submit" type="submit" class="btn btn-lg btn-primary cta-breathe w-full">
-              Ir al pago seguro . {COURSE_LAUNCH_PRICE_EUR} EUR
-            </button>
-          </form>
-
-          <p class="text-xs text-ink/55">
-            Pago procesado en Stripe. Tras el pago recibiras confirmacion y acceso a tu perfil privado.
-          </p>
-
-          <div class="pt-4 border-t border-clay/55">
-            <p class="text-xs uppercase tracking-[0.16em] text-ink/58 mb-2">Plan de captacion activo</p>
-            <div class="space-y-2 text-sm text-ink/70">
-              {CAPTURE_WEEKS.map((week) => (
-                <p>{week.label}: {week.focus}</p>
-              ))}
-            </div>
-          </div>
-        </section>
+<Layout title="Solicitar plaza · El Árbol Que Suena" experience="focused">
+  <Header mode="focused" />
+  <main id="main-content" class="application-page">
+    <header class="shell page-heading application-heading"><p class="eyebrow">Solicitud de admisión · Docentes de 0–6 años</p><h1>Empecemos por <em><span class="editorial-accent">conocernos.</span></em></h1><p class="lead">Cuéntanos sobre tu práctica docente. La escuela revisará tu solicitud y te responderá por correo.</p><p class="application-summary"><strong>{COURSE_LAUNCH_PRICE_EUR} € · Edición enero 2027</strong> · 10 módulos · {COURSE_SEAT_LIMIT} plazas</p><p class="application-conditions">Calendario detallado por confirmar. Enviar la solicitud no implica un pago ni confirma una plaza.</p></header>
+    <div class="shell page-body application-grid">
+      <div class="application-main">
+      {sent ? <section class="panel stack" role="status"><p class="eyebrow">Solicitud recibida</p><h2>Gracias por compartir<br />tu mirada.</h2><p>La escuela revisará tu solicitud. La respuesta llegará al correo que has indicado; revisa también la carpeta de correo no deseado.</p><p>Tu plaza todavía no está confirmada y no se ha realizado ningún cobro.</p><a class="text-link" href="/programa">Volver al programa <span aria-hidden="true">↗</span></a></section> : <>
+        {errorCode && <p class="notice notice-error" role="alert">{errors[errorCode] || 'No hemos podido enviar tu solicitud. Revisa los datos e inténtalo de nuevo.'}</p>}
+        {errorCode === 'closed' && <p class="notice"><a class="text-link" href="/#newsletter">Recibir Las Próximas Novedades <span aria-hidden="true">↗</span></a></p>}
+        <form class="application-form" action="/api/applications" method="post">
+          <div class="honeypot" aria-hidden="true"><label for="application-website">Dejar vacío</label><input id="application-website" name="website" autocomplete="off" tabindex="-1" /></div>
+          <fieldset class="application-fields"><legend>Tus datos</legend>
+            <div class="field"><label for="full_name">Nombre y apellidos</label><input id="full_name" name="full_name" autocomplete="name" required maxlength="120" /></div>
+            <div class="field"><label for="email">Correo electrónico</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="254" /><small>Te escribiremos aquí para responder a tu solicitud.</small></div>
+            <div class="field"><label for="country">País</label><input id="country" name="country" autocomplete="country-name" required maxlength="80" /></div>
+          </fieldset>
+          <fieldset class="application-fields"><legend>Tu práctica docente</legend>
+          <div class="field"><label for="role">Tu ocupación</label><input id="role" name="role" placeholder="Docente de infantil, educadora…" required maxlength="120" /></div>
+          <div class="field"><label for="age_range">¿Con qué edades trabajas?</label><select id="age_range" name="age_range" required><option value="">Selecciona una opción</option><option value="0-3">De 0 a 3 años</option><option value="3-6">De 3 a 6 años</option><option value="0-6">De 0 a 6 años</option><option value="other">Otro contexto o etapa formativa</option></select></div>
+          <div class="field"><label for="motivation">¿Qué te gustaría explorar en esta formación?</label><textarea id="motivation" name="motivation" rows="5" required minlength="20" maxlength="2000" placeholder="Puedes contarnos sobre tus preguntas, tu aula o lo que te ha traído hasta aquí."></textarea><small>Entre 20 y 2.000 caracteres. Evita incluir datos personales de niños o niñas.</small></div>
+          </fieldset>
+          <div><label class="checkbox-row" for="privacy"><input id="privacy" type="checkbox" name="privacy" required /><span>He leído y acepto la <a href="/privacidad" target="_blank" rel="noopener noreferrer">política de privacidad (se abre en otra pestaña)</a> para gestionar esta solicitud.</span></label><label class="checkbox-row" for="newsletter"><input id="newsletter" type="checkbox" name="newsletter" /><span>También quiero recibir por email ideas y novedades sobre las formaciones de la escuela. Es opcional y podré darme de baja.</span></label></div>
+          <button class="button" type="submit">Solicitar Plaza <span aria-hidden="true">↗</span></button>
+          <p class="muted fineprint">La admisión se revisa personalmente. El envío no confirma una plaza.</p>
+        </form>
+      </>}
       </div>
-    </section>
-  </main>
-
-  <Footer />
-
-  <script define:vars={{ closeAtIso: CHECKOUT_CLOSE_AT_ISO, launchPrice: COURSE_LAUNCH_PRICE_EUR }}>
-    const form = document.getElementById('checkout-form');
-    const nameInput = document.getElementById('checkout-name');
-    const emailInput = document.getElementById('checkout-email');
-    const consentInput = document.getElementById('checkout-consent');
-    const feedback = document.getElementById('checkout-feedback');
-    const submitButton = document.getElementById('checkout-submit');
-    const availabilityNode = document.getElementById('checkout-availability');
-
-    let checkoutOpen = true;
-
-    function setFeedback(message, isError = false) {
-      if (!feedback) return;
-      feedback.textContent = message;
-      feedback.className = isError ? 'text-sm text-red-700 min-h-6' : 'text-sm text-ink/60 min-h-6';
-    }
-
-    function setCheckoutState(isOpen, message) {
-      checkoutOpen = isOpen;
-
-      if (availabilityNode) {
-        availabilityNode.textContent = message;
-        availabilityNode.className = isOpen ? 'text-sm text-ink/65' : 'text-sm text-red-700';
-      }
-
-      if (submitButton instanceof HTMLButtonElement) {
-        submitButton.disabled = !isOpen;
-      }
-    }
-
-    async function loadAvailability() {
-      try {
-        const response = await fetch('/api/launch/status');
-        const payload = await response.json();
-
-        if (!response.ok || !payload) {
-          setCheckoutState(true, '');
-          return;
-        }
-
-        const closeDate = new Intl.DateTimeFormat('es-ES', {
-          day: '2-digit',
-          month: 'short',
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Europe/Madrid',
-        }).format(new Date(payload.closesAtIso || closeAtIso));
-
-        if (payload.open) {
-          setCheckoutState(true, `Plazas disponibles: ${payload.seatsLeft}/${payload.seatLimit}. Cierre estimado: ${closeDate}.`);
-          return;
-        }
-
-        const message = payload.soldOut
-          ? 'Convocatoria completa: ya no quedan plazas disponibles para esta cohorte.'
-          : 'Convocatoria cerrada por fecha. Puedes entrar a la newsletter para la siguiente apertura.';
-
-        setCheckoutState(false, message);
-      } catch (_error) {
-        setCheckoutState(true, '');
-      }
-    }
-
-    form?.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      if (!checkoutOpen) {
-        setFeedback('Convocatoria cerrada. Puedes entrar en la newsletter para la siguiente cohorte.', true);
-        return;
-      }
-
-      const fullName = nameInput instanceof HTMLInputElement ? nameInput.value.trim() : '';
-      const email = emailInput instanceof HTMLInputElement ? emailInput.value.trim().toLowerCase() : '';
-      const hasConsent = consentInput instanceof HTMLInputElement ? consentInput.checked : false;
-      const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-      if (!fullName || !validEmail) {
-        setFeedback('Completa nombre y correo con formato valido.', true);
-        return;
-      }
-
-      if (!hasConsent) {
-        setFeedback('Debes aceptar terminos y condiciones para continuar.', true);
-        return;
-      }
-
-      if (submitButton instanceof HTMLButtonElement) {
-        submitButton.disabled = true;
-        submitButton.textContent = 'Conectando con Stripe...';
-      }
-      setFeedback('');
-
-      try {
-        const response = await fetch('/api/checkout/create-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            fullName,
-            email,
-            source: 'registro_page',
-          }),
-        });
-
-        const payload = await response.json().catch(() => ({}));
-        if (!response.ok || payload?.ok === false) {
-          const message = payload?.message || 'No fue posible iniciar el checkout.';
-          setFeedback(message, true);
-
-          if (submitButton instanceof HTMLButtonElement) {
-            submitButton.disabled = false;
-            submitButton.textContent = `Ir al pago seguro . ${launchPrice} EUR`;
-          }
-          return;
-        }
-
-        if (payload?.checkoutUrl) {
-          window.location.assign(payload.checkoutUrl);
-          return;
-        }
-
-        setFeedback('No se recibio URL de checkout. Intentalo de nuevo.', true);
-      } catch (_error) {
-        setFeedback('Error de conexion con el checkout. Revisa tu red e intentalo otra vez.', true);
-      }
-
-      if (submitButton instanceof HTMLButtonElement) {
-        submitButton.disabled = false;
-        submitButton.textContent = `Ir al pago seguro . ${launchPrice} EUR`;
-      }
-    });
-
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('checkout') === 'cancelled') {
-      setFeedback('Pago cancelado. Tu plaza sigue disponible si vuelves a intentarlo ahora.', true);
-    }
-
-    loadAvailability();
-  </script>
+      <aside class="application-aside"><p class="eyebrow">La formación de un vistazo</p><h2>Neuroeducación musical para la primera infancia.</h2><ul><li>Para docentes de 0–6 años, especialmente 3–6</li><li>Online y en español · España y Latinoamérica</li><li>10 módulos · Clases grabadas y tutorías</li><li>Hasta {COURSE_SEAT_LIMIT} personas por cohorte</li><li>{COURSE_LAUNCH_PRICE_EUR} € · Edición enero 2027</li><li>En mayo de 2027 sube a {COURSE_STANDARD_PRICE_EUR} €</li><li>Calendario detallado por confirmar</li></ul><p>Tras la revisión humana, si tu solicitud es aceptada, recibirás los siguientes pasos para formalizar la matrícula cuando se habilite el cobro.</p><p>¿Tienes alguna pregunta? <a class="text-link" href="/contacto">Hablemos <span aria-hidden="true">↗</span></a></p></aside>
+    </div>
+  </main><Footer mode="focused" />
 </Layout>

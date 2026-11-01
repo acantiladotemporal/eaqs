@@ -1,28 +1,29 @@
-# build output
-dist/
-
-# generated types
-.astro/
-
-# dependencies
+# Dependencies and build
 node_modules/
-
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# environment variables
-.env
-.env.production
-
-# macOS-specific files
+dist/
+.astro/
+# Credentials: only the example is versioned
+.env*
+!.env.example
+*.pem
+*.key
+# Runtime / local data
+pb_data/
+pb_migrations/
+pocketbase*
+*.db
+*.db-*
+*.sqlite*
+*.log
+supabase/.temp/
+supabase/.branches/
+.vercel/
+.wrangler/
 .DS_Store
-
-# jetbrains setting folder
 .idea/
-.vercel
-
-.vercel
-.env*.local
+coverage/
+# Intermediate local setup files
+/work/
+/.codex/
+/img/
+/.dev.vars*

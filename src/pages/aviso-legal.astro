@@ -1,29 +1,6 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import Layout from '../layouts/Layout.astro'; import Header from '../components/Header.astro'; import Footer from '../components/Footer.astro';
 ---
-
-<Layout title="Aviso legal | El Arbol Que Suena" canonical="https://eaqs.vercel.app/aviso-legal">
-  <Header />
-  <main class="bg-white text-ink pt-40 pb-20 px-6">
-    <article class="max-w-3xl mx-auto space-y-10 font-sans">
-      <header>
-        <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold mb-4 block">Transparencia</span>
-        <h1 class="font-display text-6xl italic tracking-tighter">Aviso legal</h1>
-      </header>
-      <section class="space-y-5 text-ink/75 leading-relaxed">
-        <p>Esta pagina resume la informacion legal y de titularidad del sitio de El Arbol Que Suena.</p>
-        <ul class="list-none space-y-2 border-l border-moss pl-6 italic">
-          <li><strong>Titular:</strong> Azahara Mateos</li>
-          <li><strong>Domicilio profesional:</strong> Madrid, Espana</li>
-          <li><strong>Email:</strong> hola@elarbolquesuena.com</li>
-        </ul>
-        <p>
-          Para consultar el detalle legal completo tambien puedes visitar <a href="/aviso.legal" class="underline">la version extendida</a>.
-        </p>
-      </section>
-    </article>
-  </main>
-  <Footer />
+<Layout title="Aviso legal · El Árbol Que Suena" noindex>
+  <Header /><main id="main-content"><header class="narrow page-heading"><p class="eyebrow">Información de la escuela</p><h1>Aviso legal</h1></header><article class="narrow article-prose page-body"><p class="notice">Información provisional de la próxima edición. Se completará antes de habilitar la matrícula.</p><section><p>El Árbol Que Suena es una Escuela Internacional de Neuroeducación Musical con actividad en España y formación online en español.</p><p>Contacto: <a href="mailto:hola@elarbolquesuena.com">hola@elarbolquesuena.com</a>.</p></section><section><h2>Información de titularidad</h2><p>La identificación completa del titular, su domicilio y datos fiscales se incorporarán a esta página antes de abrir la matrícula y recibir pagos.</p></section><section><h2>Contenidos y materiales</h2><p>Los materiales de la formación se facilitan para el uso personal del alumnado. Su reproducción o distribución fuera del curso requiere autorización de sus titulares.</p></section></article></main><Footer />
 </Layout>

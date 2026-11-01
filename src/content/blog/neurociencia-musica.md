@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "La neurociencia detrás de la música en el aula"
 description: "Descubre cómo el cerebro de un niño de 0 a 6 años reacciona a los estímulos musicales."
 pubDate: 2026-02-03

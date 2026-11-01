@@ -1,0 +1,29 @@
+{
+  "verifiedOn": "2026-11-01",
+  "projectRef": "bgmkkvgcaygtcfphkvlv",
+  "server": "supabase_eaqs",
+  "appliedMigrations": [
+    { "version": "20261101112113", "name": "escuela_admision_aula", "sha256": "29159B22F26CCE86217B1C88A864955A896E44A80F0DC236F10FDA4ABB8A8CB0" },
+    { "version": "20261101112458", "name": "hardening_school_access", "sha256": "A7737474E980B043757F36AAF6271F040AB0395951CFDEF494287C04B79F71A5" }
+  ],
+  "applicationTables": 19,
+  "tablesWithoutRls": 0,
+  "cohorts": 1,
+  "modules": 10,
+  "publishedModules": 0,
+  "authUsers": 0,
+  "enrollments": 0,
+  "privateBuckets": 2,
+  "publicBuckets": 0,
+  "graphqlEnabled": false,
+  "securityAdvisorLints": [],
+  "performanceAdvisorWarnings": [],
+  "performanceAdvisorInformation": [{ "name": "unused_index", "count": 17, "decision": "Retain indexes: no student traffic yet." }],
+  "localSqlTestsPassed": 19,
+  "remoteAnonymousReadChecksPassed": 8,
+  "publicEnvironmentConfigured": true,
+  "privateServerAndEmailConfigurationPending": true,
+  "captureEnabled": false,
+  "paymentsEnabled": false,
+  "limitations": ["No remote student identities created", "GoTrue and SMTP not yet tested end to end", "No real video catalog or bucket restoration tested", "Payment processing remains deferred"]
+}

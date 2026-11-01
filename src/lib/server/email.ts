@@ -1,122 +1,49 @@
-import type { EmailEventType } from '../course-data';
-import { isSupabaseServerConfigured, supabaseAdmin } from './supabase-admin';
+import { randomBytes, createHash } from 'node:crypto';
+import { adminClient } from './auth';
+import { env } from './config';
+import { escapeHtml, HttpError } from './security';
+import { rateLimit } from './limits';
 
-interface ResendPayload {
-  to: string;
-  subject: string;
-  html: string;
-  text: string;
+export const token = () => randomBytes(32).toString('base64url');
+export const tokenHash = (value: string) => createHash('sha256').update(value).digest('hex');
+export function mailTemplate(title: string, message: string, link?: {label:string;url:string}) {
+  const html = `<div style="font-family:Arial,sans-serif;line-height:1.7;color:#3f3832;max-width:600px"><p>El Árbol Que Suena</p><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p>${link ? `<p><a href="${escapeHtml(link.url)}">${escapeHtml(link.label)}</a></p>` : ''}<p>Escuela Internacional de Neuroeducación Musical</p></div>`;
+  return {subject:title,html,text:`${message}${link ? `\n${link.label}: ${link.url}` : ''}`};
 }
-
-interface EmailLogInput {
-  email: string;
-  eventType: EmailEventType;
-  template: string;
-  payload?: Record<string, unknown>;
-}
-
-const resendApiKey = import.meta.env.RESEND_API_KEY?.trim();
-const resendFrom = import.meta.env.RESEND_FROM_EMAIL?.trim() || 'El Arbol Que Suena <hola@elarbolquesuena.com>';
-
-function normalizeEmail(email: string) {
-  return email.trim().toLowerCase();
-}
-
-export async function sendResendEmail(input: ResendPayload) {
-  if (!resendApiKey) {
-    return { ok: false as const, skipped: true as const, message: 'RESEND_API_KEY missing' };
-  }
-
+export async function sendQueuedMail(id: string) {
+  const service = adminClient();
+  const {data:mail,error} = await service.from('email_outbox').select('*').eq('id',id).single();
+  if (error || !mail) throw new HttpError(404,'Mensaje no encontrado.');
+  if (mail.status === 'sent') return true;
+  const apiKey = env('RESEND_API_KEY');
+  const from = env('RESEND_FROM_EMAIL');
+  if (!apiKey || !from) return false;
   try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${resendApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: resendFrom,
-        to: [normalizeEmail(input.to)],
-        subject: input.subject,
-        html: input.html,
-        text: input.text,
-      }),
+    await rateLimit('email:daily',90,86400);
+    const response = await fetch('https://api.resend.com/emails',{
+      method:'POST',headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json','Idempotency-Key':mail.dedupe_key},
+      body:JSON.stringify({from,to:[mail.recipient],subject:mail.subject,html:mail.html,text:mail.body_text}),
+      signal:AbortSignal.timeout(10000),
     });
-
-    if (!response.ok) {
-      const bodyText = await response.text();
-      return {
-        ok: false as const,
-        skipped: false as const,
-        message: `Resend error ${response.status}: ${bodyText}`,
-      };
-    }
-
-    return {
-      ok: true as const,
-      skipped: false as const,
-      message: 'sent',
-    };
-  } catch (error) {
-    return {
-      ok: false as const,
-      skipped: false as const,
-      message: error instanceof Error ? error.message : 'Unknown resend error',
-    };
+    if (!response.ok) throw new Error(`Proveedor de correo: HTTP ${response.status}`);
+    const result = await response.json() as {id?:string};
+    const saved = await service.from('email_outbox').update({status:'sent',sent_at:new Date().toISOString(),attempts:mail.attempts+1,provider_id:result.id || null,last_error:null}).eq('id',id);
+    if (saved.error) throw new Error('No se pudo registrar la entrega.');
+    return true;
+  } catch(error) {
+    await service.from('email_outbox').update({status:'failed',attempts:mail.attempts+1,last_error:error instanceof Error ? error.message : 'Error de entrega'}).eq('id',id).neq('status','sent');
+    return false;
   }
 }
-
-export async function logEmailEvent(input: EmailLogInput) {
-  if (!isSupabaseServerConfigured) return;
-
-  try {
-    await supabaseAdmin.from('email_events').insert({
-      email: normalizeEmail(input.email),
-      event_type: input.eventType,
-      template: input.template,
-      provider: 'resend',
-      payload: input.payload || {},
-    });
-  } catch (error) {
-    console.warn('[email] Unable to log email event:', error);
+export async function queueMail(recipient:string,dedupeKey:string,template:ReturnType<typeof mailTemplate>) {
+  const service = adminClient();
+  const inserted = await service.from('email_outbox').upsert({dedupe_key:dedupeKey,recipient,subject:template.subject,html:template.html,body_text:template.text},{onConflict:'dedupe_key',ignoreDuplicates:true}).select('id').maybeSingle();
+  if (inserted.error) throw new HttpError(503,'No se pudo preparar el correo.');
+  let id = inserted.data?.id;
+  if (!id) {
+    const found = await service.from('email_outbox').select('id').eq('dedupe_key',dedupeKey).single();
+    if (found.error) throw new HttpError(503,'No se pudo recuperar el correo.');
+    id = found.data.id;
   }
-}
-
-export function buildNewsletterWelcomeTemplate(email: string) {
-  return {
-    subject: 'Bienvenida a la newsletter de El Arbol Que Suena',
-    html: `
-      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#3f3832;">
-        <h1 style="font-size:24px;margin-bottom:12px;">Gracias por unirte</h1>
-        <p>Hola ${email},</p>
-        <p>Ya estas dentro de la newsletter semanal de neuroeducacion musical.</p>
-        <p>Recibiras una idea accionable por semana para aplicar en aula con foco en 0-6 y transferible a 0-9.</p>
-        <p>Equipo El Arbol Que Suena.</p>
-      </div>
-    `,
-    text:
-      `Gracias por unirte, ${email}. ` +
-      'Ya estas dentro de la newsletter semanal de neuroeducacion musical de El Arbol Que Suena.',
-  };
-}
-
-export function buildPurchaseConfirmationTemplate(name: string, accessUrl: string) {
-  const safeName = name || 'Docente';
-
-  return {
-    subject: 'Pago confirmado - El Arbol Que Suena',
-    html: `
-      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#3f3832;">
-        <h1 style="font-size:24px;margin-bottom:12px;">Tu plaza esta confirmada</h1>
-        <p>Hola ${safeName},</p>
-        <p>Tu pago del curso de Neuroeducacion Musical ha sido validado correctamente.</p>
-        <p>Entra en tu perfil privado para seguir el calendario de la cohorte y avanzar modulo a modulo.</p>
-        <p><a href="${accessUrl}" style="color:#b4892f;">Acceder al aula</a></p>
-        <p>Equipo El Arbol Que Suena.</p>
-      </div>
-    `,
-    text:
-      `Hola ${safeName}. Tu pago ha sido confirmado. ` +
-      `Accede a tu aula desde ${accessUrl}`,
-  };
+  return sendQueuedMail(id);
 }

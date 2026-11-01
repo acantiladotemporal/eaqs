@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Musica, atencion y aula en infantil"
 description: "Como estructurar rutinas sonoras que mejoran la atencion sostenida en ninos y ninas de 3 a 6 anos."
 pubDate: 2026-02-06

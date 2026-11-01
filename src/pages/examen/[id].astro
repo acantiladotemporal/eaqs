@@ -1,258 +1,30 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import { COURSE_MODULES, getModuleById } from '../../lib/course-data';
-
-const { id = '1' } = Astro.params;
-const moduleData = getModuleById(id) || COURSE_MODULES[0];
-const moduleNumber = Number(moduleData.id);
-const nextModule = COURSE_MODULES.find((module) => Number(module.id) === moduleNumber + 1) || null;
+import LearningShell from '../../components/LearningShell.astro';
+import { formNotice } from '../../components/learning';
+const { db, user } = Astro.locals;
+if (!db || !user) return Astro.redirect('/login');
+const { data: module, error } = await db.from('modules').select('id,position,title').eq('id', Astro.params.id || '').maybeSingle();
+if (error || !module) return new Response('Este cuestionario no está disponible.', { status: 404 });
+const [questionResult, participationResult] = await Promise.all([
+  db.from('quiz_questions').select('id,prompt,options').eq('module_id', module.id).order('id'),
+  db.from('quiz_participations').select('completed_at').eq('module_id', module.id).eq('user_id', user.id).maybeSingle(),
+]);
+const questions = questionResult.data || [];
+const notice = formNotice(Astro.url);
 ---
-
-<Layout title={`Quiz modulo ${moduleData.numero} | El Arbol Que Suena`}>
-  <Header mode="learning" />
-
-  <main class="bg-white min-h-screen pt-20 md:pt-24 pb-16 md:pb-20">
-    <section class="section-shell pt-6 md:pt-8 pb-14 md:pb-16">
-      <section class="content-shell max-w-4xl py-4 md:py-6">
-        <div id="exam-intro" class="text-center space-y-8">
-          <span class="font-sans text-[10px] uppercase tracking-[0.4em] text-moss font-bold">
-            Quiz de consolidacion
-          </span>
-          <h1 class="font-display text-6xl md:text-8xl italic tracking-tight leading-none text-ink">
-            Modulo {moduleData.numero}.
-          </h1>
-          <p class="font-sans text-ink/62 max-w-lg mx-auto text-lg leading-relaxed">
-            {moduleData.title}. Completa este quiz para consolidar el bloque.
-          </p>
-          <button id="exam-start" class="btn btn-lg btn-primary">Comenzar quiz</button>
-        </div>
-
-        <div id="exam-quiz" class="space-y-10 hidden">
-          <header class="flex justify-between items-end border-b border-clay/30 pb-6 gap-8">
-            <h2 id="exam-question" class="font-display text-4xl md:text-5xl italic text-ink max-w-xl leading-tight"></h2>
-            <div class="text-right">
-              <span class="font-sans text-[10px] font-bold text-moss tracking-widest uppercase">Pregunta</span>
-              <p id="exam-counter" class="font-display text-3xl italic"></p>
-            </div>
-          </header>
-          <div id="exam-options" class="grid gap-4"></div>
-        </div>
-
-        <div id="exam-result" class="text-center space-y-8 hidden">
-          <h2 id="exam-result-title" class="font-display text-7xl md:text-8xl italic tracking-tight leading-none"></h2>
-          <p id="exam-result-score" class="font-sans text-ink/62 text-xl"></p>
-          <p id="exam-saving" class="text-sm text-ink/55 min-h-6" aria-live="polite"></p>
-          <div id="exam-result-actions" class="pt-4 flex flex-wrap justify-center gap-3"></div>
-        </div>
-      </section>
-    </section>
-  </main>
-
-  <script define:vars={{ moduleId: moduleData.id, moduleTitle: moduleData.title, nextModuleId: nextModule?.id || '' }}>
-    import { buildLoginRedirect, resolveSessionUser } from '../../lib/auth-client';
-    import { supabase } from '../../lib/supabase';
-
-    function buildQuestions(title) {
-      return [
-        {
-          titulo: `Cual es el objetivo principal del bloque ${title}?`,
-          opciones: [
-            'Acumular teoria sin aplicacion',
-            'Aplicar neuroeducacion musical en decisiones de aula',
-            'Sustituir toda la planificacion didactica',
-          ],
-          correcta: 1,
-        },
-        {
-          titulo: 'Que accion representa mejor el enfoque de esta cohorte?',
-          opciones: [
-            'Abrir modulos sin practica',
-            'Practicar, observar y ajustar de forma semanal',
-            'Esperar al examen final para aplicar',
-          ],
-          correcta: 1,
-        },
-        {
-          titulo: 'El quiz del modulo sirve para...',
-          opciones: [
-            'Marcar progreso y consolidar aprendizaje',
-            'Sustituir la practica docente',
-            'Bloquear el acceso por castigo',
-          ],
-          correcta: 0,
-        },
-      ];
-    }
-
-    const preguntas = buildQuestions(moduleTitle);
-    const introEl = document.getElementById('exam-intro');
-    const quizEl = document.getElementById('exam-quiz');
-    const resultEl = document.getElementById('exam-result');
-    const startBtn = document.getElementById('exam-start');
-    const questionEl = document.getElementById('exam-question');
-    const counterEl = document.getElementById('exam-counter');
-    const optionsEl = document.getElementById('exam-options');
-    const resultTitleEl = document.getElementById('exam-result-title');
-    const resultScoreEl = document.getElementById('exam-result-score');
-    const resultActionsEl = document.getElementById('exam-result-actions');
-    const savingEl = document.getElementById('exam-saving');
-
-    let preguntaActual = 0;
-    let puntos = 0;
-
-    async function ensureSession() {
-      const user = await resolveSessionUser(8500);
-
-      if (user) return user;
-      window.location.replace(buildLoginRedirect(`/examen/${moduleId}`));
-      return null;
-    }
-
-    function show(el) {
-      el?.classList.remove('hidden');
-    }
-
-    function hide(el) {
-      el?.classList.add('hidden');
-    }
-
-    function renderQuestion() {
-      const pregunta = preguntas[preguntaActual];
-      if (!pregunta || !questionEl || !counterEl || !optionsEl) return;
-
-      questionEl.textContent = pregunta.titulo;
-      counterEl.textContent = `${preguntaActual + 1}/${preguntas.length}`;
-      optionsEl.innerHTML = '';
-
-      pregunta.opciones.forEach((opcion, index) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className =
-          'group flex justify-between items-center p-6 border border-clay/40 rounded-2xl hover:bg-ink hover:text-bone transition-all duration-500 text-left';
-
-        const optionText = document.createElement('span');
-        optionText.className = 'font-sans text-xs uppercase tracking-[0.18em] font-medium';
-        optionText.textContent = opcion;
-
-        const optionArrow = document.createElement('span');
-        optionArrow.className = 'text-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300';
-        optionArrow.textContent = '\u2192';
-
-        button.append(optionText, optionArrow);
-        button.addEventListener('click', () => answerQuestion(index));
-        optionsEl.appendChild(button);
-      });
-    }
-
-    async function saveProgressIfPassed() {
-      if (!savingEl) return;
-      savingEl.textContent = 'Guardando progreso...';
-
-      try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-
-        if (!user) {
-          savingEl.textContent = 'Sin sesion activa. Inicia sesion de nuevo para guardar avance.';
-          return;
-        }
-
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('progress')
-          .eq('id', user.id)
-          .maybeSingle();
-
-        const currentProgress = profile?.progress && typeof profile.progress === 'object' ? profile.progress : {};
-        const quizProgress =
-          currentProgress.quiz_progress && typeof currentProgress.quiz_progress === 'object'
-            ? currentProgress.quiz_progress
-            : {};
-
-        const nextProgress = {
-          ...currentProgress,
-          quiz_progress: {
-            ...quizProgress,
-            [moduleId]: true,
-          },
-          [`modulo${moduleId}`]: true,
-          last_quiz_module: moduleId,
-          last_quiz_at: new Date().toISOString(),
-        };
-
-        await supabase.from('profiles').upsert({ id: user.id, progress: nextProgress }, { onConflict: 'id' });
-        savingEl.textContent = 'Quiz completado. Progreso actualizado.';
-      } catch (error) {
-        console.error('Error guardando progreso del quiz:', error);
-        savingEl.textContent = 'No se pudo guardar ahora, pero puedes continuar.';
-      }
-    }
-
-    function showResult() {
-      hide(quizEl);
-      show(resultEl);
-
-      if (!resultTitleEl || !resultScoreEl || !resultActionsEl) return;
-
-      const aprobado = puntos >= 2;
-      resultTitleEl.textContent = aprobado ? 'Aprobado.' : 'Revisar.';
-      resultScoreEl.textContent = `Has alcanzado ${puntos} de ${preguntas.length} puntos posibles.`;
-
-      resultActionsEl.innerHTML = '';
-
-      if (aprobado) {
-        saveProgressIfPassed();
-
-        if (nextModuleId) {
-          const nextLink = document.createElement('a');
-          nextLink.href = `/modulos/${nextModuleId}`;
-          nextLink.className = 'btn btn-lg btn-primary';
-          nextLink.textContent = 'Ir al siguiente modulo';
-          resultActionsEl.appendChild(nextLink);
-        }
-
-        const backLink = document.createElement('a');
-        backLink.href = '/dashboard';
-        backLink.className = 'btn btn-lg btn-secondary';
-        backLink.textContent = 'Volver al dashboard';
-        resultActionsEl.appendChild(backLink);
-        return;
-      }
-
-      if (savingEl) savingEl.textContent = '';
-      const retry = document.createElement('button');
-      retry.type = 'button';
-      retry.className = 'btn btn-lg btn-secondary';
-      retry.textContent = 'Reintentar quiz';
-      retry.addEventListener('click', () => window.location.reload());
-      resultActionsEl.appendChild(retry);
-    }
-
-    function answerQuestion(indice) {
-      const pregunta = preguntas[preguntaActual];
-      if (!pregunta) return;
-
-      if (indice === pregunta.correcta) puntos += 1;
-
-      if (preguntaActual + 1 < preguntas.length) {
-        preguntaActual += 1;
-        renderQuestion();
-        return;
-      }
-
-      showResult();
-    }
-
-    startBtn?.addEventListener('click', () => {
-      hide(introEl);
-      show(quizEl);
-      renderQuestion();
-    });
-
-    ensureSession();
-  </script>
-</Layout>
-
+<LearningShell eyebrow={`Cuestionario · Módulo ${String(module.position).padStart(2, '0')}`} title={module.title} description="Una pausa para pensar lo que acabas de aprender. Completar todas las preguntas registra tu participación; no hay nota mínima.">
+  <a href={`/modulos/${module.id}`}>← Volver al módulo</a>
+  {notice && <p class={`notice ${notice.kind}`} role="status">{notice.message}</p>}
+  {questionResult.error || participationResult.error ? <p class="notice error">No hemos podido cargar el cuestionario. Inténtalo más tarde.</p> : participationResult.data ? <section class="panel section"><p class="eyebrow">Participación registrada</p><h2>Ya has completado este cuestionario.</h2><p>Puedes continuar tu itinerario cuando se abra el siguiente módulo.</p><a href="/dashboard" class="button">Volver al itinerario</a></section> : questions.length ? <form action="/api/learning/action" method="post" class="quiz-form section stack">
+    <input type="hidden" name="action" value="complete_quiz" /><input type="hidden" name="module_id" value={module.id} /><input type="hidden" name="return_to" value={`/examen/${module.id}`} />
+    {questions.map((question, index) => <fieldset class="panel">
+      <legend><span class="eyebrow">Pregunta {index + 1}</span><span class="question-title">{question.prompt}</span></legend>
+      {Array.isArray(question.options) && question.options.length ? question.options.map((option: string) => <label class="answer-option"><input type="radio" name={`q_${question.id}`} value={option} required /><span>{option}</span></label>) : <div class="field"><label for={`q_${question.id}`}>Tu reflexión</label><textarea id={`q_${question.id}`} name={`q_${question.id}`} rows={4} maxlength={3000} required></textarea></div>}
+    </fieldset>)}
+    <div><button type="submit" class="button">Registrar mi participación</button></div>
+  </form> : <section class="empty-state section"><h2>El cuestionario se está preparando.</h2><p>La escuela lo publicará aquí cuando esté listo.</p></section>}
+</LearningShell>
+<style>
+.quiz-form{max-width:50rem}.quiz-form fieldset{min-width:0;border:1px solid var(--line,#e2d7c8)}legend{padding:0 .5rem;max-width:100%}.question-title{display:block;font-size:1.4rem;margin-top:.5rem}.answer-option{display:flex;gap:.8rem;align-items:flex-start;padding:1rem .5rem;cursor:pointer;border-bottom:1px solid var(--line,#e2d7c8)}.answer-option input{margin-top:.35rem;accent-color:var(--ochre);flex:0 0 auto}
+</style>
 

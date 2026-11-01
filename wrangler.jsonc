@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "eaqs",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": {
+    "PUBLIC_SITE_URL": "https://www.elarbolquesuena.com",
+    "PUBLIC_SUPABASE_URL": "",
+    "PUBLIC_SUPABASE_PUBLISHABLE_KEY": "",
+    "SUPABASE_SECRET_KEY": "",
+    "LEGAL_READY": "false",
+    "SEO_INDEXING_ENABLED": "false",
+    "NEWSLETTER_MARKETING_ENABLED": "false"
+  }
+}

@@ -2,282 +2,79 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import Button from '../components/ui/Button.astro';
-import NewsletterForm from '../components/NewsletterForm.astro';
-import {
-  COURSE_MODULES,
-  COURSE_SEAT_LIMIT,
-  COURSE_TIMELINE,
-  COURSE_LAUNCH_PRICE_EUR,
-  COURSE_STANDARD_PRICE_EUR,
-  INTEGRATION_WEEKEND,
-} from '../lib/course-data';
-
-const moduleRows = COURSE_MODULES.map((module) => ({
-  id: module.numero,
-  title: module.title,
-  description: module.description,
-}));
-
-const formationFeatures = [
-  '10 modulos con recursos y prueba por cada bloque',
-  'Acceso permanente a clases y materiales',
-  'Certificacion oficial de la Escuela',
-  'Comunidad docente internacional',
-  'Mentoria en directo con Azahara',
-  'Apertura por calendario de cohorte + progreso por quiz',
-];
+import NewsletterCard from '../components/NewsletterCard.astro';
+import '../styles/home.css';
+import { COURSE_MODULES, COURSE_LAUNCH_PRICE_EUR, COURSE_STANDARD_PRICE_EUR, COURSE_SEAT_LIMIT } from '../lib/course-data';
 
 const faqs = [
-  {
-    question: 'Necesito ser docente de musica para aprovechar el curso?',
-    answer: 'No. Esta formacion esta pensada para docentes y profesionales que trabajan con infancia de 0 a 9 anos.',
-  },
-  {
-    question: 'Cuanto tiempo necesito cada semana?',
-    answer: 'Entre 2 y 4 horas semanales entre clase, observacion y aplicacion en aula.',
-  },
-  {
-    question: 'Como se desbloquean los modulos?',
-    answer:
-      'La apertura es por calendario de edicion. Cada modulo incluye quiz y recursos propios para consolidar el aprendizaje.',
-  },
-  {
-    question: 'Es teorico o practico?',
-    answer: 'Es practico: cada modulo termina con propuestas listas para implementar.',
-  },
-  {
-    question: 'Y si aun no quiero inscribirme?',
-    answer: 'Puedes entrar gratis en la newsletter semanal y avanzar a tu ritmo.',
-  },
+  ['¿Necesito tener formación musical?', 'La propuesta se dirige a docentes y profesionales que acompañan a niños y niñas de 0 a 6 años, especialmente de 3 a 6. No necesitas ser docente de música.'],
+  ['¿Cómo se organiza el curso?', 'Combina clases grabadas, materiales, tutorías y conversación con el grupo. La próxima edición será en enero de 2027. Los módulos se abren por calendario de cohorte; el calendario detallado y los horarios de tutoría se comunicarán antes de la matrícula.'],
+  ['¿Puedo hacerlo desde otro país?', 'La formación es online y en español, dirigida a docentes de España y Latinoamérica. El calendario y los horarios de tutoría se comunicarán antes de formalizar la matrícula para que puedas valorar si encajan contigo.'],
+  ['¿Qué certificado se entrega?', 'Un certificado propio de El Árbol Que Suena. Para obtenerlo es necesario completar los cuestionarios de participación y recibir la aprobación docente del trabajo final.'],
+  ['¿Cuándo tengo que pagar?', 'Primero envías tu solicitud. La escuela la revisa y te comunica la respuesta. Tras la aceptación se facilitarán las opciones y condiciones para formalizar la matrícula cuando se habilite el cobro. La solicitud no implica un pago ni concede acceso al aula.'],
+  ['¿Conservaré las clases y los materiales?', 'La propuesta incluye acceso permanente a las clases y materiales del curso. Las condiciones de acceso se facilitarán antes de formalizar la matrícula.'],
 ];
 ---
-
-<Layout
-  title="Curso de Neuroeducación Musical | El Árbol Que Suena"
-  description="Escuela Internacional de Neuroeducación Musical. Primera edición para docentes de 0 a 9 años con foco en primera infancia."
->
+<Layout title="Neuroeducación musical para docentes · El Árbol Que Suena" description="Formación online de neuroeducación musical para docentes de 0 a 6 años. Diez módulos, tutorías y certificado propio. Próxima edición: enero de 2027.">
   <Header />
-
-  <main class="rhythm-layer sales-home overflow-hidden">
-    <section class="section-shell pt-44 md:pt-56">
-      <div class="content-shell max-w-5xl text-center">
-        <p class="editorial-kicker mb-8" data-reveal>Escuela Internacional de Neuroeducación Musical</p>
-        <h1 class="headline-luxe headline-rhythm hero-title sales-hero-title mb-7" data-reveal style="--reveal-delay:90ms">
-        Donde vuelves a ser el maestro que siempre quisiste tener
-
-        </h1>
-        <p class="lead-copy max-w-3xl mx-auto mb-8" data-reveal style="--reveal-delay:150ms">
-          Donde el silencio suena. Donde tus alumnos brillan. Donde tu aula se transforma desde la música, el vínculo y la neurociencia. Todo cambia cuando dejas de buscar resultados inmediatos. El aprendizaje no siempre hace ruido. El tiempo también enseña. No ofrecemos más recursos para hacer más cosas, ofrecemos herramientas para entender lo que ya está ocurriendo.
-        </p>
-
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4" data-reveal style="--reveal-delay:220ms">
-          <Button id="home-hero-reserve" href="/registro?source=home_hero" size="lg" variant="primary" class="cta-breathe">
-            Quiero reservar mi plaza
-          </Button>
-          <a href="/#curso" class="btn btn-secondary btn-lg">Ver programa certificado</a>
+  <main id="main-content" class="home-narrative">
+    <section class="story-hero shell" aria-labelledby="hero-title">
+      <div class="hero-layout">
+        <div class="hero-heading">
+          <p class="hero-intro">Escuela Internacional de Neuroeducación Musical</p>
+          <h1 id="hero-title"><span class="hero-title-line">Tú también aprendiste</span>{' '}<em class="hero-title-line"><span class="editorial-accent">cantando</span></em></h1>
         </div>
-
-        <p class="sales-note mt-8" data-reveal style="--reveal-delay:280ms">
-          Próxima edición: <span class="ink-underline-subtle">plazas limitadas a {COURSE_SEAT_LIMIT} docentes</span>. Ideal para docentes de niños y niñas de 0 a 6 años.
-        </p>
-        <p id="home-launch-status" class="sales-note mt-2" data-reveal style="--reveal-delay:320ms"></p>
+        <div class="story-hero-lead"><p class="hero-invitation"><strong>Vuelve a ser el maestro que siempre quisiste tener.</strong></p><p>Los griegos explicaban andando. Los bardos compartían el folklore de pueblo en pueblo. Tus padres aprendieron los ríos de España con una canción. <span class="hero-challenge">Y tú, entre fichas, superfichas y boletines, te pierdes lo importante.</span></p><p class="hero-promise"><strong>Transforma tu día a día en el aula con herramientas musicales que impulsan el aprendizaje.</strong></p></div>
+        <div class="actions" data-enrollment-trigger><a class="button" href="/registro">Solicitar Plaza <span aria-hidden="true">↗</span></a><a class="text-link" href="/programa">Ver El Programa <span aria-hidden="true">↗</span></a></div>
+        <p class="hero-edition"><span>Próxima edición: <strong>Enero 2027</strong>.</span><span>Plazas limitadas a {COURSE_SEAT_LIMIT} docentes.</span><span>Ideal para docentes de niños y niñas de 0 a 6 años.</span><span>Apúntate en la <a href="#newsletter">newsletter</a> para enterarte antes de la próxima apertura.</span></p>
       </div>
     </section>
 
-    <section id="newsletter" class="section-shell section-tone-ivory">
-      <div class="content-shell">
-        <div class="newsletter-band newsletter-band-stacked space-y-7" data-reveal>
-          <div class="space-y-4 max-w-none">
-            <p class="editorial-kicker mb-3">Newsletter semanal</p>
-            <h2 class="headline-luxe headline-rhythm-soft text-4xl md:text-5xl mb-3">
-              Una pausa de pensamiento y aprendizaje lento a la semana,
-              <span class="ink-underline">sin ruido.</span>
-            </h2>
-            <p class="lead-copy">
-              Si aún no es tu momento de apuntarte al curso, déjanos tu email y recibe nuestra newsletter sobre neurodesarrollo y música cada semana. 
-            </p>
-          </div>
-          <div>
-            <NewsletterForm source="home_newsletter" variant="inline" ctaLabel="Apuntarme" />
-          </div>
+    <div class="home-newsletter-band" data-newsletter-capture><NewsletterCard class="home-newsletter shell" source="home" title="Una pausa de pensamiento y aprendizaje lento a la semana, sin ruido." description="Si aún no es tu momento de apuntarte al curso, déjanos tu email y recibe nuestra newsletter sobre neurociencia, pedagogía y música cada semana." /></div>
+
+    <section class="home-school" id="quienes-somos" aria-labelledby="school-heading" data-entrance>
+      <div class="school-note shell">
+        <p class="eyebrow">Quiénes somos</p>
+        <div class="school-editorial">
+          <div class="school-identity"><h2 id="school-heading">El Árbol<br />Que Suena</h2><p>Escuela Internacional de Neuroeducación Musical creada y dirigida por Azahara Mateos.</p></div>
+          <div class="school-perspective"><p>El Árbol Que Suena es un lugar para <em>detenerse</em>, para <em class="editorial-accent">escuchar</em> y para <em>pensar</em> la práctica docente.</p><a class="text-link" href="/escuela-internacional-neuroeducacion-musical">Conocer La Escuela <span aria-hidden="true">↗</span></a></div>
         </div>
       </div>
     </section>
 
-    <section id="curso" class="section-shell">
-      <div class="content-shell">
-        <div class="max-w-3xl mb-14 md:mb-16" data-reveal>
-          <p class="editorial-kicker mb-4">La formacion</p>
-          <h2 class="headline-luxe section-title mb-5">
-            Lo que deseas para tu aula
-            <span class="ink-underline-subtle">si se puede entrenar</span>.
-          </h2>
-          <p class="lead-copy">
-            No es solo teoria. Es una metodologia para ordenar la clase desde el ritmo, el vinculo y la atencion.
-            Menos caos, mas presencia y aprendizaje que si se sostiene en el tiempo. Formación para docentes que quieren entender que ocurre cuando aparentamente no ocurre nada
-          </p>
-        </div>
+    <section class="section shell home-course" id="curso" aria-labelledby="course-heading">
+      <header class="section-heading" data-entrance><div><p class="eyebrow">La formación · Docentes de 0–6 años, especialmente 3–6</p><h2 class="section-title" id="course-heading"><span>Sincroniza música, neurociencia</span>{' '}<em><span class="editorial-accent">y aprendizaje invisible</span></em></h2></div><p>Diez módulos online, en español, donde aprenderás una metodología para ordenar la clase desde el ritmo, el vínculo y la atención. Menos caos, más presencia y un mejor aprendizaje sostenido en el tiempo.</p></header>
+      <div class="program-list">{COURSE_MODULES.map((module) => <a class="program-row" href={`/programa#modulo-${module.id}`} data-entrance><span class="program-number">{module.id}</span><h3>{module.title}</h3><p>{module.description}</p><span class="program-arrow" aria-hidden="true">↗</span></a>)}</div>
+      <div class="program-footer"><a class="text-link" href="/programa">Leer el programa completo <span aria-hidden="true">↗</span></a></div>
+    </section>
 
-        <div class="module-list">
-          {moduleRows.map((row, index) => (
-            <article class="module-row" data-reveal style={`--reveal-delay:${index * 70}ms`}>
-              <span class="module-index">{row.id}</span>
-              <h3>{row.title}</h3>
-              <p>{row.description}</p>
-            </article>
-          ))}
+    <section class="section section-tint home-price" id="precio" aria-labelledby="price-heading">
+      <div class="shell admission-grid" data-entrance>
+        <div class="admission-process">
+          <p class="eyebrow">Cómo solicitar tu plaza</p><h2 class="section-title" id="price-heading">Primero,<br /><em>nos conocemos.</em></h2>
+          <ol class="admission-steps">
+            <li><span class="step-number" aria-hidden="true">1</span><div><h3>Tu Solicitud</h3><p>Envías tu solicitud.</p></div></li>
+            <li><span class="step-number" aria-hidden="true">2</span><div><h3>Nuestra Respuesta</h3><p>La escuela la revisa y te responde.</p></div></li>
+            <li><span class="step-number" aria-hidden="true">3</span><div><h3>Tu Matrícula</h3><p>Si se acepta, te explicamos cómo formalizar la matrícula cuando se habilite el cobro.</p></div></li>
+          </ol>
+          <p class="admission-note">El calendario detallado y los horarios se comunicarán antes de la matrícula. La solicitud no supone un pago, una reserva confirmada ni acceso al aula.</p>
         </div>
-
-        <div class="pt-9 md:pt-11 text-center" data-reveal style="--reveal-delay:460ms">
-          <a href="/programa-completo.pdf" class="program-pdf-link" download>
-            Descargar programa completo en PDF
-          </a>
-        </div>
+        <div class="investment"><h3 class="eyebrow">Precio Exclusivo Edición Enero 2027</h3><p class="price">{COURSE_LAUNCH_PRICE_EUR}<small> €</small></p><p>En Mayo 2027 sube a {COURSE_STANDARD_PRICE_EUR} €</p><ul><li>Diez módulos y materiales del curso</li><li>Tutorías y foro privado de la cohorte</li><li>Acceso permanente a clases y materiales</li><li>Trabajo final y certificado propio</li></ul><a class="button" href="/registro">Solicitar Plaza <span aria-hidden="true">↗</span></a><p class="fineprint">Limitado a {COURSE_SEAT_LIMIT} plazas</p></div>
       </div>
     </section>
 
-    <section id="quienes" class="section-shell section-tone-ivory">
-      <div class="content-shell">
-        <div class="grid lg:grid-cols-12 gap-10 md:gap-12 items-start">
-          <div class="lg:col-span-7 space-y-5" data-reveal>
-            <p class="editorial-kicker">Quienes somos</p>
-            <h2 class="headline-luxe section-title">
-              Una escuela para docentes que quieren
-              <span class="ink-underline">impacto real</span> y sensibilidad.
-            </h2>
-            <p class="lead-copy">
-              Unimos neuroeducacion, musica y pedagogia aplicada para ayudarte a sostener clases mas profundas, disfrutables y efectivas.
-            </p>
-          </div>
-
-          <div class="lg:col-span-5 who-list" data-reveal style="--reveal-delay:120ms">
-            <p>Metodo claro para 0-6 y adaptable a 0-9.</p>
-            <p>Aplicacion inmediata en contexto real.</p>
-            <p>Formacion premium con acompanamiento humano.</p>
-            <div class="pt-3">
-              <Button href="/azahara-mateos" size="md" variant="secondary">Conocer a la directora</Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="precio" class="section-shell">
-      <div class="content-shell max-w-4xl">
-        <div class="price-shell" data-reveal>
-          <div class="text-center mb-10">
-            <p class="editorial-kicker mb-4">Inversion en tu futuro docente</p>
-            <h2 class="headline-luxe headline-rhythm-soft section-title mb-5">La formacion.</h2>
-            <p class="font-display text-6xl md:text-7xl text-note mb-2">{COURSE_LAUNCH_PRICE_EUR} EUR</p>
-            <p class="text-[11px] uppercase tracking-[0.2em] text-ink/54">
-              Oferta lanzamiento . luego {COURSE_STANDARD_PRICE_EUR} EUR
-            </p>
-            <p class="mt-3 text-xs uppercase tracking-[0.14em] text-ink/58">
-              Cierre automatico: 12 abril 2026 . 23:59 (Europe/Madrid)
-            </p>
-          </div>
-
-          <div class="max-w-2xl mx-auto">
-            {formationFeatures.map((feature, index) => (
-              <div class={`formation-item ${index === formationFeatures.length - 1 ? '!border-b-0' : ''}`}>
-                <span class="text-base md:text-[18px] text-ink/78">{feature}</span>
-                <span class="check-soft text-xl text-moss">&#10003;</span>
-              </div>
-            ))}
-          </div>
-
-          <div class="text-center pt-10">
-            <Button id="home-price-reserve" href="/registro?source=home_precio" size="lg" variant="primary" class="cta-breathe">
-              Reservar mi plaza - {COURSE_LAUNCH_PRICE_EUR} EUR
-            </Button>
-            <p class="mt-5 text-sm text-ink/54 italic">
-              Garantia de 14 dias. Maximo {COURSE_SEAT_LIMIT} plazas por curso. Si no encaja contigo, devolvemos la inversion.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="faq" class="section-shell section-tone-ivory">
-      <div class="content-shell max-w-4xl">
-        <div class="price-shell" data-reveal>
-          <div class="text-center mb-8">
-            <p class="editorial-kicker mb-3">Preguntas frecuentes</p>
-            <h2 class="headline-luxe section-title">FAQ</h2>
-          </div>
-
-          <div>
-            {faqs.map((faq, index) => (
-              <details class="faq-item" open={index === 0} data-reveal style={`--reveal-delay:${index * 70}ms`}>
-                <summary>{faq.question}</summary>
-                <p class="mt-3 text-ink/78 leading-relaxed text-base md:text-lg">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-
-          <div class="text-center pt-10">
-            <p class="lead-copy max-w-3xl mx-auto mb-7">
-              Tu aula puede sonar distinta desde este mes. Reserva tu plaza y entra en la primera edicion de la Escuela.
-            </p>
-            <Button id="home-faq-reserve" href="/registro?source=home_faq_cta" size="lg" variant="primary" class="cta-breathe">
-              Reservar plaza
-            </Button>
-          </div>
-        </div>
-      </div>
-    </section>
+    <section class="section shell" id="preguntas-frecuentes" aria-labelledby="faq-heading"><div class="faq" data-entrance><div><p class="eyebrow">Preguntas frecuentes</p><h2 class="section-title" id="faq-heading">Resolvamos<br /><em><span class="editorial-accent">tus dudas.</span></em></h2></div><div class="faq-list">{faqs.map(([question, answer]) => <details><summary>{question}</summary><p>{answer}</p></details>)}</div></div></section>
   </main>
-
   <Footer />
-
-  <script>
-    async function syncLaunchStatus() {
-      const statusNode = document.getElementById('home-launch-status');
-      const reserveLinks = [
-        document.getElementById('home-hero-reserve'),
-        document.getElementById('home-price-reserve'),
-        document.getElementById('home-faq-reserve'),
-      ].filter(Boolean);
-
-      if (!statusNode || !reserveLinks.length) return;
-
-      try {
-        const response = await fetch('/api/launch/status');
-        const payload = await response.json();
-
-        if (!response.ok || !payload) return;
-
-        const closeDate = new Date(payload.closesAtIso);
-        const closeLabel = new Intl.DateTimeFormat('es-ES', {
-          day: '2-digit',
-          month: 'short',
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Europe/Madrid',
-        }).format(closeDate);
-
-        if (payload.open) {
-          statusNode.textContent = `Plazas disponibles: ${payload.seatsLeft}/${payload.seatLimit}. Cierre previsto: ${closeLabel}.`;
-          return;
-        }
-
-        statusNode.textContent = payload.soldOut
-          ? 'Convocatoria completa. Puedes entrar a la newsletter para la siguiente cohorte.'
-          : 'Convocatoria cerrada por fecha. Entra en la newsletter para la proxima apertura.';
-
-        reserveLinks.forEach((node) => {
-          if (!(node instanceof HTMLAnchorElement)) return;
-          node.href = '/#newsletter';
-          node.textContent = 'Quiero entrar en la newsletter';
-        });
-      } catch (_error) {
-        statusNode.textContent = '';
-      }
-    }
-
-    syncLaunchStatus();
-  </script>
 </Layout>
-
-
+<script>
+  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) if (entry.isIntersecting) {
+        entry.target.classList.add('has-entered');
+        observer.unobserve(entry.target);
+      }
+    }, { rootMargin: '0px 0px -32px 0px', threshold: 0.08 });
+    document.querySelectorAll('[data-entrance]').forEach(element => observer.observe(element));
+  }
+</script>

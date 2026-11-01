@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Ritmo y autorregulacion en 0-6"
 description: "Una guia breve para usar patrones ritmicos en transiciones de aula y reducir sobrecarga emocional."
 pubDate: 2026-01-03

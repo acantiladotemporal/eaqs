@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { applicationLabels, madridDate } from '../components/learning';
+const { db, user } = Astro.locals;
+if (!db || !user) return Astro.redirect('/login?next=/mi-solicitud');
+const email = (user.email || '').toLowerCase();
+const [ownedApplications, unclaimedApplications, enrollmentsResult] = await Promise.all([
+  db.from('applications').select('id,full_name,status,created_at').eq('user_id', user.id).order('created_at', { ascending: false }),
+  db.from('applications').select('id,full_name,status,created_at').is('user_id',null).eq('email', email).order('created_at', { ascending: false }),
+  db.from('enrollments').select('id,status,reference').eq('user_id', user.id).order('created_at', { ascending: false }),
+]);
+const applicationsResult = {error:ownedApplications.error || unclaimedApplications.error};
+const applications = [...(ownedApplications.data || []),...(unclaimedApplications.data || [])].sort((a,b)=>b.created_at.localeCompare(a.created_at));
+const enrollments = enrollmentsResult.data || [];
+const active = enrollments.some((item) => item.status === 'active');
+---
+<Layout title="Mi solicitud | El Árbol Que Suena" description="Consulta el estado de tu solicitud de admisión." experience="learning">
+  <Header mode="learning" />
+  <main id="main-content" class="app-shell shell">
+    <header class="page-heading"><p class="eyebrow">Admisión a la escuela</p><h1 class="display">Cada recorrido tiene su momento.</h1><p class="lead">Aquí puedes consultar el estado de tu solicitud.</p></header>
+    {applicationsResult.error || enrollmentsResult.error ? <p class="notice error">No hemos podido consultar tu solicitud. Inténtalo más tarde.</p> : active ? <section class="panel stack"><p class="eyebrow">Matrícula confirmada</p><h2>Tu aula te espera.</h2><a class="button" href="/dashboard">Entrar al aula ↗</a></section> : applications.length ? <section class="stack">{applications.map((application) => <article class="panel stack"><p class="eyebrow">Solicitud del {madridDate(application.created_at)}</p><h2>{application.full_name}</h2><p class="status">{applicationLabels[application.status] || 'En revisión'}</p>
+      {application.status === 'submitted' && <p>La escuela revisará tu solicitud y se pondrá en contacto contigo. Todavía no necesitas realizar ningún pago.</p>}
+      {application.status === 'accepted' && <><p>Tu solicitud ha sido aceptada. La matrícula sigue pendiente de pago; la escuela te comunicará las instrucciones cuando se habilite el cobro.</p><p class="muted">La aceptación no activa todavía el acceso al aula.</p></>}
+      {application.status === 'waitlisted' && <p>Tu solicitud está en lista de espera. La escuela se pondrá en contacto contigo si hay una plaza disponible.</p>}
+      {application.status === 'rejected' && <p>En esta edición no se ha aceptado tu solicitud. Puedes escribir a la escuela para consultar otras posibilidades.</p>}
+    </article>)}</section> : <section class="empty-state"><h2>No encontramos una solicitud con este correo.</h2><p>Comprueba que has accedido con la dirección que utilizaste al solicitar plaza.</p><a class="button" href="/registro">Solicitar Plaza</a></section>}
+    <div class="section"><a href="/contacto">Contactar con la escuela</a><form method="post" action="/api/auth/logout" class="logout-form"><button type="submit" class="button button-secondary">Cerrar sesión</button></form></div>
+  </main><Footer mode="focused" />
+</Layout>
+<style>.logout-form{margin-top:1.5rem}</style>

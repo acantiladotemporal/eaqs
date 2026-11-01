@@ -1,0 +1,13 @@
+---
+import Layout from '../layouts/Layout.astro'; import Header from '../components/Header.astro'; import Footer from '../components/Footer.astro';
+import CourseInvitation from '../components/CourseInvitation.astro';
+---
+<Layout title="Escuela Internacional de Neuroeducación Musical · El Árbol Que Suena" description="Escuela Internacional de Neuroeducación Musical para docentes de Infantil. Música, neuroeducación y pedagogía aplicada, dirigida por Azahara Mateos.">
+  <Header /><main id="main-content">
+    <header class="shell page-heading school-heading"><p class="eyebrow">Música, vínculo y primera infancia</p><h1>Una escuela para docentes<br /><em>que quieren impacto real y <span class="editorial-accent">sensibilidad.</span></em></h1><p class="lead">Un lugar para detenerse, escuchar y pensar la práctica docente.</p><p class="lead">Unimos neuroeducación, música y pedagogía aplicada para ayudarte a sostener clases más profundas, disfrutables y efectivas.</p></header>
+    <section class="shell page-body">
+      <div class="school-story"><aside class="school-identity" aria-label="La directora de la escuela"><p class="eyebrow">Creada y dirigida por</p><h2>Azahara Mateos</h2><p class="identity-experience">20<span>Años de experiencia</span></p><p class="identity-practice">Pianista y violonchelista.<br />Profesora de música y musicoterapeuta.</p></aside><article class="school-copy"><h2>De persona en persona.<br /><em>También al aprender.</em></h2><p>El Árbol Que Suena es una Escuela Internacional de Neuroeducación Musical. Nuestra primera formación se dirige a docentes de niños y niñas de 0 a 6 años, con especial atención a la etapa de 3 a 6.</p><p>Azahara Mateos acompaña el recorrido docente y las tutorías para relacionar música, desarrollo y práctica educativa, desde sus veinte años de experiencia.</p><p>Queremos ofrecer un lugar para parar, observar y pensar. Trabajar con grupos pequeños permite hacer sitio a las preguntas y revisar la práctica de persona en persona.</p><p>La primera formación combina clases grabadas, conversación, materiales y un trabajo final conectado con el aula.</p><a href="/metodologia" class="text-link">Conocer Nuestra Mirada <span aria-hidden="true">↗</span></a></article></div>
+      <CourseInvitation />
+    </section>
+  </main><Footer />
+</Layout>

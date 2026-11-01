@@ -1,122 +1,17 @@
 ---
-interface Props {
-  source?: string;
-  title?: string;
-  description?: string;
-  ctaLabel?: string;
-  variant?: 'default' | 'inline';
-  class?: string;
-}
-
-const {
-  source = 'home',
-  title = 'Newsletter semanal',
-  description = 'Una dosis breve de musica, infancia y aprendizaje para inspirar tu semana.',
-  ctaLabel = 'Quiero suscribirme',
-  variant = 'default',
-  class: className = '',
-} = Astro.props;
-
-const formId = `newsletter-form-${source}`;
-const emailId = `newsletter-email-${source}`;
-const buttonId = `newsletter-button-${source}`;
-const feedbackId = `newsletter-feedback-${source}`;
+interface Props { source?: string; variant?: string; ctaLabel?: string; }
+const { source = 'newsletter', variant = 'default', ctaLabel = 'Quiero recibirla' } = Astro.props;
+const id = 'newsletter-' + source.replace(/[^a-z0-9_-]/gi, '');
+const result = Astro.url.searchParams.get('newsletter');
+const responseSource = Astro.url.searchParams.get('newsletter_source');
+const showResult = responseSource ? responseSource === source : source !== 'footer' || Astro.url.pathname !== '/';
+const messages: Record<string,string> = { pending: 'Revisa tu correo para confirmar la suscripción.', confirmed: 'Tu suscripción está confirmada. Gracias por acompañarnos.', unsubscribed: 'Has dado de baja tu suscripción.', error: 'No hemos podido completar la suscripción. Inténtalo de nuevo más tarde.' };
 ---
-
-<section class={`${variant === 'inline' ? 'space-y-4' : 'space-y-6'} ${className}`}>
-  {
-    variant === 'default' && (
-      <>
-        <p class="badge">Newsletter semanal</p>
-        <h3 class="headline-luxe text-4xl md:text-5xl">{title}</h3>
-        <p class="lead-copy max-w-2xl">{description}</p>
-      </>
-    )
-  }
-
-  <form id={formId} class={variant === 'inline' ? 'space-y-3' : 'space-y-4'} novalidate>
-    <label for={emailId} class={variant === 'inline' ? 'sr-only' : 'field-label'}>Tu correo</label>
-    <div class={`flex flex-col sm:flex-row gap-3 ${variant === 'inline' ? 'items-center' : ''}`}>
-      <input
-        id={emailId}
-        name="email"
-        type="email"
-        required
-        autocomplete="email"
-        placeholder="docente@centroeducativo.com"
-        class={`input-base sm:flex-1 ${variant === 'inline' ? 'newsletter-inline-input' : ''}`}
-      />
-      <button
-        id={buttonId}
-        type="submit"
-        class={`btn ${variant === 'inline' ? 'btn-primary newsletter-inline-button' : 'btn-accent px-8 py-4 md:px-10 md:py-4'} sm:shrink-0`}
-      >
-        {ctaLabel}
-      </button>
-    </div>
-    <input type="hidden" name="source" value={source} />
-    <p class="text-xs text-ink/60">
-      {variant === 'inline' ? 'Si te apuntas, todos los martes a las 14:00 te llegará un email sobre música y desarrollo cerebral' : 'Un correo semanal. Sin ruido.'}
-    </p>
-    <p id={feedbackId} class="text-sm min-h-6 text-ink/60" aria-live="polite"></p>
-  </form>
-</section>
-
-<script define:vars={{ formId, emailId, feedbackId, buttonId, source, ctaLabel }}>
-  const form = document.getElementById(formId);
-  const emailInput = document.getElementById(emailId);
-  const feedback = document.getElementById(feedbackId);
-  const button = document.getElementById(buttonId);
-
-  const setFeedback = (message, isError = false) => {
-    if (!feedback) return;
-    feedback.textContent = message;
-    feedback.className = `text-sm min-h-6 ${isError ? 'text-red-700' : 'text-ink/60'}`;
-  };
-
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const email = emailInput instanceof HTMLInputElement ? emailInput.value.trim().toLowerCase() : '';
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-    if (!isValidEmail) {
-      setFeedback('Introduce un correo valido para suscribirte.', true);
-      return;
-    }
-
-    if (button instanceof HTMLButtonElement) {
-      button.disabled = true;
-      button.textContent = 'Enviando...';
-      button.setAttribute('aria-busy', 'true');
-    }
-    setFeedback('');
-
-    try {
-      const response = await fetch('/api/newsletter/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, source }),
-      });
-
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok || payload?.ok === false) {
-        throw new Error(payload?.message || 'No se pudo completar la suscripcion.');
-      }
-
-      setFeedback('Ya estas dentro. Te leemos la proxima semana.');
-      if (form instanceof HTMLFormElement) form.reset();
-    } catch (error) {
-      console.error('Newsletter subscription error:', error);
-      setFeedback('No se pudo registrar automaticamente. Escribenos a hola@elarbolquesuena.com.', true);
-    } finally {
-      if (button instanceof HTMLButtonElement) {
-        button.disabled = false;
-        button.textContent = ctaLabel;
-        button.setAttribute('aria-busy', 'false');
-      }
-    }
-  });
-</script>
+<form class="newsletter-form" action="/api/newsletter/subscribe" method="post">
+  <input type="hidden" name="source" value={source} />
+  <div class="honeypot" aria-hidden="true"><label for={id + '-website'}>Dejar vacío</label><input id={id + '-website'} name="website" tabindex="-1" autocomplete="off" /></div>
+  <label class:list={{ 'sr-only': variant === 'footer' }} for={id + '-email'}>Tu correo electrónico</label>
+  <div class="newsletter-input-row"><input id={id + '-email'} type="email" name="email" autocomplete="email" placeholder="docente@centroeducativo.com" maxlength="254" required /><button class="button" type="submit">{ctaLabel}{variant !== 'footer' && <span aria-hidden="true">↗</span>}</button></div>
+  <label class="checkbox-row" for={id + '-consent'}><input id={id + '-consent'} name="consent" type="checkbox" required /> <span>Quiero recibir por email ideas y novedades sobre las formaciones de la escuela. He leído la <a href="/privacidad" target="_blank" rel="noopener noreferrer" aria-label="Política de privacidad (se abre en otra pestaña)">política de privacidad <span aria-hidden="true">↗</span></a>. Podré darme de baja cuando quiera.</span></label>
+  {showResult && result && messages[result] && <p class="form-result" role="status">{messages[result]}</p>}
+</form>

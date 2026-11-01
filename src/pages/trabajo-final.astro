@@ -1,0 +1,35 @@
+---
+import LearningShell from '../components/LearningShell.astro';
+import { INITIAL_COHORT_ID, madridDate, formNotice, submissionLabels } from '../components/learning';
+const { db, user, enrollment } = Astro.locals;
+if (!db || !user) return Astro.redirect('/login');
+const cohortId = enrollment?.cohort_id || INITIAL_COHORT_ID;
+const assignmentResult = await db.from('assignments').select('id,title,instructions').eq('cohort_id', cohortId).order('created_at', { ascending: false }).limit(1).maybeSingle();
+const assignment = assignmentResult.data;
+const submissionResult = assignment ? await db.from('submissions').select('id,content,storage_path,status,feedback,created_at,reviewed_at').eq('assignment_id', assignment.id).eq('user_id', user.id).maybeSingle() : { data: null, error: null };
+const submission = submissionResult.data;
+const notice = formNotice(Astro.url);
+---
+<LearningShell title="Lo aprendido, en tu propia práctica." eyebrow="Trabajo final" description="Una propuesta para integrar el recorrido y compartir tu mirada con la docente.">
+  {notice && <p class={`notice ${notice.kind}`} role="status">{notice.message}</p>}
+  {assignmentResult.error || submissionResult.error ? <p class="notice error">No hemos podido cargar el trabajo final. Vuelve a intentarlo más tarde.</p> : assignment ? <>
+    <article class="panel stack"><h2>{assignment.title}</h2><div class="preserve-lines">{assignment.instructions}</div></article>
+    {submission && <section class="panel section stack" aria-labelledby="submission-heading">
+      <p class="eyebrow">Tu entrega · {madridDate(submission.created_at)}</p><h2 id="submission-heading">{submissionLabels[submission.status] || 'Entrega registrada'}</h2>
+      <p class="preserve-lines">{submission.content}</p>
+      {submission.storage_path && <a href={`/api/submissions/${submission.id}`}>Descargar tu archivo adjunto ↓</a>}
+      {submission.feedback && <div class="feedback"><h3>La devolución de tu docente</h3><p class="preserve-lines">{submission.feedback}</p><p class="muted">{madridDate(submission.reviewed_at)}</p></div>}
+      {submission.status === 'approved' && <a class="button" href="/certificado">Consultar mi certificado</a>}
+    </section>}
+    {(!submission || submission.status === 'revision_requested') && <form action="/api/learning/action" method="post" enctype="multipart/form-data" class="panel section stack">
+      <input type="hidden" name="action" value="submit_assignment" /><input type="hidden" name="assignment_id" value={assignment.id} /><input type="hidden" name="return_to" value="/trabajo-final" />
+      <h2>{submission ? 'Enviar una nueva revisión' : 'Preparar tu entrega'}</h2>
+      <div class="field"><label for="assignment-content">Tu trabajo o reflexión</label><textarea id="assignment-content" name="content" rows={12} minlength="30" maxlength="20000" required>{submission?.content || ''}</textarea></div>
+      <div class="field"><label for="assignment-file">Documento PDF (opcional)</label><input id="assignment-file" name="file" type="file" accept="application/pdf" /><p class="muted">Máximo 10 MB. Evita incluir datos personales del alumnado. Si adjuntas un nuevo PDF en una revisión, reemplazará al anterior.</p></div>
+      <div><button class="button" type="submit">Enviar a revisión docente</button></div>
+    </form>}
+  </> : <section class="empty-state"><h2>La propuesta final aún no se ha publicado.</h2><p>Cuando la docente comparta las instrucciones, podrás consultarlas y entregar aquí tu trabajo.</p></section>}
+</LearningShell>
+<style>.preserve-lines{white-space:pre-line;overflow-wrap:anywhere}.feedback{border-left:2px solid var(--ochre);padding-left:1.5rem;margin-top:1rem}</style>
+
+

@@ -1,0 +1,18 @@
+---
+import NewsletterForm from './NewsletterForm.astro';
+interface Props { source?: string; id?: string; title?: string; description?: string; class?: string; }
+const {
+  source = 'footer',
+  id = 'newsletter',
+  title = 'Cuando estés listo, aquí estaremos.',
+  description = 'Si aún no es tu momento para entrar al curso, podemos seguir en contacto. Ideas sobre música, desarrollo y primera infancia para pensar tu práctica docente.',
+  class: className,
+} = Astro.props;
+const titleId = `${source}-newsletter-title`;
+---
+<section class:list={['footer-card', 'newsletter-surface', className]} id={id} aria-labelledby={titleId} data-newsletter-capture>
+  <p class="eyebrow newsletter-intro">Newsletter semanal para docentes que quieren entender qué ocurre en el aula cuando aparentemente no ocurre nada</p>
+  <h2 id={titleId}>{title}</h2>
+  <p class="footer-card-lead">{description}</p>
+  <NewsletterForm source={source} variant="footer" ctaLabel="Apuntarme" />
+</section>

@@ -1,9 +1,10 @@
 ---
+import type { HTMLAttributes } from 'astro/types';
 interface Props {
   id: string;
   name?: string;
   label: string;
-  type?: string;
+  type?: HTMLAttributes<'input'>['type'];
   placeholder?: string;
   required?: boolean;
   autocomplete?: string;

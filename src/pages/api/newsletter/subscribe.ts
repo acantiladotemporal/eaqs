@@ -1,77 +1,20 @@
 import type { APIRoute } from 'astro';
-import { buildNewsletterWelcomeTemplate, logEmailEvent, sendResendEmail } from '../../../lib/server/email';
-import { isSupabaseServerConfigured, supabaseAdmin } from '../../../lib/server/supabase-admin';
-
-export const prerender = false;
-
-interface NewsletterInput {
-  email?: string;
-  source?: string;
-}
-
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-export const POST: APIRoute = async ({ request }) => {
-  const payload = (await request.json().catch(() => null)) as NewsletterInput | null;
-  const email = payload?.email?.trim().toLowerCase() || '';
-  const source = payload?.source?.trim() || 'unknown';
-
-  if (!isValidEmail(email)) {
-    return new Response(JSON.stringify({ ok: false, message: 'Email invalido' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  if (isSupabaseServerConfigured) {
-    try {
-      const { error } = await supabaseAdmin
-        .from('newsletter_subscribers')
-        .upsert(
-          {
-            email,
-            source,
-          },
-          { onConflict: 'email' }
-        );
-
-      if (error) throw error;
-    } catch (error) {
-      console.warn('[newsletter] Unable to upsert subscriber:', error);
-    }
-  }
-
-  const template = buildNewsletterWelcomeTemplate(email);
-  const sendResult = await sendResendEmail({
-    to: email,
-    subject: template.subject,
-    html: template.html,
-    text: template.text,
-  });
-
-  await logEmailEvent({
-    email,
-    eventType: 'newsletter_sent',
-    template: 'newsletter_welcome',
-    payload: {
-      source,
-      resend: sendResult.message,
-    },
-  });
-
-  return new Response(
-    JSON.stringify({
-      ok: true,
-      message: 'Suscripcion registrada',
-      emailSent: sendResult.ok,
-      emailSkipped: sendResult.skipped,
-    }),
-    {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    }
-  );
+import { formData,text,optionalText,emailAddress,redirectTo,HttpError } from '../../../lib/server/security';
+import { env } from '../../../lib/server/config';
+import { limitPublicRequest } from '../../../lib/server/limits';
+import { subscribeNewsletter } from '../../../lib/server/newsletter';
+export const POST:APIRoute=async context=>{
+  let source: 'home' | 'footer' = 'home';
+  const response = (state: string) => redirectTo(`/?newsletter_source=${source}#${source === 'footer' ? 'newsletter-footer' : 'newsletter'}`, 'newsletter', state);
+  try {
+    const data=await formData(context);
+    source = optionalText(data,'source',100) === 'footer' ? 'footer' : 'home';
+    if(optionalText(data,'website',200))return response('pending');
+    if(env('LEGAL_READY')!=='true')throw new HttpError(503,'Suscripciones aún no disponibles.');
+    const email=emailAddress(text(data,'email',254));
+    if(!data.has('consent'))throw new HttpError(400,'Necesitamos tu consentimiento.');
+    await limitPublicRequest(context,'newsletter',email);
+    await subscribeNewsletter(email,source);
+    return response('pending');
+  } catch { return response('error'); }
 };
-

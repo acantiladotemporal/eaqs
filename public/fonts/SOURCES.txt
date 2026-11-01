@@ -1,0 +1,26 @@
+Fonts retrieved from official Google Fonts endpoints on 2026-11-01.
+Licenses retained in this directory.
+
+dm-sans-latin.woff2
+https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K4.woff2
+
+dm-sans-latin-ext.woff2
+https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu6-K6h9Q.woff2
+
+dm-serif-latin.woff2
+https://fonts.gstatic.com/s/dmserifdisplay/v17/-nFnOHM81r4j6k0gjAW3mujVU2B2G_Bx0g.woff2
+
+dm-serif-latin-ext.woff2
+https://fonts.gstatic.com/s/dmserifdisplay/v17/-nFnOHM81r4j6k0gjAW3mujVU2B2G_5x0ujy.woff2
+
+dm-serif-italic-latin.woff2
+https://fonts.gstatic.com/s/dmserifdisplay/v17/-nFhOHM81r4j6k0gjAW3mujVU2B2G_VB0PD2.woff2
+
+dm-serif-italic-latin-ext.woff2
+https://fonts.gstatic.com/s/dmserifdisplay/v17/-nFhOHM81r4j6k0gjAW3mujVU2B2G_VB3vD212k.woff2
+
+DM-Sans-OFL.txt
+https://raw.githubusercontent.com/google/fonts/main/ofl/dmsans/OFL.txt
+
+DM-Serif-Display-OFL.txt
+https://raw.githubusercontent.com/google/fonts/main/ofl/dmserifdisplay/OFL.txt

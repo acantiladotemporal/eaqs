@@ -4,7 +4,7 @@ Carpeta local principal: `D:\El Árbol Que Suena`. Los originales de la escuela 
 
 Web y aula de la Escuela Internacional de Neuroeducación Musical. Primera edición online en español para docentes de 0–6 años, especialmente 3–6: 10 módulos, hasta 20 plazas y 390 € de lanzamiento (referencia posterior: 490 €).
 
-La publicación se prepara desde `main`, conservando Node para desarrollo local y usando Cloudflare Workers como opción preferida por coste cero. Las dos migraciones están instaladas en el Supabase de la escuela, con RLS y buckets privados verificados. Siguen pendientes las claves de servidor, SMTP, sesiones reales, materiales y pagos. El estado de publicación y su procedimiento están en [docs/deployment.md](docs/deployment.md); las verificaciones de datos están en [docs/supabase-verification.json](docs/supabase-verification.json).
+La web está publicada en [www.elarbolquesuena.com](https://www.elarbolquesuena.com/) con Cloudflare Workers. La integración con GitHub está configurada para construir y publicar los cambios de `main`, conservando Node para desarrollo local. Las dos migraciones están instaladas en el Supabase de la escuela, con RLS y buckets privados verificados. Siguen pendientes las claves de servidor, SMTP, sesiones reales, materiales y pagos. El estado de publicación y su procedimiento están en [docs/deployment.md](docs/deployment.md); las verificaciones de datos están en [docs/supabase-verification.json](docs/supabase-verification.json).
 
 ## Arranque local
 

@@ -45,6 +45,8 @@ La escuela declara que PocketBase ya no tiene utilidad y autoriza retirarlo. Se 
 
 La actualización remota utilizará el SHA esperado de `main` y una operación con lease. El resultado concreto se registrará en `docs/deployment.md`. No se afirma haber verificado reutilización de contraseñas, revocado credenciales ni borrado objetos cacheados o copias que terceros pudieran haber descargado. La limpieza de referencias no puede garantizar esa eliminación; si existen credenciales reutilizadas, deben sustituirse en sus servicios.
 
+La limpieza se ejecutó y la historia saneada se publicó utilizando el SHA remoto esperado. El árbol de la implementación se conservó idéntico y la comprobación posterior no encontró las rutas retiradas en los objetos alcanzables desde las referencias locales actualizadas. El bundle de recuperación permanece exclusivamente en `work/`, ignorado y con permisos locales restringidos. Los límites anteriores sobre credenciales, cachés y copias de terceros siguen vigentes.
+
 ## Límites de la comprobación
 
 No se han consultado datos de alumnado ni contenido de registros remotos. Después de esta revisión local inicial se inspeccionó el proyecto Supabase independiente de la escuela: estaba vacío y se aplicaron las dos migraciones. Se verificaron RLS, buckets privados y lecturas anónimas de la API; el asesor de seguridad no devolvió avisos. Esto no acredita el despliegue web anterior ni la entrega de correo. Las claves privadas, Resend, el catálogo de archivos y el banco siguen pendientes de configuración o verificación bajo control de la escuela.

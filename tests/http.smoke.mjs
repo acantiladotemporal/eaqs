@@ -12,6 +12,12 @@ try {
   let ready=false;
   for(let i=0;i<80;i++){try{const response=await fetch(base);if(response.ok){ready=true;break;}}catch{}await delay(150);}
   assert.ok(ready,`Server did not start: ${log}`);
+  for (const path of ['/', '/programa?utm_source=ensayo', '/admin']) {
+    const root = await fetch(base + path, { headers: { Host: 'elarbolquesuena.com', 'X-Forwarded-Host': 'elarbolquesuena.com', 'X-Forwarded-Proto': 'https' }, redirect: 'manual' });
+    assert.equal(root.status, 308, path);
+    assert.equal(root.headers.get('location'), 'https://www.elarbolquesuena.com' + path);
+    checks++;
+  }
   for(const path of ['/','/registro','/programa','/login','/metodologia','/escuela-internacional-neuroeducacion-musical','/contacto','/privacidad']) {
     const response=await fetch(base+path);assert.equal(response.status,200,path);assert.ok((await response.text()).includes('El Árbol'));checks++;
   }
